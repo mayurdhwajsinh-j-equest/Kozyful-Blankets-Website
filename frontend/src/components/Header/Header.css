@@ -82,3 +82,78 @@
     background-color: #EFF2F4;
     border-radius: 50%;
 }
+
+.hamburger {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    gap: 4px;
+}
+
+.hamburger span {
+    width: 22px;
+    height: 2px;
+    background: #000;
+    display: block;
+}
+
+@media (max-width: 1024px) {
+    .container {
+        padding: 0 16px;
+    }
+
+    .navbar__left,
+    .navbar__right {
+        gap: 16px;
+    }
+
+    .btn-shopBlankets {
+        padding: 8px 16px;
+    }
+}
+@media (max-width: 768px) {
+
+    .hamburger {
+        display: flex;
+        order: 0;
+    }
+
+    .navbar__left {
+        display: none;
+    }
+
+     .navbar__right {
+        position: static;
+        width: auto;
+        background: transparent;
+        flex-direction: row;
+        align-items: center;
+        padding: 0;
+        gap: 10px;
+        display: flex; /* always visible */
+    }
+
+    /* Hide Support, Blog, Profile on mobile */
+    .navbar__right li:nth-child(1), /* SUPPORT */
+    .navbar__right li:nth-child(2), /* BLOG */
+    .navbar__right li:nth-child(4) { /* Profile icon */
+        display: none;
+    }
+
+    .navbar__right li:nth-child(3), 
+    .navbar__right li:nth-child(5) { 
+        display: flex;
+    }
+
+    .navbar__center {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .container {
+        height: 60px;
+        padding: 0 12px;
+        justify-content: space-between;
+    }
+}
