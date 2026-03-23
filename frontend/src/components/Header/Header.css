@@ -132,8 +132,7 @@
 
     .navbar__center {
         position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
+        transform: translateX(-100%);
         z-index: 1;
     }
 
@@ -147,29 +146,27 @@
         padding: 0;
         gap: 8px;
         display: flex;
-        order: 2; /* far right */
+        order: 2; 
     }
 
-    /* Hide: SUPPORT, BLOG, Profile icon */
-    .navbar__right li:nth-child(1), /* SUPPORT */
+    .navbar__right li:nth-child(1),/* SUPPORT */
     .navbar__right li:nth-child(2), /* BLOG */
     .navbar__right li:nth-child(4) { /* Profile */
         display: none;
     }
 
-    /* Show: Shop Blankets + Cart */
     .navbar__right li:nth-child(3),
     .navbar__right li:nth-child(5) {
         display: flex;
     }
 
-    .navbar__logo
-    {
-        transform: translateX(-55%);
-    }
-
     .navbar__right .btn-shopBlankets
     {
         padding: 5px 10px;
+    }
+
+    .cart-icon
+    {
+        padding: 8px;
     }
 }
