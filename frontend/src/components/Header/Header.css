@@ -110,50 +110,66 @@
     .btn-shopBlankets {
         padding: 8px 16px;
     }
-}
-@media (max-width: 768px) {
+}@media (max-width: 768px) {
+    .container {
+        height: 60px;
+        padding: 0 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+    }
 
     .hamburger {
         display: flex;
-        order: 0;
+        order: 0; /* far left */
+        z-index: 2;
     }
 
     .navbar__left {
         display: none;
     }
 
-     .navbar__right {
+    .navbar__center {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1;
+    }
+
+    /* Keep right as inline row, always visible */
+    .navbar__right {
         position: static;
         width: auto;
         background: transparent;
         flex-direction: row;
         align-items: center;
         padding: 0;
-        gap: 10px;
-        display: flex; /* always visible */
+        gap: 8px;
+        display: flex;
+        order: 2; /* far right */
     }
 
-    /* Hide Support, Blog, Profile on mobile */
+    /* Hide: SUPPORT, BLOG, Profile icon */
     .navbar__right li:nth-child(1), /* SUPPORT */
     .navbar__right li:nth-child(2), /* BLOG */
-    .navbar__right li:nth-child(4) { /* Profile icon */
+    .navbar__right li:nth-child(4) { /* Profile */
         display: none;
     }
 
-    .navbar__right li:nth-child(3), 
-    .navbar__right li:nth-child(5) { 
+    /* Show: Shop Blankets + Cart */
+    .navbar__right li:nth-child(3),
+    .navbar__right li:nth-child(5) {
         display: flex;
     }
 
-    .navbar__center {
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
+    .navbar__logo
+    {
+        transform: translateX(-55%);
     }
 
-    .container {
-        height: 60px;
-        padding: 0 12px;
-        justify-content: space-between;
+    .navbar__right .btn-shopBlankets
+    {
+        padding: 5px 10px;
     }
 }
