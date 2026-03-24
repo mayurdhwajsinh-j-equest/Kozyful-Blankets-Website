@@ -1,0 +1,16 @@
+.bestSellerCard-content
+{
+    max-width: 264px;
+    background-color: #FFFFFF;
+    border-radius: 16px;
+}
+
+.bestSellerCard-top__p
+{
+    background-color: #DCF5E9;
+    color: #11854D;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 2px 4px;
+    max-width: fit-content;
+}

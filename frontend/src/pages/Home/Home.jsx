@@ -8,6 +8,7 @@ import nextIcon from "../../assets/next-icon.svg"
 import ctg1 from "../../assets/ctg1.png"
 import ctg2 from "../../assets/ctg2.png"
 import bl1 from "../../assets/blanket1.png"
+import BestSellerCard from '../../components/BestSellerCard/BestSellerCard'
 
 function Home() {
     return (
@@ -55,23 +56,28 @@ function Home() {
                 </div>
             </section>
             <section className='shopbycategory-section'>
-
                 <div className='shopbycategory-content'>
                     <h1 className='shopbycategory__title'>
                         Shop by category
                     </h1>
                     <div className='category__items'>
                         <div className='category__item'>
-                            <img src={ctg1} alt="category image1" className='ctg1'/>
+                            <img src={ctg1} alt="category image1" className='ctg1' />
                             <a href="#" className="btnshopBlankets btn1">Shop blankets<img src={nextIcon} alt="next icon" className='next-icon' /></a>
                         </div>
                         <div className='category__item'>
-                            <img src={ctg2} alt="category image2" className='ctg2'/>
+                            <img src={ctg2} alt="category image2" className='ctg2' />
                             <a href="#" className="btnshopBlankets btn2">Shop blankets <img src={nextIcon} alt="next icon" className='next-icon' /></a>
                         </div>
                     </div>
                 </div>
             </section>
+            <section className='bestSeller-section'>
+                <div className='bestSeller-content'>
+                    <p>Blanket best sellers</p>
+                    <BestSellerCard />
+                </div>    
+            </section>    
         </>
 
     )
