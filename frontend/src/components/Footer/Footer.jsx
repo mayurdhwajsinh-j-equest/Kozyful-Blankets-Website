@@ -1,10 +1,10 @@
 import React from 'react'
 import Logo from "../../assets/Logo.png";
 import socials from "../../assets/Social Media.svg"
-import footerImg1 from "../../assets/footer-img1.svg"
-import footerImg2 from "../../assets/footer-img2.svg"
-import footerImg3 from "../../assets/footer-img3.svg"
-import footerImg4 from "../../assets/footer-img4.svg"
+import footerImg1 from "../../assets/shipping.svg"
+import footerImg2 from "../../assets/quality.svg"
+import footerImg3 from "../../assets/support.svg"
+import footerImg4 from "../../assets/money-back.svg"
 import "./Footer.css"
 
 function Footer() {
@@ -64,11 +64,11 @@ function Footer() {
                         <p>Fast shipping</p>
                     </div>
                     <div className="footer__center-item">
-                        <img src={footerImg2} alt="" />
+                        <img src={footerImg3} alt="" />
                         <p>24/7 customer support</p>
                     </div>
                     <div className="footer__center-item">
-                        <img src={footerImg3} alt="" />
+                        <img src={footerImg2} alt="" />
                         <p>Top quality materials</p>
                     </div>
                     <div className="footer__center-item">
