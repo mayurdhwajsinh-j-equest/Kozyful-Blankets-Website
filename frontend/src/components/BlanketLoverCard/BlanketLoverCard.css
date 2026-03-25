@@ -1,0 +1,56 @@
+.blanketLoverCard-cnt {
+    max-width: 356px;
+    background-color: #FFFFFF;
+    border-radius: 16px;
+    padding: 25px 24px;
+}
+
+.blanketLover-bottom
+{
+    max-width: 308px;
+}
+
+.blanketLoverCard-bottom__p1
+{
+    color: #293644;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 0;
+}
+
+.blanketLover-bottom__p2
+{
+    margin-top: 0;
+    margin-bottom: 0;
+    line-height: 20px;
+    font-size: 14px;
+    color: #58636E;
+}
+
+.blanketLoverCard-bottom__btm
+{
+    display: flex;
+    gap: 4px;
+}
+
+.blanketLoverCard-bottom__p3
+{
+    color: #293644;
+    font-size: 16px;
+    margin-bottom: 0;
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+.blanketLoverCard-bottom__p4
+{
+    margin-top: 10px;
+    background-color: #DCF5E9;
+    color: #11854D;
+    margin-bottom: 0;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 4px 8px;
+    border-radius: 20px;
+}
+

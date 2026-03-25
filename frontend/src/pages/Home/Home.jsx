@@ -8,6 +8,7 @@ import nextIcon from "../../assets/next-icon.svg"
 import ctg1 from "../../assets/ctg1.png"
 import ctg2 from "../../assets/ctg2.png"
 import bl1 from "../../assets/blanket1.png"
+import BlanketLoverCard from '../../components/BlanketLoverCard/BlanketLoverCard'
 import BestSellerCard from '../../components/BestSellerCard/BestSellerCard'
 
 function Home() {
@@ -74,10 +75,45 @@ function Home() {
             </section>
             <section className='bestSeller-section'>
                 <div className='bestSeller-content'>
-                    <p>Blanket best sellers</p>
-                    <BestSellerCard />
-                </div>    
-            </section>    
+                    <div className='bestSeller-top'>
+                        <p className='bestSeller-title'>Blanket best sellers</p>
+                        <a href='#' className='see-all'>See all</a>
+                    </div>
+                    <div className='bestSeller-cards'>
+                        <BestSellerCard />
+                        <BestSellerCard />
+                        <BestSellerCard />
+                        <BestSellerCard />
+                        <BestSellerCard />
+                    </div>
+                    <div className='bestSeller-top'>
+                        <p className='bestSeller-title'>Towel best sellers</p>
+                        <a href='#' className='see-all'>See all</a>
+                    </div>
+                    <div className='bestSeller-cards'>
+                        <BestSellerCard />
+                        <BestSellerCard />
+                        <BestSellerCard />
+                        <BestSellerCard />
+                        <BestSellerCard />
+                    </div>
+                </div>
+            </section>
+            <section className='blanketLover-section'>
+                <div className="blanketLover-content">
+                    <div className='blanketLover-top'>
+                        <p className='blanketLover-title'>Blanket lovers in socials</p>
+                        <a href='#' className='see-all'>See all</a>
+
+                    </div>
+                    <div className="blanketLover-bottom">
+                       <BlanketLoverCard /> 
+                       <BlanketLoverCard /> 
+                       <BlanketLoverCard /> 
+                       <BlanketLoverCard /> 
+                    </div>
+                </div>
+            </section>
         </>
 
     )

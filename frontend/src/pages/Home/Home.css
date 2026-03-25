@@ -166,4 +166,51 @@
 .bestSeller-section
 {
     background-color: #FFEBEE80;
+    padding: 72px;
+}
+
+.blanketLover-section
+{
+    background-color: #E0F7FA80;
+    padding: 72px;
+}
+
+.bestSeller-content,.blanketLover-content
+{
+    max-width: 1440px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.bestSeller-title,.blanketLover-title
+{
+    color: #293644;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.bestSeller-top,.blanketLover-top
+{
+    display: inline-flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.bestSeller-cards,.blanketLover-cards
+{
+    display: flex;
+    gap: 16px;
+}
+
+.see-all
+{
+    color: #293644;
+    font-size: 14px;
+}
+
+.blanketLover-bottom
+{
+    display: flex;
+    gap: 16px;
 }

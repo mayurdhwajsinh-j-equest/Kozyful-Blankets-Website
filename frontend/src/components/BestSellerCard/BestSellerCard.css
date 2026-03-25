@@ -1,16 +1,62 @@
-.bestSellerCard-content
-{
+.bestSellerCard-content {
     max-width: 264px;
     background-color: #FFFFFF;
     border-radius: 16px;
+    position: relative;
 }
 
-.bestSellerCard-top__p
-{
+.bestSellerCard-top__p {
     background-color: #DCF5E9;
     color: #11854D;
     font-size: 13px;
     font-weight: 600;
     padding: 2px 4px;
+    position: absolute;
+    top: -5px;
+    left: 0px;
     max-width: fit-content;
+}
+
+.bestSellerCard-bottom__p1 {
+    color: #404D58;
+    font-size: 14px;
+    font-weight: 600;
+    margin-top: 0;
+}
+
+.bestSellerCard-bottom__p2 {
+    color: #404D58;
+    font-weight: bold;
+    font-size: 16px;
+    margin: 0;
+
+}
+
+.bestSellerCard-bottom__p2 span {
+    font-size: 12px;
+    font-weight: bold;
+    color: #707983;
+}
+
+.bestSellerCard-bottom__p3 {
+    background-color: #E8656B;
+    padding: 4px 8px;
+    max-width: fit-content;
+    font-size: 13px;
+    font-weight: 600;
+    color: #FFFFFF;
+    position: absolute;
+    right: 0;
+    top: -20px;
+}
+
+.bl2
+{
+    padding: 16px 34px;
+}
+
+.bestSellerCard-bottom
+{
+    position: relative;
+    padding-bottom: 10px;
 }
