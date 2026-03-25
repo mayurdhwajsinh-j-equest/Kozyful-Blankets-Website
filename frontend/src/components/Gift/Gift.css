@@ -1,0 +1,95 @@
+.gift__content
+{
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 72px ;
+}
+
+.gift__top
+{
+    display: flex;
+    gap: 44px;
+    margin-bottom: 72px;
+}
+
+.gift__bottom
+{
+    display: flex;
+    justify-content: space-between;
+    max-width: 1280px;
+}
+
+.gift__image
+{
+    max-width: 604px;
+    border-radius: 24px;
+}
+
+.gift__heading
+{
+    color: #293644;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.gift__description
+{
+    color: #404D58;
+    font-size: 14px;
+    line-height: 22px;
+    max-width: 632px;
+}
+
+.gift__list li::marker {
+    color: #E8656B; 
+}
+
+.gift__list-item
+{
+    font-size: 14px;
+    color: #404D58;
+    margin-bottom: 12px;
+    font-weight: 500;
+}
+
+.gift__cta
+{
+    background-color: #000000;
+    color: #FFFFFF;
+    text-decoration: none;
+    padding: 10px 40px;
+    border-radius: 56px;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.gift__card-title
+{
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.gift__card-text
+{
+    max-width: 203px;
+    color: #293644;
+    font-size: 13px;
+}
+
+.gift__card
+{
+    position: relative;
+}
+
+.gift__card::before {
+    content: "";
+    position: absolute;
+    top: 0%;
+    left: 15%;
+    transform: translateX(-110%);
+    width: 30px;
+    height: 30px;
+    background-color: #FEC8CF;
+    border-radius: 50%;
+    z-index: -1;
+}

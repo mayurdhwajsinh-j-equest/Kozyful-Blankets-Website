@@ -10,6 +10,7 @@ import ctg2 from "../../assets/ctg2.png"
 import bl1 from "../../assets/blanket1.png"
 import BlanketLoverCard from '../../components/BlanketLoverCard/BlanketLoverCard'
 import BestSellerCard from '../../components/BestSellerCard/BestSellerCard'
+import Gift from '../../components/Gift/Gift'
 
 function Home() {
     return (
@@ -112,6 +113,16 @@ function Home() {
                        <BlanketLoverCard /> 
                        <BlanketLoverCard /> 
                     </div>
+                </div>
+            </section>
+            <section className='benifit-section'>
+                <div className='benifit-content'>
+                    <Gift />
+                </div>
+            </section>
+            <section className='faq-section'>
+                <div className='faq-content'>
+                    <p>Frequently asked questions</p>
                 </div>
             </section>
         </>

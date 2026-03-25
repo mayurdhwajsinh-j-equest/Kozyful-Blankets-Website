@@ -214,3 +214,8 @@
     display: flex;
     gap: 16px;
 }
+
+.benifit-section
+{
+    background-color: #F9FBE780;
+}
