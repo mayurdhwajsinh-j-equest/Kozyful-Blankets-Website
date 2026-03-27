@@ -94,7 +94,6 @@
     color: #404D58;
 }
 
-/* ─── Shop by Category ─── */
 .shopbycategory-section {
     padding: 48px 0;
     background-color: #FFF2DF80;
@@ -125,7 +124,7 @@
 
 .category__item {
     flex: 1;
-    position: relative;  
+    position: relative;
 }
 
 .ctg1, .ctg2 {
@@ -163,59 +162,168 @@
     max-width: 10px;
 }
 
-.bestSeller-section
-{
+.bestSeller-section {
     background-color: #FFEBEE80;
     padding: 72px;
 }
 
-.blanketLover-section
-{
+.blanketLover-section {
     background-color: #E0F7FA80;
     padding: 72px;
 }
 
-.bestSeller-content,.blanketLover-content
-{
+.bestSeller-content, .blanketLover-content,.blanketGallery-content {
     max-width: 1440px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
 }
 
-.bestSeller-title,.blanketLover-title
-{
+.bestSeller-title, .blanketLover-title, .faq-title, .whyPeopleLoveUs-title,.blanketGallery-title {
     color: #293644;
     font-size: 28px;
     font-weight: bold;
 }
 
-.bestSeller-top,.blanketLover-top
-{
+.bestSeller-top, .blanketLover-top {
     display: inline-flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.bestSeller-cards,.blanketLover-cards
-{
+.bestSeller-cards, .blanketLover-cards {
     display: flex;
     gap: 16px;
 }
 
-.see-all
-{
+.see-all {
     color: #293644;
     font-size: 14px;
 }
 
-.blanketLover-bottom
-{
+.blanketLover-bottom {
     display: flex;
     gap: 16px;
 }
 
-.benifit-section
-{
+.benifit-section {
     background-color: #F9FBE780;
+}
+
+.faq-section {
+    background-color: #D1C4E933;
+}
+
+.faq-content {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 72px 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.whyPeopleLoveUs-section {
+    background-color: #E1F5FE80;
+    padding: 72px 0;
+}
+
+.whyPeopleLoveUs-content {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.whyPeopleLoveUs-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.whyPeopleLoveUs-title {
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.see-all {
+    font-size: 14px;
+    color: #333;
+    text-decoration: underline;
+}
+
+.review-column {
+    display: flex;
+    flex-direction: row;
+    gap: 24px;
+}
+
+.review-card {
+    flex: 1;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.review-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.review-body {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.review-author {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: auto;
+}
+
+.review-author-name {
+    font-weight: 600;
+    font-size: 14px;
+    margin: 0;
+}
+
+.review-author-tag {
+    font-size: 12px;
+    color: #2e7d5e;
+    background: #d6f5e3;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin: 0;
+}
+
+.pdp-section {
+    background-color: #E8F5E980;
+}
+
+.pdp-content {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 72px 60px;
+}
+
+.blanketGallery-section
+{
+    background-color: #FBEDE780;
+}
+
+.blanketGallery-content
+{
+    max-width: 1040px;    
+    
+    justify-content: center;
+    align-items: center;
 }
