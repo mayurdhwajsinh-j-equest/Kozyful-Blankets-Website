@@ -1,0 +1,46 @@
+.collection-section
+{
+    background-color: #FEE9ED;
+}
+
+.collection__content
+{
+    max-width: 1440px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.collection__breadcrumb
+{
+    font-size: 10px;
+    line-height: 20px;
+    font-weight: 500;
+    color: #58636E;
+    margin-top: 8px;
+}
+
+.collection__title
+{
+    color: #E8656B;
+    font-size: 36px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.collection__subtitle
+{
+    color: #1A67A0;
+    font-size: 15px;
+    font-weight: bold;
+    margin-top: 0;
+    margin-bottom: 46px;
+}
+
+.collection__image
+{
+    display: block;
+    max-width: 100%;
+    mix-blend-mode: multiply;
+}

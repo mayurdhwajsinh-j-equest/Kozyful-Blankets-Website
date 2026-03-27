@@ -1,12 +1,12 @@
-import React, { useState } from 'react'
-import "./BlanketGallery.css"
+import React, { useState } from 'react';
+import "./BlanketGallery.css";
 import blGalleryimg1 from "../../assets/bl-gallery-img1.png";
-import blGalleryimg2 from "../../assets/bl-gallery-img2.png";
-import blGalleryimg3 from "../../assets/bl-gallery-img3.png";
-import blGalleryimg4 from "../../assets/bl-gallery-img4.png";
-import blGalleryimg5 from "../../assets/bl-gallery-img5.png";
-import blGalleryimg6 from "../../assets/bl-gallery-img6.png";
-import blGalleryimg7 from "../../assets/bl-gallery-img7.png";
+import blGalleryimg2 from "../../assets/bl-gallery-img2.jpg";
+import blGalleryimg3 from "../../assets/bl-gallery-img3.jpg";
+import blGalleryimg4 from "../../assets/bl-gallery-img4.jpg";
+import blGalleryimg5 from "../../assets/bl-gallery-img5.jpg";
+import blGalleryimg6 from "../../assets/bl-gallery-img6.jpg";
+import blGalleryimg7 from "../../assets/bl-gallery-img7.jpg";
 import leftArrow from "../../assets/left-arrow.svg";
 import rightArrow from "../../assets/right-arrow.svg";
 
@@ -52,7 +52,7 @@ function BlanketGallery() {
                     </div>
 
                     <button className='gallery-arrow gallery-arrow--right' onClick={handleNext} aria-label="Next">
-                        <img src={leftArrow} alt="right arrow" />
+                        <img src={rightArrow} alt="right arrow" />
                     </button>
                 </div>
 

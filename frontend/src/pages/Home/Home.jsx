@@ -5,10 +5,6 @@ import fImg2 from "../../assets/feature-icon2.svg"
 import fImg3 from "../../assets/feature-icon3.svg"
 import fImg4 from "../../assets/feature-icon4.svg"
 import nextIcon from "../../assets/next-icon.svg"
-import blGalleryimg1 from "../../assets/bl-gallery-img1.png";
-import blGalleryimg3 from "../../assets/bl-gallery-img3.png";
-import leftArrow from "../../assets/left-arrow.svg";
-import rightArrow from "../../assets/right-arrow.svg";
 import ctg1 from "../../assets/ctg1.png"
 import ctg2 from "../../assets/ctg2.png"
 import bl1 from "../../assets/blanket1.png"
