@@ -4,6 +4,7 @@ import Header from "./components/Header/Header";
 import "./App.css";
 import Footer from "./components/Footer/Footer";
 import Collection from "./pages/Collection/Collection";
+import Pdp from "./pages/Pdp/Pdp";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/collection" element={<Collection />} />
+        <Route path="/pdp" element={<Pdp />} />
         <Route path="*" element={<h1>Page Not Found</h1>} />
       </Routes>
       <Footer />
