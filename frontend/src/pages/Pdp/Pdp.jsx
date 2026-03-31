@@ -19,6 +19,7 @@ import p4 from "../../assets/p4.png";
 import p5 from "../../assets/p5.png";
 import p6 from "../../assets/p6.png";
 import './Pdp.css'
+import ProductHero from '../../components/ProductHero/ProductHero'
 
 function Pdp() {
     return (
@@ -29,37 +30,7 @@ function Pdp() {
                 </div>
             </section>
             <section>
-                <div className="product-gallery">
-                    <div className="product-main-image">
-                        <img src={mainimg} alt="Kozyful Blanket" />
-                        <button className="gallery-arrow gallery-arrow--prev">‹</button>
-                        <button className="gallery-arrow gallery-arrow--next">›</button>
-                    </div>
-
-                    <div className="product-thumbnails">
-                        <div className="thumbnail thumbnail--active">
-                            <img src={mainimg} alt="thumbnail 1" />
-                        </div>
-                        <div className="thumbnail">
-                            <img src={p1} alt="thumbnail 2" />
-                        </div>
-                        <div className="thumbnail">
-                            <img src={p2} alt="thumbnail 3" />
-                        </div>
-                        <div className="thumbnail">
-                            <img src={p3} alt="thumbnail 4" />
-                        </div>
-                        <div className="thumbnail">
-                            <img src={p4} alt="thumbnail 5" />
-                        </div>
-                        <div className="thumbnail">
-                            <img src={p5} alt="thumbnail 6" />
-                        </div>
-                        <div className="thumbnail">
-                            <img src={p6} alt="thumbnail 7" />
-                        </div>
-                    </div>
-                </div>
+               <ProductHero />
             </section>
             <section className='frame__section'>
                 <div className="frame__content">
