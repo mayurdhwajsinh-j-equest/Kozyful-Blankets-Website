@@ -2,3 +2,151 @@
 {
     background-color: #FEF9FA;
 }
+.quality-section
+{
+    background-color: #FEF9FA;
+}
+.quality-content
+{
+    display: flex;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 72px 80px;
+    justify-content: space-between;
+}
+
+.quality-title,.bedfit-title
+{   
+    font-weight: bold;
+    font-size: 24px;
+    line-height: 100%;
+    color: #293644;
+}
+
+.quality-description{
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    color: #404D58;
+    max-width: 632px;
+}
+
+.quality-list li::marker {
+    color: #E8656B; 
+}
+
+.quality-item
+{
+    font-size: 14px;
+    color: #404D58;
+    margin-bottom: 12px;
+    font-weight: 500;
+}
+
+.bedfit-section
+{
+    background-color: #FEF9FA;
+}
+
+.bedfit-content
+{
+    display: flex;
+    flex-direction: column;
+    max-width: 1216px;
+    margin: 0 auto;
+    padding: 32px;
+    background-color: #fff;
+    border-radius: 16px;
+}
+
+.bedfit-items
+{
+    display: flex;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.bedfit-title
+{
+    text-align: center;
+    color: #293644;
+    margin: 0;
+}
+
+.bedfit-size-container
+{
+    display: flex;
+    gap: 128px;
+    justify-content: center;
+}
+
+.bedfit-size-title
+{
+    color: #293644;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 0;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.bedfit-size-item
+{
+    color: #707983;
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.info-section
+{
+    background-color: #FEF9FA;
+    padding-bottom: 16px;
+}
+
+.info-content
+{
+    display: flex;
+    gap: 16px;
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+.shipping-info, .materials-info
+{
+    background-color: #fff;
+    border-radius: 16px;
+    padding: 32px;
+}
+
+.info-title
+{
+    color: #293644;
+    font-size: 24px;
+    font-weight: bold;
+    margin-top: 0;
+    margin-bottom: 16px;
+}
+
+.info-description
+{
+    color: #293644;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 22px;
+}
+
+.frame__section
+{
+    background-color: #FEF9FA;
+    padding: 57px 0;
+}
+
+.frame__content
+{
+    display: flex;
+    max-width: 1068px;
+    margin: 0 auto;
+    padding: 0 80px;
+}
