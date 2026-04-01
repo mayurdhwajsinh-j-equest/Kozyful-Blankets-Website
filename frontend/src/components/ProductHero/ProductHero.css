@@ -29,10 +29,8 @@
 
 /* ── Wrapper ─────────────────────────────── */
 .pdp-hero {
-  background: var(--clr-bg);
   padding: 0 80px 48px;
-  max-width: 1280px;
-  margin: 0 auto;
+  background: var(--clr-bg);
   font-family: var(--font-main);
 }
 
@@ -40,14 +38,16 @@
 .pdp-breadcrumb {
   font-size: 13px;
   color: var(--clr-muted);
-  padding: 18px 0 24px;
-  margin: 0;
+  padding: 18px 230px 24px;
+  margin: 0 auto;
 }
 
 /* ── Two-column layout ───────────────────── */
 .pdp-hero__layout {
+  margin: 0 auto;
   display: grid;
   grid-template-columns: 1fr 1fr;
+  max-width: 1280px;
   gap: 56px;
   align-items: flex-start;
 }
@@ -103,11 +103,6 @@
   transition: background 0.2s, transform 0.2s;
   z-index: 2;
   line-height: 1;
-}
-
-.gallery-arrow:hover {
-  background: var(--clr-accent);
-  color: #fff;
 }
 
 .gallery-arrow--prev { left: 14px; }

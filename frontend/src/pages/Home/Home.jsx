@@ -4,7 +4,7 @@ import fImg1 from "../../assets/feature-icon1.svg"
 import fImg2 from "../../assets/feature-icon2.svg"
 import fImg3 from "../../assets/feature-icon3.svg"
 import fImg4 from "../../assets/feature-icon4.svg"
-import nextIcon from "../../assets/next-icon.svg"
+import nextIcon from "../../assets/shopBlanketNextIcon.svg"
 import ctg1 from "../../assets/ctg1.png"
 import ctg2 from "../../assets/ctg2.png"
 import bl1 from "../../assets/blanket1.png"
@@ -14,6 +14,9 @@ import Gift from '../../components/Gift/Gift'
 import FAQ from '../../components/FAQ/FAQ'
 import ProductDetail from '../../components/ProductDetail/ProductDetail'
 import BlanketGallery from '../../components/BlanketGallery/BlanketGallery'
+import prevIcon from "../../assets/prev-icon.svg"
+import nextIcon1 from "../../assets/next-icon.svg"
+
 
 function Home() {
     return (
@@ -88,6 +91,8 @@ function Home() {
                         <p className='bestSeller-title'>Blanket best sellers</p>
                         <a href='#' className='see-all'>See all</a>
                     </div>
+                    <div className='bestSeller-carousel'>
+                    <img src={prevIcon} alt="previous icon" className='prev-icon' />
                     <div className='bestSeller-cards'>
                         <BestSellerCard />
                         <BestSellerCard />
@@ -95,16 +100,24 @@ function Home() {
                         <BestSellerCard />
                         <BestSellerCard />
                     </div>
+                    </div>
+                    <img src={nextIcon1} alt="next icon" className='next-icon' />
+                    <br />
+                    <br />
                     <div className='bestSeller-top'>
                         <p className='bestSeller-title'>Towel best sellers</p>
                         <a href='#' className='see-all'>See all</a>
                     </div>
+                    <div className='bestSeller-carousel'>
+                    <img src={prevIcon} alt="previous icon" className='prev-icon' />
                     <div className='bestSeller-cards'>
                         <BestSellerCard />
                         <BestSellerCard />
                         <BestSellerCard />
                         <BestSellerCard />
                         <BestSellerCard />
+                    </div>
+                    <img src={nextIcon1} alt="next icon" className='next-icon' />
                     </div>
                 </div>
             </section>

@@ -1,4 +1,9 @@
 import { useState } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Thumbs } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/thumbs";
 import "./ProductDetail.css";
 import mainimg from "../../assets/main-img.png";
 import p1 from "../../assets/p1.png";
@@ -7,10 +12,12 @@ import p3 from "../../assets/p3.png";
 import p4 from "../../assets/p4.png";
 import p5 from "../../assets/p5.png";
 import p6 from "../../assets/p6.png";
-// import p7 from "../../assets/product-detail/p7.png";
+
+const images = [mainimg, p1, p2, p3, p4, p5, p6];
 
 export default function ProductDetail() {
     const [quantity, setQuantity] = useState(3);
+    const [thumbsSwiper, setThumbsSwiper] = useState(null);
 
     return (
         <div className="product-detail">
@@ -95,38 +102,43 @@ export default function ProductDetail() {
             {/* ===== RIGHT: Gallery Panel ===== */}
             <div className="product-gallery">
 
-                {/* Main Image */}
+                {/* Main Swiper */}
                 <div className="product-main-image">
-                    <img src={mainimg} alt="Kozyful Blanket" />
+                    <Swiper
+                        modules={[Navigation, Thumbs]}
+                        navigation={{
+                            prevEl: ".gallery-arrow--prev",
+                            nextEl: ".gallery-arrow--next",
+                        }}
+                        thumbs={{ swiper: thumbsSwiper }}
+                        className="main-swiper"
+                    >
+                        {images.map((img, i) => (
+                            <SwiperSlide key={i}>
+                                <img src={img} alt={`slide-${i}`} />
+                            </SwiperSlide>
+                        ))}
+                    </Swiper>
+
                     <button className="gallery-arrow gallery-arrow--prev">‹</button>
                     <button className="gallery-arrow gallery-arrow--next">›</button>
                 </div>
 
-                {/* Thumbnails — add your src values */}
-                <div className="product-thumbnails">
-                    <div className="thumbnail thumbnail--active">
-                        <img src={mainimg} alt="thumbnail 1" />
-                    </div>
-                    <div className="thumbnail">
-                        <img src={p1} alt="thumbnail 2" />
-                    </div>
-                    <div className="thumbnail">
-                        <img src={p2} alt="thumbnail 3" />
-                    </div>
-                    <div className="thumbnail">
-                        <img src={p3} alt="thumbnail 4" />
-                    </div>
-                    <div className="thumbnail">
-                        <img src={p4} alt="thumbnail 5" />
-                    </div>
-                    <div className="thumbnail">
-                        <img src={p5} alt="thumbnail 6" />
-                    </div>
-                    <div className="thumbnail">
-                        <img src={p6} alt="thumbnail 7" />
-                    </div>
-                    
-                </div>
+                {/* Thumbnail Swiper */}
+                <Swiper
+                    modules={[Thumbs]}
+                    onSwiper={setThumbsSwiper}
+                    slidesPerView="auto"
+                    spaceBetween={8}
+                    watchSlidesProgress
+                    className="thumb-swiper"
+                >
+                    {images.map((img, i) => (
+                        <SwiperSlide key={i} className="thumb-slide">
+                            <img src={img} alt={`thumb-${i}`} />
+                        </SwiperSlide>
+                    ))}
+                </Swiper>
 
             </div>
 

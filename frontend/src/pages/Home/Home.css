@@ -100,9 +100,8 @@
 }
 
 .shopbycategory-content {
-    max-width: 1440px;
+    max-width: 1280px;
     margin: 0 auto;
-    padding: 0 60px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -173,7 +172,7 @@
 }
 
 .bestSeller-content, .blanketLover-content,.blanketGallery-content {
-    max-width: 1440px;
+    max-width: 1280px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
@@ -229,9 +228,8 @@
 }
 
 .whyPeopleLoveUs-content {
-    max-width: 1440px;
+    max-width: 1280px;
     margin: 0 auto;
-    padding: 0 40px;
     display: flex;
     flex-direction: column;
     gap: 24px;
@@ -307,10 +305,11 @@
 
 .pdp-section {
     background-color: #E8F5E980;
+    position: relative;
 }
 
 .pdp-content {
-    max-width: 1440px;
+    max-width: 1280px;
     margin: 0 auto;
     padding: 72px 60px;
 }
@@ -322,8 +321,18 @@
 
 .blanketGallery-content
 {
-    max-width: 1040px;    
-    
+    max-width: 1040px;        
     justify-content: center;
     align-items: center;
+}
+
+.prev-icon,.next-icon {
+    width: 8px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.bestSeller-Carasoul {
+    display: flex;
+    justify-content: space-between;
 }

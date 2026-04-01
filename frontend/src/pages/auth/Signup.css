@@ -1,0 +1,197 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+
+/* ───── Page ───── */
+.signup-section {
+  min-height: 100vh;
+  background: radial-gradient(ellipse at top left, #f9c8c8 0%, #fde8e8 40%, #fdf0f0 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Sans', sans-serif;
+  padding: 40px 20px;
+}
+
+/* ───── Logo ───── */
+.signup-logo {
+  margin-bottom: 32px;
+}
+
+.signup-logo img {
+  height: 48px;
+  width: auto;
+}
+
+/* ───── Card ───── */
+.signup-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 40px 44px;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+}
+
+/* ───── Headings ───── */
+.signup-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: #1a1a1a;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.signup-description {
+  font-size: 14px;
+  color: #777;
+  text-align: center;
+  line-height: 1.6;
+  margin-bottom: 28px;
+}
+
+/* ───── Form ───── */
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1a1a1a;
+}
+
+/* ───── Inputs ───── */
+.signup-input {
+  width: 90%;
+  padding: 12px 16px;
+  border: 1.5px solid #e8e8e8;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #1a1a1a;
+  outline: none;
+  font-family: 'DM Sans', sans-serif;
+  transition: border-color 0.2s;
+  background: #fff;
+}
+
+.signup-input::placeholder {
+  color: #bbb;
+}
+
+.signup-input:focus {
+  border-color: #d94f4f;
+}
+
+/* ───── Password toggle ───── */
+.password-wrapper {
+  position: relative;
+}
+
+.password-wrapper .signup-input {
+  padding-right: 44px;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #aaa;
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.toggle-password:hover {
+  color: #555;
+}
+
+/* ───── Create Account button ───── */
+.signup-btn {
+  width: 100%;
+  padding: 14px;
+  background: #1a1a1a;
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 4px;
+  font-family: 'DM Sans', sans-serif;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.signup-btn:hover {
+  background: #333;
+}
+
+.signup-btn:active {
+  transform: scale(0.99);
+}
+
+/* ───── Footer inside card ───── */
+.signup-footer {
+  text-align: center;
+  margin-top: 18px;
+  font-size: 14px;
+  color: #777;
+}
+
+.signup-footer a {
+  color: #1a1a1a;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.signup-footer a:hover {
+  color: #d94f4f;
+}
+
+/* ───── Page footer ───── */
+.page-footer-wrapper {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.page-footer {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.page-footer a {
+  color: #aaa;
+  text-decoration: none;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 11px;
+}
+
+.page-footer a:hover {
+  color: #888;
+}
+
+.page-footer .divider {
+  color: #ccc;
+  font-size: 12px;
+}
+
+.copyright {
+  font-size: 12px;
+  color: #bbb;
+}

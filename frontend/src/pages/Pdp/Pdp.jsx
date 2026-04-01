@@ -25,11 +25,6 @@ function Pdp() {
     return (
         <>
             <section className='pdp'>
-                <div className="pdp__content">
-                    <p>Home &gt; Middle page &gt; This page</p>
-                </div>
-            </section>
-            <section>
                <ProductHero />
             </section>
             <section className='frame__section'>
