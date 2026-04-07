@@ -14,6 +14,7 @@ import Gift from '../../components/Gift/Gift'
 import FAQ from '../../components/FAQ/FAQ'
 import ProductDetail from '../../components/ProductDetail/ProductDetail'
 import BlanketGallery from '../../components/BlanketGallery/BlanketGallery'
+import Marquee from '../../components/Marquee/Marquee'
 import prevIcon from "../../assets/prev-icon.svg"
 import nextIcon1 from "../../assets/next-icon.svg"
 
@@ -202,7 +203,7 @@ function Home() {
                         <p className='whyPeopleLoveUs-title'>Why people love us</p>
                         <a href='#' className='see-all'>See all</a>
                     </div>
-                    <div className='review-column'>
+                    <Marquee direction="ltr">
                         <div className='review-card'>
                             <p className='review-title'>The best nights sleep</p>
                             <p className='review-body'>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliquat enim ad minim veniam.</p>
@@ -227,8 +228,8 @@ function Home() {
                                 <p className='review-author-tag'>Verified buyer</p>
                             </div>
                         </div>
-                    </div>
-                    <div className='review-column'>
+                    </Marquee>
+                    <Marquee direction="rtl">
                         <div className='review-card'>
                             <p className='review-title'>The best nights sleep</p>
                             <p className='review-body'>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliquat enim ad minim veniam.</p>
@@ -253,7 +254,7 @@ function Home() {
                                 <p className='review-author-tag'>Verified buyer</p>
                             </div>
                         </div>
-                    </div>
+                    </Marquee>
                 </div>
             </section>
         </>

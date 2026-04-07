@@ -323,17 +323,19 @@
 }
 
 .whyPeopleLoveUs-content {
-    max-width: 1280px;
+    /* max-width: 1280px; */
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 48px;
 }
 
 .whyPeopleLoveUs-top {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 0 230px;
+    /* max-width: 1280px;   */
 }
 
 .whyPeopleLoveUs-title {
