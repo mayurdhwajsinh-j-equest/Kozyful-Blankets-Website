@@ -40,6 +40,11 @@
     max-width: 632px;
 }
 
+.gift__list
+{
+    padding: 0 15px 1px;
+}
+
 .gift__list li::marker {
     color: #E8656B; 
 }

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import "./Home.css"
 import fImg1 from "../../assets/feature-icon1.svg"
 import fImg2 from "../../assets/feature-icon2.svg"
@@ -17,6 +17,87 @@ import BlanketGallery from '../../components/BlanketGallery/BlanketGallery'
 import prevIcon from "../../assets/prev-icon.svg"
 import nextIcon1 from "../../assets/next-icon.svg"
 
+// Reusable swiper scroll amount — scrolls by ~1 card width
+const SCROLL_AMOUNT = 220
+
+function BestSellerSwiper({ title }) {
+    const trackRef = useRef(null)
+
+    const scrollPrev = () => {
+        if (trackRef.current) trackRef.current.scrollBy({ left: -SCROLL_AMOUNT, behavior: 'smooth' })
+    }
+
+    const scrollNext = () => {
+        if (trackRef.current) trackRef.current.scrollBy({ left: SCROLL_AMOUNT, behavior: 'smooth' })
+    }
+
+    return (
+        <div>
+            <div className='bestSeller-top'>
+                <p className='bestSeller-title'>{title}</p>
+                <a href='#' className='see-all'>See all</a>
+            </div>
+            <div className='bestSeller-carousel'>
+                <button className='swiper-btn' onClick={scrollPrev} aria-label="Previous">
+                    <img src={prevIcon} alt="previous" />
+                </button>
+
+                <div className='bestSeller-cards' ref={trackRef}>
+                    <BestSellerCard />
+                    <BestSellerCard />
+                    <BestSellerCard />
+                    <BestSellerCard />
+                    <BestSellerCard />
+                    <BestSellerCard />
+                    <BestSellerCard />
+                </div>
+
+                <button className='swiper-btn' onClick={scrollNext} aria-label="Next">
+                    <img src={nextIcon1} alt="next" />
+                </button>
+            </div>
+        </div>
+    )
+}
+
+function BlanketLoverSwiper() {
+    const trackRef = useRef(null)
+
+    const scrollPrev = () => {
+        if (trackRef.current) trackRef.current.scrollBy({ left: -SCROLL_AMOUNT, behavior: 'smooth' })
+    }
+
+    const scrollNext = () => {
+        if (trackRef.current) trackRef.current.scrollBy({ left: SCROLL_AMOUNT, behavior: 'smooth' })
+    }
+
+    return (
+        <div className='blanketLover-content'>
+            <div className='blanketLover-top'>
+                <p className='blanketLover-title'>Blanket lovers in socials</p>
+                <a href='#' className='see-all'>See all</a>
+            </div>
+            <div className='blanketLover-carousel'>
+                <button className='swiper-btn' onClick={scrollPrev} aria-label="Previous">
+                    <img src={prevIcon} alt="previous" />
+                </button>
+
+                <div className='blanketLover-cards' ref={trackRef}>
+                    <BlanketLoverCard />
+                    <BlanketLoverCard />
+                    <BlanketLoverCard />
+                    <BlanketLoverCard />
+                    <BlanketLoverCard />
+                    <BlanketLoverCard />
+                </div>
+
+                <button className='swiper-btn' onClick={scrollNext} aria-label="Next">
+                    <img src={nextIcon1} alt="next" />
+                </button>
+            </div>
+        </div>
+    )
+}
 
 function Home() {
     return (
@@ -28,7 +109,7 @@ function Home() {
                             UP TO 30% OFF
                         </div>
                         <h1 className='hero__title'>
-                            MOTHER’S DAY SALE
+                            MOTHER'S DAY SALE
                         </h1>
                         <p className='hero__subtitle'>
                             OVER 300,000+ HAPPY CUSTOMERS
@@ -43,6 +124,7 @@ function Home() {
                     </div>
                 </div>
             </section>
+
             <section className='frame-section'>
                 <div className="frame__content">
                     <div className="frame__center-item">
@@ -63,6 +145,7 @@ function Home() {
                     </div>
                 </div>
             </section>
+
             <section className='shopbycategory-section'>
                 <div className='shopbycategory-content'>
                     <h1 className='shopbycategory__title'>
@@ -80,74 +163,39 @@ function Home() {
                     </div>
                 </div>
             </section>
+
             <section className='pdp-section'>
                 <div className='pdp-content'>
                     <ProductDetail />
                 </div>
             </section>
+
             <section className='bestSeller-section'>
                 <div className='bestSeller-content'>
-                    <div className='bestSeller-top'>
-                        <p className='bestSeller-title'>Blanket best sellers</p>
-                        <a href='#' className='see-all'>See all</a>
-                    </div>
-                    <div className='bestSeller-carousel'>
-                    <img src={prevIcon} alt="previous icon" className='prev-icon' />
-                    <div className='bestSeller-cards'>
-                        <BestSellerCard />
-                        <BestSellerCard />
-                        <BestSellerCard />
-                        <BestSellerCard />
-                        <BestSellerCard />
-                    </div>
-                    </div>
-                    <img src={nextIcon1} alt="next icon" className='next-icon' />
-                    <br />
-                    <br />
-                    <div className='bestSeller-top'>
-                        <p className='bestSeller-title'>Towel best sellers</p>
-                        <a href='#' className='see-all'>See all</a>
-                    </div>
-                    <div className='bestSeller-carousel'>
-                    <img src={prevIcon} alt="previous icon" className='prev-icon' />
-                    <div className='bestSeller-cards'>
-                        <BestSellerCard />
-                        <BestSellerCard />
-                        <BestSellerCard />
-                        <BestSellerCard />
-                        <BestSellerCard />
-                    </div>
-                    <img src={nextIcon1} alt="next icon" className='next-icon' />
-                    </div>
+                    <BestSellerSwiper title="Blanket best sellers" />
+                    <BestSellerSwiper title="Towel best sellers" />
                 </div>
             </section>
-            <section className='blanketLover-section'>
-                <div className="blanketLover-content">
-                    <div className='blanketLover-top'>
-                        <p className='blanketLover-title'>Blanket lovers in socials</p>
-                        <a href='#' className='see-all'>See all</a>
 
-                    </div>
-                    <div className="blanketLover-bottom">
-                        <BlanketLoverCard />
-                        <BlanketLoverCard />
-                        <BlanketLoverCard />
-                        <BlanketLoverCard />
-                    </div>
-                </div>
+            <section className='blanketLover-section'>
+                <BlanketLoverSwiper />
             </section>
+
             <section className='benifit-section'>
                 <div className='benifit-content'>
                     <Gift />
                 </div>
             </section>
+
             <section className='faq-section'>
                 <div className='faq-content'>
                     <p className='faq-title'>Frequently asked questions</p>
                     <FAQ />
                 </div>
             </section>
+
             <BlanketGallery />
+
             <section className='whyPeopleLoveUs-section'>
                 <div className='whyPeopleLoveUs-content'>
                     <div className='whyPeopleLoveUs-top'>
@@ -163,7 +211,6 @@ function Home() {
                                 <p className='review-author-tag'>Verified buyer</p>
                             </div>
                         </div>
-
                         <div className='review-card'>
                             <p className='review-title'>The best nights sleep</p>
                             <p className='review-body'>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliquat enim ad minim veniam.</p>
@@ -172,7 +219,6 @@ function Home() {
                                 <p className='review-author-tag'>Verified buyer</p>
                             </div>
                         </div>
-
                         <div className='review-card'>
                             <p className='review-title'>The best nights sleep</p>
                             <p className='review-body'>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliquat enim ad minim veniam.</p>
@@ -182,7 +228,6 @@ function Home() {
                             </div>
                         </div>
                     </div>
-
                     <div className='review-column'>
                         <div className='review-card'>
                             <p className='review-title'>The best nights sleep</p>
@@ -192,7 +237,6 @@ function Home() {
                                 <p className='review-author-tag'>Verified buyer</p>
                             </div>
                         </div>
-
                         <div className='review-card'>
                             <p className='review-title'>The best nights sleep</p>
                             <p className='review-body'>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliquat enim ad minim veniam.</p>
@@ -201,7 +245,6 @@ function Home() {
                                 <p className='review-author-tag'>Verified buyer</p>
                             </div>
                         </div>
-
                         <div className='review-card'>
                             <p className='review-title'>The best nights sleep</p>
                             <p className='review-body'>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliquat enim ad minim veniam.</p>
@@ -211,12 +254,9 @@ function Home() {
                             </div>
                         </div>
                     </div>
-
                 </div>
             </section>
-
         </>
-
     )
 }
 

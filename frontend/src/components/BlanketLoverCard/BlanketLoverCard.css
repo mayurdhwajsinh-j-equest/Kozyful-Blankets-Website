@@ -5,6 +5,16 @@
     padding: 25px 24px;
 }
 
+.blanketLoverCard-bottom__p1{
+    max-width: 260px;
+}
+
+.blanketLover-cards > * {
+    scroll-snap-align: start;
+    flex: 0 0 calc(25% - 12px);
+    min-width: 308px;
+}
+
 .blanketLover-bottom
 {
     max-width: 308px;
@@ -21,7 +31,7 @@
 .blanketLover-bottom__p2
 {
     margin-top: 0;
-    margin-bottom: 0;
+    margin-bottom: 0; 
     line-height: 20px;
     font-size: 14px;
     color: #58636E;

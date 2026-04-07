@@ -52,11 +52,11 @@
 
 .bl2
 {
-    padding: 16px 34px;
+    padding: 16px 14px;
 }
 
 .bestSellerCard-bottom
 {
     position: relative;
     padding-bottom: 10px;
-}
+} 

@@ -157,52 +157,147 @@
     color: #fff;
 }
 
-.next-icon {
-    max-width: 10px;
-}
-
+/* ===== BEST SELLER SECTION ===== */
 .bestSeller-section {
     background-color: #FFEBEE80;
     padding: 72px;
 }
 
+.bestSeller-content {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+}
+
+.bestSeller-top,
+.blanketLover-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.bestSeller-title,
+.blanketLover-title,
+.faq-title,
+.whyPeopleLoveUs-title,
+.blanketGallery-title {
+    color: #293644;
+    font-size: 28px;
+    font-weight: bold;
+    margin: 0;
+}
+
+/* Swiper wrapper: arrow + track + arrow */
+.bestSeller-carousel,
+.blanketLover-carousel {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+}
+
+/* The scrollable track — shared rules */
+.bestSeller-cards,
+.blanketLover-cards {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    flex: 1;
+    padding: 8px 4px; /* small vertical padding so box-shadows aren't clipped */
+}
+
+.bestSeller-cards::-webkit-scrollbar,
+.blanketLover-cards::-webkit-scrollbar {
+    display: none;
+}
+
+/* Best seller: ~5 cards visible */
+.bestSeller-cards > * {
+    scroll-snap-align: start;
+    flex: 0 0 calc(20% - 13px);
+    min-width: 200px;
+}
+
+/* Blanket lover: ~4 cards visible */
+.blanketLover-cards > * {
+    scroll-snap-align: start;
+    flex: 0 0 calc(25% - 12px);
+    min-width: 220px;
+}
+
+/* Arrow buttons — shared between both swipers */
+.swiper-btn {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: background 0.2s, box-shadow 0.2s;
+    padding: 0;
+}
+
+.swiper-btn:hover {
+    background: #E8656B;
+    border-color: #E8656B;
+}
+
+.swiper-btn:hover img {
+    filter: brightness(0) invert(1);
+}
+
+.swiper-btn img {
+    width: 8px;
+    height: 14px;
+}
+
+.swiper-btn:disabled {
+    opacity: 0.35;
+    cursor: default;
+}
+
+.swiper-btn:disabled:hover {
+    background: #ffffff;
+    border-color: #e0e0e0;
+}
+
+.swiper-btn:disabled:hover img {
+    filter: none;
+}
+
+/* ===== END SWIPER ===== */
+
+/* ===== BLANKET LOVER SECTION ===== */
 .blanketLover-section {
     background-color: #E0F7FA80;
     padding: 72px;
 }
 
-.bestSeller-content, .blanketLover-content,.blanketGallery-content {
+.blanketLover-content {
     max-width: 1280px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
 }
 
-.bestSeller-title, .blanketLover-title, .faq-title, .whyPeopleLoveUs-title,.blanketGallery-title {
-    color: #293644;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.bestSeller-top, .blanketLover-top {
-    display: inline-flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.bestSeller-cards, .blanketLover-cards {
-    display: flex;
-    gap: 16px;
-}
+/* ===== END BLANKET LOVER SECTION ===== */
 
 .see-all {
     color: #293644;
     font-size: 14px;
-}
-
-.blanketLover-bottom {
-    display: flex;
-    gap: 16px;
 }
 
 .benifit-section {
@@ -314,25 +409,12 @@
     padding: 72px 60px;
 }
 
-.blanketGallery-section
-{
+.blanketGallery-section {
     background-color: #FBEDE780;
 }
 
-.blanketGallery-content
-{
-    max-width: 1040px;        
+.blanketGallery-content {
+    max-width: 1040px;
     justify-content: center;
     align-items: center;
-}
-
-.prev-icon,.next-icon {
-    width: 8px;
-    height: 16px;
-    cursor: pointer;
-}
-
-.bestSeller-Carasoul {
-    display: flex;
-    justify-content: space-between;
 }

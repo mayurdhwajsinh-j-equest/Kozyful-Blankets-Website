@@ -12,8 +12,9 @@ import p3 from "../../assets/p3.png";
 import p4 from "../../assets/p4.png";
 import p5 from "../../assets/p5.png";
 import p6 from "../../assets/p6.png";
+import stars from "../../assets/stars.svg";
 
-const images = [mainimg, p1, p2, p3, p4, p5, p6];
+const images = [mainimg, p2, p2, p3, p4, p5, p6];
 
 export default function ProductDetail() {
     const [quantity, setQuantity] = useState(3);
@@ -30,11 +31,7 @@ export default function ProductDetail() {
                 {/* Rating */}
                 <div className="product-rating">
                     <div className="product-stars">
-                        <span>⭐</span>
-                        <span>⭐</span>
-                        <span>⭐</span>
-                        <span>⭐</span>
-                        <span>⭐</span>
+                        <img src={stars} alt="stars" />
                     </div>
                     <p className="product-rating-score">4.7</p>
                 </div>
@@ -107,8 +104,8 @@ export default function ProductDetail() {
                     <Swiper
                         modules={[Navigation, Thumbs]}
                         navigation={{
-                            prevEl: ".gallery-arrow--prev",
-                            nextEl: ".gallery-arrow--next",
+                            prevEl: ".gallery-arr--prev",
+                            nextEl: ".gallery-arr--next",
                         }}
                         thumbs={{ swiper: thumbsSwiper }}
                         className="main-swiper"
@@ -120,8 +117,8 @@ export default function ProductDetail() {
                         ))}
                     </Swiper>
 
-                    <button className="gallery-arrow gallery-arrow--prev">‹</button>
-                    <button className="gallery-arrow gallery-arrow--next">›</button>
+                    <button className="gallery-arr gallery-arr--prev">‹</button>
+                    <button className="gallery-arr gallery-arr--next">›</button>
                 </div>
 
                 {/* Thumbnail Swiper */}
