@@ -111,3 +111,26 @@
     transform: translateY(0);
   }
 }
+
+@media(max-width: 700px) {
+  .faq-page {
+    padding: 20px 12px;
+  }
+
+  .faq-list {
+    width: 100%;
+    min-width: auto;
+  }
+
+  .faq-item {
+    padding: 16px 20px;
+  }
+
+  .faq-question-text {
+    font-size: 14px;
+  }
+
+  .faq-answer-text {
+    font-size: 13px;
+  }
+}

@@ -93,21 +93,19 @@
     height: 2px;
     background: #000;
     display: block;
+    transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
-@media (max-width: 1024px) {
-    .container {
-        padding: 0 16px;
-    }
+.hamburger.open span:nth-child(1) {
+    transform: rotate(45deg) translate(4px, 4px);
+}
 
-    .navbar__left,
-    .navbar__right {
-        gap: 16px;
-    }
+.hamburger.open span:nth-child(2) {
+    opacity: 0;
+}
 
-    .btn-shopBlankets {
-        padding: 8px 16px;
-    }
+.hamburger.open span:nth-child(3) {
+    transform: rotate(-45deg) translate(4px, -4px);
 }
 
 @media (max-width: 768px) {
@@ -123,7 +121,6 @@
     .hamburger {
         display: flex;
         order: 0;
-        /* far left */
         z-index: 2;
     }
 
@@ -137,7 +134,6 @@
         z-index: 1;
     }
 
-    /* Keep right as inline row, always visible */
     .navbar__right {
         position: static;
         width: auto;
@@ -150,18 +146,39 @@
         order: 2;
     }
 
+    /* Hide SUPPORT, BLOG and PROFILE in default mobile row */
     .navbar__right li:nth-child(1),
-    /* SUPPORT */
     .navbar__right li:nth-child(2),
-    /* BLOG */
     .navbar__right li:nth-child(4) {
-        /* Profile */
         display: none;
     }
 
-    .navbar__right li:nth-child(3),
-    .navbar__right li:nth-child(5) {
+    .navbar__right.active {
         display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        right: 0;
+        background: #fff;
+        padding: 16px 20px;
+        gap: 16px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+        z-index: 100;
+    }
+
+    /* Show SUPPORT, BLOG and PROFILE in dropdown */
+    .navbar__right.active li:nth-child(1),
+    .navbar__right.active li:nth-child(2),
+    .navbar__right.active li:nth-child(4) {
+        display: flex !important;
+    }
+
+    /* Keep Shop Blankets and Cart hidden in dropdown */
+    .navbar__right.active li:nth-child(3),
+    .navbar__right.active li:nth-child(5) {
+        display: none !important;
     }
 
     .navbar__right .btn-shopBlankets {

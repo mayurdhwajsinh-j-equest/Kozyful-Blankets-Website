@@ -64,3 +64,48 @@
     border-radius: 20px;
 }
 
+@media (max-width: 768px) {
+    .blanketLover-title {
+        max-width: 185px;
+    }
+
+   .blanketLover-cards > *{
+        min-width: 160px;
+    }
+
+    .blanketLover-card{
+        max-width: 160px;
+    }
+
+    .blanketLoverCard-cnt
+    {
+        padding: 8px;
+    }
+
+    .blLover1
+    {
+        max-width: 144px;
+    }
+
+    .blanketLoverCard-bottom__p1
+    {
+        font-size: 14px;
+        padding-bottom: 5px ;
+    }
+
+
+    .blanketLoverCard-bottom__p2
+    {
+        font-size: 12px;
+    }
+
+    .blanketLoverCard-bottom__p3
+    {
+        font-size: 14px;
+    }
+
+    .blanketLoverCard-bottom__p4
+    {
+        font-size: 10px;
+    }
+}

@@ -19,6 +19,13 @@ function Header() {
 
             <nav className="navbar">
                 <div className="container">
+
+                    <div className={`hamburger ${menuOpen ? "open" : ""}`} onClick={() => setMenuOpen(!menuOpen)}>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+
                     <ul className="navbar__left">
                         <li>
                             <Link to="/sale">
@@ -50,13 +57,6 @@ function Header() {
                             </Link>
                         </li>
                     </ul>
-
-                    <div className="hamburger" onClick={() => setMenuOpen(!menuOpen)}>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </div>
-
                 </div>
             </nav>
         </header>

@@ -121,3 +121,32 @@
     object-fit: cover;
     display: block;
 }
+
+@media (max-width: 768px) {
+    .blanketGallery-title {
+        font-size: 24px;
+    }
+
+    .gallery-slide img {
+    max-height: 160px;
+    }
+
+    .blanketGallery-additional{
+        gap: 8px;
+        min-width: 375px;
+    }
+
+    .additional img {
+        min-width: 100px;
+    }
+
+    .gallery-arrow--left
+    {
+        left: -20px;
+    }
+
+    .gallery-arrow--right
+    {
+        right: -20px;
+    }
+}

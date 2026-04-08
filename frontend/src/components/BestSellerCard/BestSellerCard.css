@@ -60,3 +60,25 @@
     position: relative;
     padding-bottom: 10px;
 } 
+
+@media (max-width: 768px) {
+    
+.bl2{
+    padding: 10px 16px ;
+    max-width: 124px;
+}
+
+.bestSellerCard-content{
+    max-width: 160px;
+}
+
+.bestSellerCard{
+    min-width: 160px;
+}
+
+.bestSeller-cards
+{
+    gap: 8px;
+}
+
+}

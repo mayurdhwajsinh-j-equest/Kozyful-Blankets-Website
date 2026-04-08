@@ -50,7 +50,17 @@
     .marquee-container .review-card {
         flex: 0 0 calc(50% - 12px);
         min-width: 250px;
+        padding: 12px;
     }
+
+    .marquee-track-ltr {
+        animation: marquee-ltr 2s linear infinite;
+    }
+
+    .marquee-track-rtl {
+        animation: marquee-rtl 2s linear infinite;
+    }
+
 }
 
 @media (max-width: 480px) {

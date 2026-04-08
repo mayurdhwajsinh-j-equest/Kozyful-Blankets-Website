@@ -17,6 +17,7 @@
     display: flex;
     justify-content: space-between;
     max-width: 1280px;
+    flex-wrap: wrap;
 }
 
 .gift__image
@@ -97,4 +98,35 @@
     background-color: #FEC8CF;
     border-radius: 50%;
     z-index: -1;
+}
+
+@media (max-width: 768px) {
+
+    .gift__content{
+        padding: 48px 12px;
+    }
+
+    .gift__top
+    {
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    .gift__card{
+        max-width: 163.5px;
+    }
+
+    .gift__image{
+        max-width: 100%;
+    }
+
+    .gift__heading
+    {
+        font-size: 24px;
+        margin: 0;
+    }
+
+    .gift__cta{
+        max-width: 100%;
+    }
 }

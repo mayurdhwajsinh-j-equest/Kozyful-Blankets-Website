@@ -403,6 +403,7 @@
 .pdp-section {
     background-color: #E8F5E980;
     position: relative;
+    overflow: hidden;
 }
 
 .pdp-content {
@@ -419,4 +420,96 @@
     max-width: 1040px;
     justify-content: center;
     align-items: center;
+}
+
+@media (max-width: 768px) {
+
+.hero__title{
+    font-size: 36px;
+    padding: 0 43px;
+}
+
+.hero__subtitle{
+    font-size: 14px;
+    padding: 0 43px;
+}
+
+.hero__badge{
+    font-size: 16px;
+    left: 15px;
+}
+
+.hero__image
+{
+    max-width: 328px;
+}
+
+.frame__content {
+    padding: 0 5px;
+}
+
+
+.category__items{
+    flex-direction: column;
+    max-width: 351px;
+}
+
+.shopbycategory__title{
+    font-size: 24px;
+}
+
+.btnshopBlankets{
+    font-size: 18px;
+    padding: 5px ;
+}
+
+.pdp-content{
+    padding: 48px;
+    max-width: 375px;
+}
+
+.bestSeller-section{
+    padding: 48px 12px;
+}
+
+.swiper-btn
+{
+    display: none;
+}
+
+.bestSeller-title,.blanketLover-title
+{
+    font-size: 24px;
+}   
+
+.blanketLover-section
+{
+    padding: 48px 12px; 
+}
+
+.faq-content
+{
+    max-width: 375px;
+    padding: 48px 12px;
+}
+
+.faq-title{
+    font-size: 24px;
+    text-align: center;
+    font-weight: bold;
+    max-width: 305px;
+}
+
+.blanketGallery-section{
+    padding: 0px;
+}
+
+.blanketGallery-content{
+    padding: 48px 12px;
+}
+
+.whyPeopleLoveUs-top{
+    padding: 0 12px;
+}
+
 }
