@@ -409,7 +409,7 @@
 .pdp-content {
     max-width: 1280px;
     margin: 0 auto;
-    padding: 72px 60px;
+    padding: 72px 0px;
 }
 
 .blanketGallery-section {
@@ -427,6 +427,7 @@
 .hero__title{
     font-size: 36px;
     padding: 0 43px;
+    max-width: 80%;
 }
 
 .hero__subtitle{
@@ -464,7 +465,7 @@
 }
 
 .pdp-content{
-    padding: 48px;
+    padding: 48px 12px;
     max-width: 375px;
 }
 

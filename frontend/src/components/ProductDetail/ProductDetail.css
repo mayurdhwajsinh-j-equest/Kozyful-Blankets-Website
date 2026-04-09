@@ -254,8 +254,8 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
 }
 
-.gallery-arr--prev { left: -90px; }
-.gallery-arr--next { right: -90px; }
+.gallery-arr--prev { left: -10px; }
+.gallery-arr--next { right: -10px; }
 
 .thumb-swiper {
     width: 100%;
@@ -289,6 +289,7 @@
 
     .product-detail{
         flex-direction: column-reverse;
+        max-width: 100%;
     }
 
     .product-info {
@@ -310,11 +311,11 @@
     }
 
     .gallery-arr--prev {
-        left: 10px;
+        left: -20px;
     }
 
     .gallery-arr--next {
-        right: 10px;
+        right: -20px;
     }
     
 }

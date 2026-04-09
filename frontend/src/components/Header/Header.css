@@ -109,6 +109,12 @@
 }
 
 @media (max-width: 768px) {
+
+    .navbar {
+        position: relative;
+        z-index: 2;
+    }
+
     .container {
         height: 60px;
         padding: 0 12px;
