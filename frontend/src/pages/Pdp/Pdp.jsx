@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import Gift from '../../components/Gift/Gift'
 import BestSellerCard from '../../components/BestSellerCard/BestSellerCard'
 import BlanketLoverCard from '../../components/BlanketLoverCard/BlanketLoverCard'
@@ -18,8 +18,92 @@ import p3 from "../../assets/p3.png";
 import p4 from "../../assets/p4.png";
 import p5 from "../../assets/p5.png";
 import p6 from "../../assets/p6.png";
+import prevIcon from "../../assets/prev-icon.svg"
+import nextIcon1 from "../../assets/next-icon.svg"
 import './Pdp.css'
 import ProductHero from '../../components/ProductHero/ProductHero'
+
+// Reusable swiper scroll amount — scrolls by ~1 card width
+const SCROLL_AMOUNT = 220
+
+function BestSellerSwiper({ title }) {
+    const trackRef = useRef(null)
+
+    const scrollPrev = () => {
+        if (trackRef.current) trackRef.current.scrollBy({ left: -SCROLL_AMOUNT, behavior: 'smooth' })
+    }
+
+    const scrollNext = () => {
+        if (trackRef.current) trackRef.current.scrollBy({ left: SCROLL_AMOUNT, behavior: 'smooth' })
+    }
+
+    return (
+        <div>
+            <div className='bestSeller-top'>
+                <p className='bestSeller-title'>{title}</p>
+                <a href='#' className='see-all'>See all</a>
+            </div>
+            <div className='bestSeller-carousel'>
+                <button className='swiper-btn' onClick={scrollPrev} aria-label="Previous">
+                    <img src={prevIcon} alt="previous" />
+                </button>
+
+                <div className='bestSeller-cards' ref={trackRef}>
+                    <BestSellerCard />
+                    <BestSellerCard />
+                    <BestSellerCard />
+                    <BestSellerCard />
+                    <BestSellerCard />
+                    <BestSellerCard />
+                    <BestSellerCard />
+                </div>
+
+                <button className='swiper-btn' onClick={scrollNext} aria-label="Next">
+                    <img src={nextIcon1} alt="next" />
+                </button>
+            </div>
+        </div>
+    )
+}
+
+function BlanketLoverSwiper() {
+    const trackRef = useRef(null)
+
+    const scrollPrev = () => {
+        if (trackRef.current) trackRef.current.scrollBy({ left: -SCROLL_AMOUNT, behavior: 'smooth' })
+    }
+
+    const scrollNext = () => {
+        if (trackRef.current) trackRef.current.scrollBy({ left: SCROLL_AMOUNT, behavior: 'smooth' })
+    }
+
+    return (
+        <div className='blanketLover-content'>
+            <div className='blanketLover-top'>
+                <p className='blanketLover-title'>Blanket lovers in socials</p>
+                <a href='#' className='see-all'>See all</a>
+            </div>
+            <div className='blanketLover-carousel'>
+                <button className='swiper-btn' onClick={scrollPrev} aria-label="Previous">
+                    <img src={prevIcon} alt="previous" />
+                </button>
+
+                <div className='blanketLover-cards' ref={trackRef}>
+                    <BlanketLoverCard />
+                    <BlanketLoverCard />
+                    <BlanketLoverCard />
+                    <BlanketLoverCard />
+                    <BlanketLoverCard />
+                    <BlanketLoverCard />
+                </div>
+
+                <button className='swiper-btn' onClick={scrollNext} aria-label="Next">
+                    <img src={nextIcon1} alt="next" />
+                </button>
+            </div>
+        </div>
+    )
+}
 
 function Pdp() {
     return (
@@ -130,33 +214,11 @@ function Pdp() {
             </section>
             <section className='bestSeller-section'>
                 <div className='bestSeller-content'>
-                    <div className='bestSeller-top'>
-                        <p className='bestSeller-title'>Blanket best sellers</p>
-                        <a href='#' className='see-all'>See all</a>
-                    </div>
-                    <div className='bestSeller-cards'>
-                        <BestSellerCard />
-                        <BestSellerCard />
-                        <BestSellerCard />
-                        <BestSellerCard />
-                        <BestSellerCard />
-                    </div>
+                    <BestSellerSwiper title="Blanket best sellers" />
                 </div>
             </section>
             <section className='blanketLover-section'>
-                <div className="blanketLover-content">
-                    <div className='blanketLover-top'>
-                        <p className='blanketLover-title'>Blanket lovers in socials</p>
-                        <a href='#' className='see-all'>See all</a>
-
-                    </div>
-                    <div className="blanketLover-bottom">
-                        <BlanketLoverCard />
-                        <BlanketLoverCard />
-                        <BlanketLoverCard />
-                        <BlanketLoverCard />
-                    </div>
-                </div>
+                <BlanketLoverSwiper />
             </section>
             <section className='faq-section'>
                 <div className='faq-content'>

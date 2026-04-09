@@ -55,7 +55,7 @@ function Collection() {
                 ? prev[group].filter((v) => v !== value)
                 : [...prev[group], value],
         }))
-    }
+    }       
 
     const clearAll = () => {
         setActiveFilters(Object.fromEntries(Object.keys(FILTERS).map((k) => [k, []])))
@@ -96,45 +96,56 @@ function Collection() {
 
                     {/* Filter Sidebar */}
                     <aside className='filter-section'>
-                        <div className="filter-section__header">
-                            <p className='filterBy-title'>Filter By</p>
+
+                        {/* Title is OUTSIDE filter-content */}
+                        <p className='filterBy-title'>Filter By</p>
+
+                        <div className="filter-content">
+
+                            {/* Active filter tags */}
+                            {activeTags.length > 0 && (
+                                <div className="filter-section__tags">
+                                    {activeTags.map(({ group, val }) => (
+                                        <span key={`${group}-${val}`} className="filter-tag">
+                                            {group}: {val}
+                                            <button onClick={() => toggleFilter(group, val)}>×</button>
+                                        </span>
+                                    ))}
+                                </div>
+                            )}
+
+                            {/* Clear All — appears below tags */}
                             {activeTags.length > 0 && (
                                 <button className="filter-section__clear" onClick={clearAll}>
-                                    Clear all
+                                    Clear All
                                 </button>
                             )}
+
+                            {/* Accordion groups */}
+                            {Object.entries(FILTERS).map(([group, options]) => (
+                                <AccordionGroup
+                                    key={group}
+                                    label={group}
+                                    options={options}
+                                    selected={activeFilters[group]}
+                                    onChange={(val) => toggleFilter(group, val)}
+                                />
+                            ))}
                         </div>
-
-                        {/* Active filter tags */}
-                        {activeTags.length > 0 && (
-                            <div className="filter-section__tags">
-                                {activeTags.map(({ group, val }) => (
-                                    <span key={`${group}-${val}`} className="filter-tag">
-                                        {val}
-                                        <button onClick={() => toggleFilter(group, val)}>×</button>
-                                    </span>
-                                ))}
-                            </div>
-                        )}
-
-                        {/* Accordion groups */}
-                        {Object.entries(FILTERS).map(([group, options]) => (
-                            <AccordionGroup
-                                key={group}
-                                label={group}
-                                options={options}
-                                selected={activeFilters[group]}
-                                onChange={(val) => toggleFilter(group, val)}
-                            />
-                        ))}
                     </aside>
 
-                    {/* Product Section — unchanged */}
+                    {/* Product Section */}
                     <div className='product-section'>
-                        <p className='productSection-title'>Blanket best sellers</p>
-                        <select name="Sort By" id="">
-                            <option value="">Best sellers</option>
-                        </select>
+                        <div className="product-section__header">
+                            <p className='productSection-title'>Blanket best sellers</p>
+                            <div className="sort-wrapper">
+                                <label className="sort-label">Sort By</label>
+                                <select name="sortBy" id="sortBy">
+                                    <option value="best-sellers">Best sellers</option>
+                                </select>
+                            </div>
+                        </div>
+
                         <div className='product-section__cards'>
                             <BestSellerCard />
                             <BestSellerCard />

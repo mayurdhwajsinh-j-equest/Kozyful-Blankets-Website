@@ -214,6 +214,10 @@
     padding: 8px 4px; /* small vertical padding so box-shadows aren't clipped */
 }
 
+.bestSeller-section .bestSeller-cards{
+    gap: 35px;
+}
+
 .bestSeller-cards::-webkit-scrollbar,
 .blanketLover-cards::-webkit-scrollbar {
     display: none;
