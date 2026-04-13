@@ -1,5 +1,5 @@
 .bestSellerCard-content {
-    min-width: 244.5px;
+    max-width: 244.5px;
     background-color: #FFFFFF;
     border-radius: 16px;
     position: relative;
@@ -74,11 +74,6 @@
 
 .bestSellerCard{
     min-width: 160px;
-}
-
-.bestSeller-cards
-{
-    gap: 8px;
 }
 
 }

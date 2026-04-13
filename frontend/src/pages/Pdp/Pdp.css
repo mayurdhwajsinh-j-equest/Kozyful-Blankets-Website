@@ -32,6 +32,10 @@
     max-width: 632px;
 }
 
+.quality-list{
+    padding-left: 20px;
+}
+
 .quality-list li::marker {
     color: #E8656B; 
 }
@@ -113,7 +117,6 @@
     gap: 16px;
     max-width: 1280px;
     margin: 0 auto;
-    flex-wrap: wrap;
 }
 
 .shipping-info, .materials-info

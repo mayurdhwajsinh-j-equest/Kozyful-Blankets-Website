@@ -8,9 +8,9 @@ import p4 from "../../assets/p4.png";
 import p5 from "../../assets/p5.png";
 import p6 from "../../assets/p6.png";
 import starsImg from "../../assets/stars.svg";
-import truckIcon from "../../assets/truck-icon.svg";
-import nextIcon from "../../assets/next-icon.svg";
-import prevIcon from "../../assets/prev-icon.svg";  
+import truckIcon from "../../assets/truck-icon.svg"; 
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Thumbs, Navigation } from 'swiper/modules';
 
 const THUMBS = [mainimg, p1, p2, p3, p4, p5, p6];
 
@@ -26,8 +26,8 @@ const KLARNA_LOGO = (
 );
 
 const TYPE_OPTIONS = [
-  { key: 'sherpa', label: 'Sherpa fleece' },
-  { key: 'fleece', label: 'Fleece' },
+  { key: 'sherpa', label: 'Sherpa fleece', hasColor: true },
+  { key: 'fleece', label: 'Fleece', hasColor: false },
 ];
 
 const SIZE_OPTIONS = [
@@ -38,34 +38,44 @@ const SIZE_OPTIONS = [
 // ── Sub-components ─────────────────────────────────────────────────────────
 
 function Gallery({ thumbs }) {
-  const [activeThumb, setActiveThumb] = useState(0);
-
-  const handleThumb = (idx) => setActiveThumb(idx);
-  const prevImg = () => setActiveThumb((i) => (i - 1 + thumbs.length) % thumbs.length);
-  const nextImg = () => setActiveThumb((i) => (i + 1) % thumbs.length);
+  const [thumbsSwiper, setThumbsSwiper] = useState(null);
 
   return (
     <div className="pdp-gallery">
+
+      {/* ── Main image swiper with thumbnails ── */}
       <div className="pdp-gallery__main">
-        <img src={thumbs[activeThumb]} alt="Product" />
-        <button className="gallery-arrow gallery-arrow--prev" onClick={prevImg}>
-          <img src={prevIcon} alt="Previous" />
-        </button>
-        <button className="gallery-arrow gallery-arrow--next" onClick={nextImg}>
-          <img src={nextIcon} alt="Next" />
-        </button>
+        <Swiper
+          modules={[Thumbs, Navigation]}
+          thumbs={{ swiper: thumbsSwiper }}
+          navigation
+          loop
+          className="pdp-gallery__main-swiper"
+        >
+          {thumbs.map((src, i) => (
+            <SwiperSlide key={i}>
+              <img src={src} alt={`View ${i + 1}`} />
+            </SwiperSlide>
+          ))}
+        </Swiper>
+
+        {/* ── Thumbnail swiper inside main ── */}
+        <Swiper
+          modules={[Thumbs]}
+          onSwiper={setThumbsSwiper}
+          slidesPerView={"auto"}
+          spaceBetween={10}
+          watchSlidesProgress
+          className="pdp-gallery__thumbs"
+        >
+          {thumbs.map((src, i) => (
+            <SwiperSlide key={i} className="pdp-thumb">
+              <img src={src} alt={`Thumb ${i + 1}`} />
+            </SwiperSlide>
+          ))}
+        </Swiper>
       </div>
-      <div className="pdp-gallery__thumbs">
-        {thumbs.map((src, i) => (
-          <button
-            key={i}
-            className={`pdp-thumb${activeThumb === i ? ' pdp-thumb--active' : ''}`}
-            onClick={() => handleThumb(i)}
-          >
-            <img src={src} alt={`View ${i + 1}`} />
-          </button>
-        ))}
-      </div>
+
     </div>
   );
 }
@@ -75,17 +85,17 @@ function OptionSelector({ label, options, selected, onChange }) {
     <div className="pdp-selector">
       <span className="pdp-selector__label">{label}</span>
       <div className="pdp-selector__options">
-        {options.map(({ key, label }) => (
+        {options.map(({ key, label, hasColor }) => (
           <button
             key={key}
             className={`pdp-option${selected === key ? ' pdp-option--active' : ''}`}
             onClick={() => onChange(key)}
           >
-            <span className={`pdp-option__dot${selected === key ? ' pdp-option__dot--checked' : ''}`} />
-            {label}
-            {label.includes('fleece') || label.includes('Fleece') ? (
+            <span className={`pdp-option__radio${selected === key ? ' pdp-option__radio--checked' : ''}`} />
+            <span className="pdp-option__text">{label}</span>
+            {hasColor && (
               <span className="pdp-option__swatch pdp-option__swatch--beige" />
-            ) : null}
+            )}
           </button>
         ))}
       </div>
@@ -102,7 +112,7 @@ function QuantitySelector({ qty, onChange }) {
         <span className="pdp-qty__value">{qty}</span>
         <button className="pdp-qty__btn" onClick={() => onChange(q => q + 1)}>+</button>
       </div>
-      <span className="pdp-qty__unit">£{UNIT_PRICE.toFixed(2)} each</span>
+        <span className="pdp-qty__unit">£{UNIT_PRICE.toFixed(2)} each</span>
     </div>
   );
 }
