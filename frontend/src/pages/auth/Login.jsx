@@ -34,7 +34,7 @@ function Login() {
           <div className="form-group">
             <div className="password-row">
               <label className="form-label" htmlFor="signin-password">Password</label>
-              <a href="/forgot-password" className="forgot-link">Forgot Your Password?</a>
+              <a href="/reset-password" className="forgot-link">Forgot Your Password?</a>
             </div>
             <div className="password-wrapper">
               <input

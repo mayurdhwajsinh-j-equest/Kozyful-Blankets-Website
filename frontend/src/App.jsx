@@ -7,8 +7,9 @@ import Collection from "./pages/Collection/Collection";
 import Pdp from "./pages/Pdp/Pdp";
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
+import ResetPassword from "./pages/auth/ResetPassword";
 
-const authRoutes = ["/login", "/signup"];
+const authRoutes = ["/login", "/signup", "/reset-password"];
 
 function Layout() {
   const location = useLocation();
@@ -23,6 +24,7 @@ function Layout() {
         <Route path="/pdp" element={<Pdp />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="*" element={<h1>Page Not Found</h1>} />
       </Routes>
       {!isAuthPage && <Footer />}

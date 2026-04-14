@@ -186,7 +186,7 @@
     color: #1a1a1a;
 }
 
-.filter-option input[type="checkbox"]:checked + span {
+.filter-option input[type="checkbox"]:checked+span {
     font-weight: 600;
 }
 
@@ -241,18 +241,44 @@
     gap: 8px;
 }
 
-@media (max-width: 768px){
+@media (max-width: 768px) {
 
-.collection__content {
-    padding: 24px 12px;
-}
+    .collection__content {
+        padding: 24px 12px;
+    }
 
-.collection__title{
-    font-size: 28px;
-}
+    .collection__title {
+        font-size: 28px;
+    }
 
-.collection__subtitle{
-    font-size: 14px;
- }
+    .collection__subtitle {
+        font-size: 14px;
+    }
 
+    .collection__middle-section {
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    .filter-section {
+        width: 100%;
+        min-width: unset;
+    }
+
+    .product-section {
+        width: 100%;
+        padding: 12px;
+    }
+
+    .product-section__header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .bestSellerCard
+    {
+        min-width: 172px;
+    }
+        
 }
