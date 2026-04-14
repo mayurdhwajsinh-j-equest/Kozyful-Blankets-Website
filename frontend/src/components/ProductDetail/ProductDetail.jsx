@@ -13,6 +13,8 @@ import p4 from "../../assets/p4.png";
 import p5 from "../../assets/p5.png";
 import p6 from "../../assets/p6.png";
 import stars from "../../assets/stars.svg";
+import prevIcon from "../../assets/prev-icon.svg";
+import nextIcon from "../../assets/next-icon.svg";
 
 const images = [mainimg, p2, p2, p3, p4, p5, p6];
 
@@ -117,8 +119,12 @@ export default function ProductDetail() {
                         ))}
                     </Swiper>
 
-                    <button className="gallery-arr gallery-arr--prev">‹</button>
-                    <button className="gallery-arr gallery-arr--next">›</button>
+                    <button className="gallery-arr gallery-arr--prev">
+                        <img src={prevIcon} alt="previous" />
+                    </button>
+                    <button className="gallery-arr gallery-arr--next">
+                        <img src={nextIcon} alt="next" />
+                    </button>
                 </div>
 
                 {/* Thumbnail Swiper */}
