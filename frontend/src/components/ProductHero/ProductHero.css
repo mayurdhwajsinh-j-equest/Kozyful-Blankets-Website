@@ -96,24 +96,37 @@
 .pdp-gallery__main-swiper {
   width: 100%;
   flex: 1;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
 }
 
 .pdp-gallery__main-swiper .swiper,
 .pdp-gallery__main-swiper .swiper-wrapper,
 .pdp-gallery__main-swiper .swiper-slide {
+  width: 100%;
+  height: 100%;
   max-height: 100%;
-  padding: 45px 55px;
+  /* padding: 45px 55px; */
   user-select: none;
   -webkit-user-select: none;
 }
 
+.pdp-gallery__main-swiper .swiper-slide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--clr-white);
+}
+
 .pdp-gallery__main img {
   max-width: 400px;
-  object-fit: cover;
+  max-height: 100%;
+  object-fit: contain;
   display: block;
   user-select: none;
   -webkit-user-select: none;
   pointer-events: none;
+  border-radius: var(--radius-lg);
 }
 
 .pdp-gallery__main .swiper-button-prev,
@@ -132,6 +145,44 @@
 .pdp-gallery__main .swiper-button-next::after {
   font-size: 14px;
   font-weight: 700;
+}
+
+/* ── Custom Navigation Buttons ── */
+.pdp-gallery__nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  background: var(--clr-white);
+  border: none;
+  border-radius: 50%;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+  z-index: 10;
+  transition: box-shadow 0.2s;
+}
+
+.pdp-gallery__nav-btn:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+}
+
+.pdp-gallery__nav-btn img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
+.pdp-gallery__nav-btn--prev {
+  left: 12px;
+}
+
+.pdp-gallery__nav-btn--next {
+  right: 12px;
 }
 
 .pdp-gallery__thumbs {
@@ -263,7 +314,6 @@
   border-color: var(--clr-ink);
   background: var(--clr-white);
   color: var(--clr-ink);
-  font-weight: 600;
 }
 
 /* Radio circle — inactive */
@@ -970,15 +1020,12 @@
   .pdp-gallery__main-swiper .swiper,
   .pdp-gallery__main-swiper .swiper-wrapper,
   .pdp-gallery__main-swiper .swiper-slide {
-    padding: 16px 24px;
+    padding: 0;
     max-width: 100%;
-    height: 100%;
   }
 
   .pdp-gallery__main img {
     max-width: 100%;
-    width: 100%;
-    height: auto;
   }
 
   .pdp-gallery__main .swiper-button-prev,

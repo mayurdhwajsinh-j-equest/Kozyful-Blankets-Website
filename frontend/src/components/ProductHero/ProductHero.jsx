@@ -9,6 +9,8 @@ import p5 from "../../assets/p5.png";
 import p6 from "../../assets/p6.png";
 import starsImg from "../../assets/stars.svg";
 import truckIcon from "../../assets/truck-icon.svg"; 
+import prevIcon from "../../assets/prev-icon.svg";
+import nextIcon from "../../assets/next-icon.svg";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Thumbs, Navigation } from 'swiper/modules';
 
@@ -39,6 +41,8 @@ const SIZE_OPTIONS = [
 
 function Gallery({ thumbs }) {
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
+  const prevRef = React.useRef(null);
+  const nextRef = React.useRef(null);
 
   return (
     <div className="pdp-gallery">
@@ -48,7 +52,14 @@ function Gallery({ thumbs }) {
         <Swiper
           modules={[Thumbs, Navigation]}
           thumbs={{ swiper: thumbsSwiper }}
-          navigation
+          navigation={{
+            prevEl: prevRef.current,
+            nextEl: nextRef.current,
+          }}
+          onBeforeInit={(swiper) => {
+            swiper.params.navigation.prevEl = prevRef.current;
+            swiper.params.navigation.nextEl = nextRef.current;
+          }}
           loop
           className="pdp-gallery__main-swiper"
         >
@@ -58,6 +69,14 @@ function Gallery({ thumbs }) {
             </SwiperSlide>
           ))}
         </Swiper>
+
+        {/* ── Custom Navigation Buttons ── */}
+        <button ref={prevRef} className="pdp-gallery__nav-btn pdp-gallery__nav-btn--prev">
+          <img src={prevIcon} alt="Previous" />
+        </button>
+        <button ref={nextRef} className="pdp-gallery__nav-btn pdp-gallery__nav-btn--next">
+          <img src={nextIcon} alt="Next" />
+        </button>
 
         {/* ── Thumbnail swiper inside main ── */}
         <Swiper
