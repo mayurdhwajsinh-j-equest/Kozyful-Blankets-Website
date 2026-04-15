@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import colImg1 from "../../assets/collection1.png"
 import BestSellerCard from "../../components/BestSellerCard/BestSellerCard"
 import "./Collection.css"
+import filterIcon from "../../assets/filterIcon.svg"
 
 const FILTERS = {
     Material: ["Cotton", "Wool", "Fleece", "Down", "Polyester", "Silk", "Cashmere"],
@@ -99,13 +100,14 @@ function Collection() {
                     {/* ── Mobile Filter + Sort bar ── */}
                     <div className="mobile-controls">
                         <button className="mobile-controls__btn" onClick={() => setFilterModalOpen(true)}>
-                            <span className="mobile-controls__icon">⊞</span>
+                            <span className="mobile-controls__icon">
+                                <img src={filterIcon} alt="Filter" />
+                            </span>
                             Filter By
                             {activeTags.length > 0 && (
                                 <span className="mobile-controls__badge">{activeTags.length}</span>
                             )}
                         </button>
-                        <div className="mobile-controls__divider" />
                         <button className="mobile-controls__btn" onClick={() => setSortModalOpen(true)}>
                             <span className="mobile-controls__icon">↕</span>
                             Sort By
