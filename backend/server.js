@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const sequelize = require('./config/db');
+const db = require('./models');
 
 // Load environment variables
 dotenv.config();
@@ -13,8 +13,8 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Database connection
-sequelize.authenticate()
+// Database connection using consolidated models
+db.sequelize.authenticate()
   .then(() => {
     console.log('✓ Database connected successfully');
   })
@@ -24,7 +24,7 @@ sequelize.authenticate()
   });
 
 // Sync models with database
-sequelize.sync({ alter: false })
+db.sequelize.sync({ alter: false })
   .then(() => {
     console.log('✓ Database synced');
   })
@@ -47,6 +47,7 @@ app.get('/api/health', (req, res) => {
     timestamp: new Date().toISOString()
   });
 });
+
 
 // 404 handler
 app.use((req, res) => {
