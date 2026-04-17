@@ -1,21 +1,17 @@
 const express = require('express');
 const router = express.Router();
+const userController = require('../controllers/user.controller');
+const { verifyToken } = require('../middleware/auth');
+const { validate, schemas } = require('../middleware/validation');
 
-// Placeholder routes - to be implemented
-router.get('/', (req, res) => {
-  res.status(501).json({ message: 'Get all users endpoint not yet implemented' });
-});
+// Admin routes
+router.get('/', verifyToken, userController.getAllUsers);
+router.get('/admin/all', verifyToken, userController.getAllUsers);
 
-router.get('/:id', (req, res) => {
-  res.status(501).json({ message: 'Get user by ID endpoint not yet implemented' });
-});
-
-router.put('/:id', (req, res) => {
-  res.status(501).json({ message: 'Update user endpoint not yet implemented' });
-});
-
-router.delete('/:id', (req, res) => {
-  res.status(501).json({ message: 'Delete user endpoint not yet implemented' });
-});
+// User routes
+router.get('/profile/me', verifyToken, userController.getCurrentUser);
+router.get('/:id', verifyToken, userController.getUserById);
+router.put('/:id', verifyToken, validate(schemas.updateUser), userController.updateUser);
+router.delete('/:id', verifyToken, userController.deleteUser);
 
 module.exports = router;

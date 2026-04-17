@@ -1,25 +1,17 @@
 const express = require('express');
 const router = express.Router();
+const productController = require('../controllers/product.controller');
+const { verifyToken } = require('../middleware/auth');
+const { validate, schemas } = require('../middleware/validation');
 
-// Placeholder routes - to be implemented
-router.get('/', (req, res) => {
-  res.status(501).json({ message: 'Get all products endpoint not yet implemented' });
-});
+// Public routes
+router.get('/', productController.getAllProducts);
+router.get('/bestsellers', productController.getBestSellers);
+router.get('/:id', productController.getProductById);
 
-router.post('/', (req, res) => {
-  res.status(501).json({ message: 'Create product endpoint not yet implemented' });
-});
-
-router.get('/:id', (req, res) => {
-  res.status(501).json({ message: 'Get product by ID endpoint not yet implemented' });
-});
-
-router.put('/:id', (req, res) => {
-  res.status(501).json({ message: 'Update product endpoint not yet implemented' });
-});
-
-router.delete('/:id', (req, res) => {
-  res.status(501).json({ message: 'Delete product endpoint not yet implemented' });
-});
+// Admin routes (protected)
+router.post('/', verifyToken, validate(schemas.createProduct), productController.createProduct);
+router.put('/:id', verifyToken, validate(schemas.updateProduct), productController.updateProduct);
+router.delete('/:id', verifyToken, productController.deleteProduct);
 
 module.exports = router;

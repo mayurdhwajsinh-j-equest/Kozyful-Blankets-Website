@@ -1,25 +1,18 @@
 const express = require('express');
 const router = express.Router();
+const reviewController = require('../controllers/review.controller');
+const { verifyToken } = require('../middleware/auth');
+const { validate, schemas } = require('../middleware/validation');
 
-// Placeholder routes - to be implemented
-router.get('/', (req, res) => {
-  res.status(501).json({ message: 'Get all reviews endpoint not yet implemented' });
-});
+// Public routes
+router.get('/product/:productId', reviewController.getProductReviews);
+router.get('/user/:userId', reviewController.getUserReviews);
+router.get('/:id', reviewController.getReviewById);
 
-router.post('/', (req, res) => {
-  res.status(501).json({ message: 'Create review endpoint not yet implemented' });
-});
-
-router.get('/:id', (req, res) => {
-  res.status(501).json({ message: 'Get review by ID endpoint not yet implemented' });
-});
-
-router.put('/:id', (req, res) => {
-  res.status(501).json({ message: 'Update review endpoint not yet implemented' });
-});
-
-router.delete('/:id', (req, res) => {
-  res.status(501).json({ message: 'Delete review endpoint not yet implemented' });
-});
+// User routes (protected)
+router.post('/', verifyToken, validate(schemas.createReview), reviewController.createReview);
+router.put('/:id', verifyToken, reviewController.updateReview);
+router.delete('/:id', verifyToken, reviewController.deleteReview);
+router.put('/:id/helpful', reviewController.markHelpful);
 
 module.exports = router;

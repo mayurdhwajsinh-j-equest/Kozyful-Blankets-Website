@@ -1,25 +1,17 @@
 const express = require('express');
 const router = express.Router();
+const orderController = require('../controllers/order.controller');
+const { verifyToken } = require('../middleware/auth');
+const { validate, schemas } = require('../middleware/validation');
 
-// Placeholder routes - to be implemented
-router.get('/', (req, res) => {
-  res.status(501).json({ message: 'Get all orders endpoint not yet implemented' });
-});
+// User routes (protected)
+router.post('/', verifyToken, validate(schemas.createOrder), orderController.createOrder);
+router.get('/', verifyToken, orderController.getUserOrders);
+router.get('/:id', verifyToken, orderController.getOrderById);
+router.put('/:id/cancel', verifyToken, orderController.cancelOrder);
 
-router.post('/', (req, res) => {
-  res.status(501).json({ message: 'Create order endpoint not yet implemented' });
-});
-
-router.get('/:id', (req, res) => {
-  res.status(501).json({ message: 'Get order by ID endpoint not yet implemented' });
-});
-
-router.put('/:id', (req, res) => {
-  res.status(501).json({ message: 'Update order endpoint not yet implemented' });
-});
-
-router.delete('/:id', (req, res) => {
-  res.status(501).json({ message: 'Delete order endpoint not yet implemented' });
-});
+// Admin routes (protected)
+router.get('/admin/all', verifyToken, orderController.getAllOrders);
+router.put('/:id/status', verifyToken, orderController.updateOrderStatus);
 
 module.exports = router;

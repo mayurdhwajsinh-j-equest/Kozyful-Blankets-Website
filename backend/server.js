@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const db = require('./models');
+const { errorHandler } = require('./middleware');
 
 // Load environment variables
 dotenv.config();
@@ -52,21 +53,13 @@ app.get('/api/health', (req, res) => {
 // 404 handler
 app.use((req, res) => {
   res.status(404).json({
-    status: 'error',
+    success: false,
     message: 'Route not found'
   });
 });
 
-// Error handling middleware
-app.use((error, req, res, next) => {
-  console.error('Error:', error.message);
-  
-  res.status(error.status || 500).json({
-    status: 'error',
-    message: error.message || 'Internal Server Error',
-    ...(process.env.NODE_ENV === 'development' && { stack: error.stack })
-  });
-});
+// Error handling middleware (must be last)
+app.use(errorHandler);
 
 // Start server
 const PORT = process.env.PORT || 5000;
