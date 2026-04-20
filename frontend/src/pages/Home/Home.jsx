@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import "./Home.css"
 import fImg1 from "../../assets/feature-icon1.svg"
 import fImg2 from "../../assets/feature-icon2.svg"
@@ -17,11 +17,12 @@ import BlanketGallery from '../../components/BlanketGallery/BlanketGallery'
 import Marquee from '../../components/Marquee/Marquee'
 import prevIcon from "../../assets/prev-icon.svg"
 import nextIcon1 from "../../assets/next-icon.svg"
+import { productAPI } from '../../services/api'
 
 // Reusable swiper scroll amount — scrolls by ~1 card width
 const SCROLL_AMOUNT = 220
 
-function BestSellerSwiper({ title }) {
+function BestSellerSwiper({ title, products = [] }) {
     const trackRef = useRef(null)
 
     const scrollPrev = () => {
@@ -36,7 +37,7 @@ function BestSellerSwiper({ title }) {
         <div>
             <div className='bestSeller-top'>
                 <p className='bestSeller-title'>{title}</p>
-                <a href='#' className='see-all'>See all</a>
+                <a href='/collection' className='see-all'>See all</a>
             </div>
             <div className='bestSeller-carousel'>
                 <button className='swiper-btn' onClick={scrollPrev} aria-label="Previous">
@@ -44,13 +45,15 @@ function BestSellerSwiper({ title }) {
                 </button>
 
                 <div className='bestSeller-cards' ref={trackRef}>
-                    <BestSellerCard />
-                    <BestSellerCard />
-                    <BestSellerCard />
-                    <BestSellerCard />
-                    <BestSellerCard />
-                    <BestSellerCard />
-                    <BestSellerCard />
+                    {products.length > 0 ? (
+                        products.map((product) => (
+                            <BestSellerCard key={product.id} product={product} />
+                        ))
+                    ) : (
+                        Array(7).fill(null).map((_, i) => (
+                            <BestSellerCard key={i} />
+                        ))
+                    )}
                 </div>
 
                 <button className='swiper-btn' onClick={scrollNext} aria-label="Next">
@@ -101,6 +104,32 @@ function BlanketLoverSwiper() {
 }
 
 function Home() {
+    const [bestSellers, setBestSellers] = useState([])
+    const [allProducts, setAllProducts] = useState([])
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const response = await productAPI.getAll({ isBestSeller: true, limit: 7 })
+                if (response.data.success) {
+                    setBestSellers(response.data.data)
+                }
+                
+                const allResponse = await productAPI.getAll({ limit: 7 })
+                if (allResponse.data.success) {
+                    setAllProducts(allResponse.data.data)
+                }
+            } catch (error) {
+                console.error('Failed to fetch products:', error)
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchProducts()
+    }, [])
+
     return (
         <>
             <section className='hero'>
@@ -155,11 +184,11 @@ function Home() {
                     <div className='category__items'>
                         <div className='category__item'>
                             <img src={ctg1} alt="category image1" className='ctg1' />
-                            <a href="#" className="btnshopBlankets btn1">Shop blankets<img src={nextIcon} alt="next icon" className='next-icon' /></a>
+                            <a href="/collection" className="btnshopBlankets btn1">Shop blankets<img src={nextIcon} alt="next icon" className='next-icon' /></a>
                         </div>
                         <div className='category__item'>
                             <img src={ctg2} alt="category image2" className='ctg2' />
-                            <a href="#" className="btnshopBlankets btn2">Shop blankets <img src={nextIcon} alt="next icon" className='next-icon' /></a>
+                            <a href="/collection" className="btnshopBlankets btn2">Shop blankets <img src={nextIcon} alt="next icon" className='next-icon' /></a>
                         </div>
                     </div>
                 </div>
@@ -173,8 +202,8 @@ function Home() {
 
             <section className='bestSeller-section'>
                 <div className='bestSeller-content'>
-                    <BestSellerSwiper title="Blanket best sellers" />
-                    <BestSellerSwiper title="Towel best sellers" />
+                    <BestSellerSwiper title="Blanket best sellers" products={bestSellers} />
+                    <BestSellerSwiper title="Towel best sellers" products={allProducts} />
                 </div>
             </section>
 

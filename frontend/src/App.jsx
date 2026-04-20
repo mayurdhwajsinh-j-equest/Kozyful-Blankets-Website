@@ -8,6 +8,7 @@ import Pdp from "./pages/Pdp/Pdp";
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
 import ResetPassword from "./pages/auth/ResetPassword";
+import { AuthProvider } from "./context/AuthContext";
 
 const authRoutes = ["/login", "/signup", "/reset-password"];
 
@@ -34,9 +35,11 @@ function Layout() {
 
 function App() {
   return (
-    <BrowserRouter>
-      <Layout />
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Layout />
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

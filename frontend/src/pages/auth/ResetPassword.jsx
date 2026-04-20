@@ -1,11 +1,41 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './ResetPassword.css';
 import Logo from "../../assets/logo.png";
+import { authAPI } from '../../services/api';
 
 function ResetPassword() {
-  const handleSubmit = (e) => {
+  const [email, setEmail] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle reset password logic here
+    setError('');
+    setLoading(true);
+
+    try {
+      const response = await authAPI.resetPassword({ 
+        email, 
+        newPassword 
+      });
+      
+      if (response.data.success) {
+        setSuccess(true);
+        setEmail('');
+        setNewPassword('');
+        setTimeout(() => {
+          navigate('/login');
+        }, 2000);
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || 'Password reset failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -19,8 +49,11 @@ function ResetPassword() {
         <div className="reset-form-wrapper">
           <p className="reset-title">Reset your password</p>
           <p className="reset-description">
-            We will send you an email to reset your password
+            Enter your email and new password to reset your account
           </p>
+
+          {error && <div style={{ color: 'red', marginBottom: '15px' }}>{error}</div>}
+          {success && <div style={{ color: 'green', marginBottom: '15px' }}>Password reset successfully! Redirecting to login...</div>}
 
           <form className="reset-form" onSubmit={handleSubmit}>
 
@@ -31,11 +64,33 @@ function ResetPassword() {
                 type="email"
                 placeholder="Enter your Email"
                 className="reset-input"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
               />
             </div>
 
-            <button type="submit" className="reset-btn">Submit</button>
+            <div className="form-group">
+              <label className="form-label" htmlFor="reset-password">New Password</label>
+              <input
+                id="reset-password"
+                type="password"
+                placeholder="Enter your New Password"
+                className="reset-input"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                required
+              />
+            </div>
+
+            <button type="submit" className="reset-btn" disabled={loading}>
+              {loading ? 'Resetting...' : 'Submit'}
+            </button>
           </form>
+
+          <p style={{ marginTop: '15px', textAlign: 'center' }}>
+            <a href="/login" style={{ textDecoration: 'none', color: 'inherit' }}>Back to Login</a>
+          </p>
         </div>
       </div>
 

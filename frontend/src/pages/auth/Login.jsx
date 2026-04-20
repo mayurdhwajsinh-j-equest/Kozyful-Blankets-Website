@@ -1,10 +1,37 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Login.css';
 import Logo from "../../assets/logo.png";
 import openEye from "../../assets/eye.svg";
+import { authAPI } from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+  const { login } = useAuth();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    try {
+      const response = await authAPI.login({ email, password });
+      if (response.data.success) {
+        await login(response.data.data);
+        navigate('/');
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || 'Login failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <section className="signin-section">
@@ -19,7 +46,9 @@ function Login() {
           Sign in to view open orders, update billing information and view past order details.
         </p>
 
-        <form className="signin-form" onSubmit={(e) => e.preventDefault()}>
+        {error && <div style={{ color: 'red', marginBottom: '15px' }}>{error}</div>}
+
+        <form className="signin-form" onSubmit={handleSubmit}>
 
           <div className="form-group">
             <label className="form-label" htmlFor="signin-email">Email</label>
@@ -28,6 +57,9 @@ function Login() {
               type="email"
               placeholder="Enter your Email"
               className="signin-input"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
             />
           </div>
 
@@ -42,6 +74,9 @@ function Login() {
                 type={showPassword ? 'text' : 'password'}
                 placeholder="Enter your Password"
                 className="signin-input"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
               />
               <button
                 type="button"
@@ -53,7 +88,9 @@ function Login() {
             </div>
           </div>
 
-          <button type="submit" className="signin-btn">Sign in</button>
+          <button type="submit" className="signin-btn" disabled={loading}>
+            {loading ? 'Signing in...' : 'Sign in'}
+          </button>
         </form>
 
         <p className="signin-footer">

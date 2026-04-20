@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import colImg1 from "../../assets/collection1.png"
 import BestSellerCard from "../../components/BestSellerCard/BestSellerCard"
 import "./Collection.css"
 import filterIcon from "../../assets/filterIcon.svg"
+import { productAPI } from '../../services/api'
 
 const FILTERS = {
     Material: ["Cotton", "Wool", "Fleece", "Down", "Polyester", "Silk", "Cashmere"],
@@ -50,15 +51,56 @@ function AccordionGroup({ label, options, selected, onChange }) {
 
 function Collection() {
     const [activeFilters, setActiveFilters] = useState({
-        Material: ["Polyester"],
+        Material: [],
         Pattern: [],
-        Size: ["Very Big"],
-        Fill: ["SpiderMan"],
+        Size: [],
+        Fill: [],
         Color: [],
     })
     const [sortValue, setSortValue] = useState("best-sellers")
     const [filterModalOpen, setFilterModalOpen] = useState(false)
     const [sortModalOpen, setSortModalOpen] = useState(false)
+    const [products, setProducts] = useState([])
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        fetchProducts()
+    }, [activeFilters, sortValue])
+
+    const fetchProducts = async () => {
+        setLoading(true)
+        try {
+            const params = {
+                limit: 100,
+            }
+
+            // Add filter parameters
+            if (activeFilters.Color.length > 0) {
+                params.color = activeFilters.Color[0]
+            }
+
+            // Add sorting
+            const sortMap = {
+                'best-sellers': 'isBestSeller',
+                'price-asc': 'priceAsc',
+                'price-desc': 'priceDesc',
+                'name-asc': 'nameAsc',
+                'name-desc': 'nameDesc',
+            }
+            if (sortValue) {
+                params.sort = sortMap[sortValue]
+            }
+
+            const response = await productAPI.getAll(params)
+            if (response.data.success) {
+                setProducts(response.data.data)
+            }
+        } catch (error) {
+            console.error('Failed to fetch products:', error)
+        } finally {
+            setLoading(false)
+        }
+    }
 
     const toggleFilter = (group, value) => {
         setActiveFilters((prev) => ({
@@ -148,7 +190,7 @@ function Collection() {
                     {/* Product Section */}
                     <div className='product-section'>
                         <div className="product-section__header">
-                            <p className='productSection-title'>Blanket best sellers</p>
+                            <p className='productSection-title'>Blanket best sellers ({products.length})</p>
                             <div className="sort-wrapper">
                                 <label className="sort-label">Sort By</label>
                                 <select
@@ -165,14 +207,15 @@ function Collection() {
                         </div>
 
                         <div className='product-section__cards'>
-                            <BestSellerCard />
-                            <BestSellerCard />
-                            <BestSellerCard />
-                            <BestSellerCard />
-                            <BestSellerCard />
-                            <BestSellerCard />
-                            <BestSellerCard />
-                            <BestSellerCard />
+                            {loading ? (
+                                <p>Loading products...</p>
+                            ) : products.length > 0 ? (
+                                products.map((product) => (
+                                    <BestSellerCard key={product.id} product={product} />
+                                ))
+                            ) : (
+                                <p>No products found</p>
+                            )}
                         </div>
                     </div>
                 </div>
