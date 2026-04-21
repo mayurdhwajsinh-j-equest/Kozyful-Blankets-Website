@@ -1,0 +1,348 @@
+.admin-products {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.admin-products-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #FFEBEE;
+}
+
+.admin-products .admin-page-title {
+  color: #404D58;
+  font-size: 24px;
+  font-weight: 800;
+  margin: 0;
+}
+
+.admin-btn-add-product {
+  padding: 12px 24px;
+  background: #FFEBEE;
+  color: #E8656B;
+  border: 2px solid #E8656B;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+}
+
+.admin-btn-add-product:hover {
+  background: #E8656B;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(232, 101, 107, 0.3);
+}
+
+.admin-product-form-container {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: 20px;
+  border-left: 4px solid #E8656B;
+}
+
+.admin-product-form h3 {
+  color: #404D58;
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 25px 0;
+}
+
+.admin-form-group {
+  margin-bottom: 20px;
+}
+
+.admin-form-group label {
+  display: block;
+  color: #404D58;
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.admin-form-group input,
+.admin-form-group textarea,
+.admin-form-group select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #DDD;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+.admin-form-group input:focus,
+.admin-form-group textarea:focus,
+.admin-form-group select:focus {
+  outline: none;
+  border-color: #E8656B;
+  box-shadow: 0 0 0 3px rgba(232, 101, 107, 0.1);
+}
+
+.admin-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.admin-form-group.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 0;
+}
+
+.admin-form-group.checkbox input {
+  width: auto;
+  margin: 0;
+}
+
+.admin-form-group.checkbox label {
+  margin: 0;
+}
+
+.admin-form-buttons {
+  display: flex;
+  gap: 15px;
+  margin-top: 25px;
+}
+
+.admin-btn-submit,
+.admin-btn-cancel {
+  padding: 12px 30px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.admin-btn-submit {
+  background: #FFEBEE;
+  color: #E8656B;
+  flex: 1;
+  border: 2px solid #E8656B;
+}
+
+.admin-btn-submit:hover {
+  background: #E8656B;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(232, 101, 107, 0.3);
+}
+
+.admin-btn-cancel {
+  background: #EFF2F4;
+  color: #404D58;
+  flex: 1;
+}
+
+.admin-btn-cancel:hover {
+  background: #E2E7EC;
+}
+
+.admin-products-search {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.admin-search-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #DDD;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+.admin-search-input:focus {
+  outline: none;
+  border-color: #E8656B;
+}
+
+.admin-products-loading,
+.admin-products-no-products {
+  text-align: center;
+  padding: 40px;
+  background: white;
+  border-radius: 8px;
+  color: #404D58;
+  font-size: 16px;
+}
+
+.admin-products-table-wrapper {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+}
+
+.admin-products-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-products-table thead {
+  background: linear-gradient(135deg, #FFEBEE 0%, #FFE0E6 100%);
+  border-bottom: 2px solid #E8656B;
+}
+
+.admin-products-table th {
+  padding: 16px;
+  text-align: left;
+  color: #404D58;
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.admin-products-table td {
+  padding: 16px;
+  border-bottom: 1px solid #F0F0F0;
+  color: #404D58;
+  font-size: 14px;
+}
+
+.admin-products-table tbody tr:hover {
+  background-color: #FEF9FA;
+}
+
+.admin-product-name {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-product-thumb {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 6px;
+  background: #F0F0F0;
+}
+
+.admin-price {
+  color: #E8656B;
+  font-weight: 700;
+}
+
+.admin-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.admin-badge-success {
+  background: #E8F5E9;
+  color: #11854D;
+}
+
+.admin-badge-secondary {
+  background: #F5F5F5;
+  color: #666;
+}
+
+.admin-action-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.admin-btn-edit,
+.admin-btn-product-delete {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.admin-btn-edit {
+  background: #E8F5E9;
+  color: #11854D;
+}
+
+.admin-btn-edit:hover {
+  background: #C8E6C9;
+}
+
+.admin-btn-product-delete {
+  background: #FFEBEE;
+  color: #C62828;
+  border: 2px solid #C62828;
+}
+
+.admin-btn-product-delete:hover {
+  background: #C62828;
+  color: white;
+}
+
+.btn-edit {
+  background: #E8F5E9;
+  color: #11854D;
+}
+
+.btn-edit:hover {
+  background: #C8E6C9;
+}
+
+.btn-delete {
+  background: #FFEBEE;
+  color: #C62828;
+}
+
+.btn-delete:hover {
+  background: #FFCDD2;
+}
+
+@media (max-width: 768px) {
+  .admin-products-header {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .admin-products-table {
+    font-size: 12px;
+  }
+
+  .admin-products-table th,
+  .admin-products-table td {
+    padding: 12px 8px;
+  }
+
+  .admin-action-buttons {
+    flex-direction: column;
+  }
+
+  .admin-btn-edit,
+  .admin-btn-product-delete {
+    width: 100%;
+  }
+
+  .admin-form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-form-buttons {
+    flex-direction: column;
+  }
+
+  .admin-btn-submit,
+  .admin-btn-cancel {
+    width: 100%;
+  }
+}

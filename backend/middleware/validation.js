@@ -22,7 +22,6 @@ const validate = (schema) => {
         errors
       });
     }
-
     req.body = value;
     next();
   };
