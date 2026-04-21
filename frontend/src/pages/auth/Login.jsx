@@ -24,7 +24,12 @@ function Login() {
       const response = await authAPI.login({ email, password });
       if (response.data.success) {
         await login(response.data.data);
-        navigate('/');
+        // Redirect based on role
+        if (response.data.data.role === 'admin') {
+          navigate('/admin');
+        } else {
+          navigate('/');
+        }
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed. Please try again.');
@@ -35,7 +40,6 @@ function Login() {
 
   return (
     <section className="signin-section">
-
       <div className="signin-logo">
         <img src={Logo} alt="kozyful logo" />
       </div>
@@ -49,7 +53,6 @@ function Login() {
         {error && <div style={{ color: 'red', marginBottom: '15px' }}>{error}</div>}
 
         <form className="signin-form" onSubmit={handleSubmit}>
-
           <div className="form-group">
             <label className="form-label" htmlFor="signin-email">Email</label>
             <input
@@ -83,7 +86,7 @@ function Login() {
                 className="toggle-password"
                 onClick={() => setShowPassword(!showPassword)}
               >
-                {showPassword ? <img src={openEye} alt="Hide password" /> : <img src={openEye} alt="Show password" />}
+                <img src={openEye} alt={showPassword ? 'Hide password' : 'Show password'} />
               </button>
             </div>
           </div>
@@ -107,7 +110,6 @@ function Login() {
         </div>
         <p className="copyright">©2024 | All right reserved</p>
       </div>
-
     </section>
   );
 }

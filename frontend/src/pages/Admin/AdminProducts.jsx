@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import AdminLayout from "../../components/AdminLayout/AdminLayout";
 import "./AdminProducts.css";
 import { productAPI } from "../../services/api";
@@ -10,14 +10,17 @@ const AdminProducts = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [imagePreview, setImagePreview] = useState(null);
+  const fileInputRef = useRef(null);
+
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     price: "",
     category: "",
-    image: "",
     isBestSeller: false,
   });
+  const [imageFile, setImageFile] = useState(null);
 
   useEffect(() => {
     fetchProducts();
@@ -38,36 +41,52 @@ const AdminProducts = () => {
 
   const handleFormChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       [name]: type === "checkbox" ? checked : value,
-    });
+    }));
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setImageFile(file);
+    const reader = new FileReader();
+    reader.onloadend = () => setImagePreview(reader.result);
+    reader.readAsDataURL(file);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Build multipart/form-data payload for multer
+    const payload = new FormData();
+    payload.append("name", formData.name);
+    payload.append("description", formData.description);
+    payload.append("price", formData.price);
+    payload.append("category", formData.category);
+    payload.append("isBestSeller", formData.isBestSeller);
+    if (imageFile) {
+      payload.append("image", imageFile); // field name must match multer config
+    }
+
     try {
       if (editingId) {
-        await api.put(`/products/${editingId}`, formData);
+        await api.put(`/products/${editingId}`, payload, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
         alert("Product updated successfully!");
       } else {
-        await api.post("/products", formData);
+        await api.post("/products", payload, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
         alert("Product created successfully!");
       }
-      setFormData({
-        name: "",
-        description: "",
-        price: "",
-        category: "",
-        image: "",
-        isBestSeller: false,
-      });
-      setShowForm(false);
-      setEditingId(null);
+      resetForm();
       fetchProducts();
     } catch (error) {
       console.error("Error saving product:", error);
-      alert("Error saving product: " + error.response?.data?.message || error.message);
+      alert("Error saving product: " + (error.response?.data?.message || error.message));
     }
   };
 
@@ -77,9 +96,10 @@ const AdminProducts = () => {
       description: product.description,
       price: product.price,
       category: product.category,
-      image: product.image,
       isBestSeller: product.isBestSeller || false,
     });
+    setImageFile(null);
+    setImagePreview(product.image || null);
     setEditingId(product.id);
     setShowForm(true);
   };
@@ -97,17 +117,13 @@ const AdminProducts = () => {
     }
   };
 
-  const handleCancel = () => {
+  const resetForm = () => {
+    setFormData({ name: "", description: "", price: "", category: "", isBestSeller: false });
+    setImageFile(null);
+    setImagePreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
     setShowForm(false);
     setEditingId(null);
-    setFormData({
-      name: "",
-      description: "",
-      price: "",
-      category: "",
-      image: "",
-      isBestSeller: false,
-    });
   };
 
   const filteredProducts = products.filter((product) =>
@@ -117,22 +133,27 @@ const AdminProducts = () => {
   return (
     <AdminLayout>
       <div className="admin-products">
-        <div className="products-header">
-          <h2 className="page-title">Products Management</h2>
+        {/* ── Header ── */}
+        <div className="admin-products-header">
+          <h2 className="admin-page-title">Products Management</h2>
           <button
-            className="btn-add-product"
-            onClick={() => setShowForm(!showForm)}
+            className="admin-btn-add-product"
+            onClick={() => {
+              if (showForm) resetForm();
+              else setShowForm(true);
+            }}
           >
             {showForm ? "✕ Cancel" : "➕ Add Product"}
           </button>
         </div>
 
+        {/* ── Form ── */}
         {showForm && (
-          <div className="product-form-container">
-            <form onSubmit={handleSubmit} className="product-form">
+          <div className="admin-product-form-container">
+            <form onSubmit={handleSubmit} className="admin-product-form">
               <h3>{editingId ? "Edit Product" : "Add New Product"}</h3>
 
-              <div className="form-group">
+              <div className="admin-form-group">
                 <label>Product Name *</label>
                 <input
                   type="text"
@@ -144,7 +165,7 @@ const AdminProducts = () => {
                 />
               </div>
 
-              <div className="form-group">
+              <div className="admin-form-group">
                 <label>Description *</label>
                 <textarea
                   name="description"
@@ -156,8 +177,8 @@ const AdminProducts = () => {
                 />
               </div>
 
-              <div className="form-row">
-                <div className="form-group">
+              <div className="admin-form-row">
+                <div className="admin-form-group">
                   <label>Price *</label>
                   <input
                     type="number"
@@ -170,7 +191,7 @@ const AdminProducts = () => {
                   />
                 </div>
 
-                <div className="form-group">
+                <div className="admin-form-group">
                   <label>Category *</label>
                   <select
                     name="category"
@@ -188,19 +209,34 @@ const AdminProducts = () => {
                 </div>
               </div>
 
-              <div className="form-group">
-                <label>Image URL *</label>
-                <input
-                  type="url"
-                  name="image"
-                  value={formData.image}
-                  onChange={handleFormChange}
-                  placeholder="Enter image URL"
-                  required
-                />
+              {/* ── Image Upload (replaces URL input) ── */}
+              <div className="admin-form-group">
+                <label>Product Image {!editingId && "*"}</label>
+                <div className="admin-image-upload-area">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="admin-image-file-input"
+                    id="imageUpload"
+                    required={!editingId}
+                  />
+                  <label htmlFor="imageUpload" className="admin-image-upload-label">
+                    {imagePreview ? "🔄 Change Image" : "📂 Choose Image"}
+                  </label>
+                  {imageFile && (
+                    <span className="admin-image-file-name">{imageFile.name}</span>
+                  )}
+                </div>
+                {imagePreview && (
+                  <div className="admin-image-preview">
+                    <img src={imagePreview} alt="Preview" />
+                  </div>
+                )}
               </div>
 
-              <div className="form-group checkbox">
+              <div className="admin-form-group checkbox">
                 <input
                   type="checkbox"
                   name="isBestSeller"
@@ -211,11 +247,11 @@ const AdminProducts = () => {
                 <label htmlFor="isBestSeller">Mark as Best Seller</label>
               </div>
 
-              <div className="form-buttons">
-                <button type="submit" className="btn-submit">
+              <div className="admin-form-buttons">
+                <button type="submit" className="admin-btn-submit">
                   {editingId ? "Update Product" : "Create Product"}
                 </button>
-                <button type="button" className="btn-cancel" onClick={handleCancel}>
+                <button type="button" className="admin-btn-cancel" onClick={resetForm}>
                   Cancel
                 </button>
               </div>
@@ -223,23 +259,25 @@ const AdminProducts = () => {
           </div>
         )}
 
-        <div className="products-search">
+        {/* ── Search ── */}
+        <div className="admin-products-search">
           <input
             type="text"
-            placeholder="Search products..."
+            placeholder="🔍 Search products..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="search-input"
+            className="admin-search-input"
           />
         </div>
 
+        {/* ── Table ── */}
         {loading ? (
-          <div className="loading">Loading products...</div>
+          <div className="admin-products-loading">Loading products...</div>
         ) : filteredProducts.length === 0 ? (
-          <div className="no-products">No products found</div>
+          <div className="admin-products-no-products">No products found</div>
         ) : (
-          <div className="products-table-wrapper">
-            <table className="products-table">
+          <div className="admin-products-table-wrapper">
+            <table className="admin-products-table">
               <thead>
                 <tr>
                   <th>ID</th>
@@ -255,38 +293,35 @@ const AdminProducts = () => {
                   <tr key={product.id}>
                     <td>{product.id}</td>
                     <td>
-                      <div className="product-name">
+                      <div className="admin-product-name">
                         {product.image && (
                           <img
                             src={product.image}
                             alt={product.name}
-                            className="product-thumb"
+                            className="admin-product-thumb"
                           />
                         )}
                         <span>{product.name}</span>
                       </div>
                     </td>
                     <td>{product.category}</td>
-                    <td className="price">${product.price}</td>
+                    <td className="admin-price">${product.price}</td>
                     <td>
                       <span
-                        className={`badge ${
-                          product.isBestSeller ? "badge-success" : "badge-secondary"
+                        className={`admin-badge ${
+                          product.isBestSeller ? "admin-badge-success" : "admin-badge-secondary"
                         }`}
                       >
                         {product.isBestSeller ? "Yes" : "No"}
                       </span>
                     </td>
                     <td>
-                      <div className="action-buttons">
-                        <button
-                          className="btn-edit"
-                          onClick={() => handleEdit(product)}
-                        >
+                      <div className="admin-action-buttons">
+                        <button className="admin-btn-edit" onClick={() => handleEdit(product)}>
                           ✏️ Edit
                         </button>
                         <button
-                          className="btn-delete"
+                          className="admin-btn-product-delete"
                           onClick={() => handleDelete(product.id)}
                         >
                           🗑️ Delete

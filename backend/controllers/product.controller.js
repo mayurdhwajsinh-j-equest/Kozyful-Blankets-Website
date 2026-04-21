@@ -191,7 +191,7 @@ const getBestSellers = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      message: 'Best sellers fetched successfully',
+      message: 'Best sellers fetched successfully', 
       data: products
     });
   } catch (error) {

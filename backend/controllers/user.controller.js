@@ -1,10 +1,9 @@
 const bcrypt = require('bcryptjs');
 const db = require('../models');
-
 const { User } = db;
 
 /**
- * Get all users (admin only)
+ * Get all customers (admin only) — excludes admin accounts
  * GET /api/users
  */
 const getAllUsers = async (req, res, next) => {
@@ -13,6 +12,7 @@ const getAllUsers = async (req, res, next) => {
     const offset = (page - 1) * limit;
 
     const { count, rows } = await User.findAndCountAll({
+      where: { role: 'user' },          // ← only return customers, not admins
       attributes: { exclude: ['password'] },
       limit: parseInt(limit),
       offset: parseInt(offset),
@@ -37,7 +37,6 @@ const getAllUsers = async (req, res, next) => {
 
 /**
  * Get user by ID
- * GET /api/users/:id
  */
 const getUserById = async (req, res, next) => {
   try {
@@ -52,17 +51,10 @@ const getUserById = async (req, res, next) => {
     });
 
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: 'User not found'
-      });
+      return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-    res.status(200).json({
-      success: true,
-      message: 'User fetched successfully',
-      data: user
-    });
+    res.status(200).json({ success: true, message: 'User fetched successfully', data: user });
   } catch (error) {
     next(error);
   }
@@ -70,7 +62,6 @@ const getUserById = async (req, res, next) => {
 
 /**
  * Get current user profile
- * GET /api/users/profile/me
  */
 const getCurrentUser = async (req, res, next) => {
   try {
@@ -85,17 +76,10 @@ const getCurrentUser = async (req, res, next) => {
     });
 
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: 'User not found'
-      });
+      return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-    res.status(200).json({
-      success: true,
-      message: 'User profile fetched successfully',
-      data: user
-    });
+    res.status(200).json({ success: true, message: 'User profile fetched successfully', data: user });
   } catch (error) {
     next(error);
   }
@@ -103,43 +87,29 @@ const getCurrentUser = async (req, res, next) => {
 
 /**
  * Update user
- * PUT /api/users/:id
  */
 const updateUser = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { name, email, password } = req.body;
 
-    // Check authorization - users can only update their own profile
     if (req.userId !== parseInt(id)) {
-      return res.status(403).json({
-        success: false,
-        message: 'Not authorized to update this user'
-      });
+      return res.status(403).json({ success: false, message: 'Not authorized to update this user' });
     }
 
     const user = await User.findByPk(id);
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: 'User not found'
-      });
+      return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-    // Check if email is already in use by another user
     if (email && email !== user.email) {
       const existingUser = await User.findOne({ where: { email } });
       if (existingUser) {
-        return res.status(409).json({
-          success: false,
-          message: 'Email already in use'
-        });
+        return res.status(409).json({ success: false, message: 'Email already in use' });
       }
     }
 
     const updateData = { name, email };
-
-    // Hash password if provided
     if (password) {
       const salt = await bcrypt.genSalt(10);
       updateData.password = await bcrypt.hash(password, salt);
@@ -150,11 +120,7 @@ const updateUser = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: 'User updated successfully',
-      data: {
-        id: user.id,
-        name: user.name,
-        email: user.email
-      }
+      data: { id: user.id, name: user.name, email: user.email }
     });
   } catch (error) {
     next(error);
@@ -162,8 +128,7 @@ const updateUser = async (req, res, next) => {
 };
 
 /**
- * Delete user (admin only or self)
- * DELETE /api/users/:id
+ * Delete user
  */
 const deleteUser = async (req, res, next) => {
   try {
@@ -171,18 +136,12 @@ const deleteUser = async (req, res, next) => {
 
     const user = await User.findByPk(id);
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: 'User not found'
-      });
+      return res.status(404).json({ success: false, message: 'User not found' });
     }
 
     await user.destroy();
 
-    res.status(200).json({
-      success: true,
-      message: 'User deleted successfully'
-    });
+    res.status(200).json({ success: true, message: 'User deleted successfully' });
   } catch (error) {
     next(error);
   }

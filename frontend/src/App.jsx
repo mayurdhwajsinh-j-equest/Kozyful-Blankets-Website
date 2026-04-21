@@ -15,19 +15,20 @@ import AdminProducts from "./pages/Admin/AdminProducts";
 import AdminOrders from "./pages/Admin/AdminOrders";
 import AdminUsers from "./pages/Admin/AdminUsers";
 import AdminReviews from "./pages/Admin/AdminReviews";
+import AdminRoute from "./components/AdminRoute";
 
 const authRoutes = ["/login", "/signup", "/reset-password"];
-const adminRoutes = ["/admin", "/admin/products", "/admin/orders", "/admin/users", "/admin/reviews"];
 
 function Layout() {
   const location = useLocation();
   const isAuthPage = authRoutes.includes(location.pathname);
-  const isAdminPage = adminRoutes.some(route => location.pathname.startsWith(route));
+  const isAdminPage = location.pathname.startsWith("/admin");
 
   return (
     <>
       {!isAuthPage && !isAdminPage && <Header />}
       <Routes>
+        {/* Public routes */}
         <Route path="/" element={<Home />} />
         <Route path="/collection" element={<Collection />} />
         <Route path="/pdp" element={<Pdp />} />
@@ -35,12 +36,14 @@ function Layout() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/FAQ" element={<FAQ />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-        {/* Admin Routes */}
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/admin/products" element={<AdminProducts />} />
-        <Route path="/admin/orders" element={<AdminOrders />} />
-        <Route path="/admin/users" element={<AdminUsers />} />
-        <Route path="/admin/reviews" element={<AdminReviews />} />
+
+        {/* Admin routes — each individually wrapped in AdminRoute guard */}
+        <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+        <Route path="/admin/products" element={<AdminRoute><AdminProducts /></AdminRoute>} />
+        <Route path="/admin/orders" element={<AdminRoute><AdminOrders /></AdminRoute>} />
+        <Route path="/admin/users" element={<AdminRoute><AdminUsers /></AdminRoute>} />
+        <Route path="/admin/reviews" element={<AdminRoute><AdminReviews /></AdminRoute>} />
+
         <Route path="*" element={<h1>Page Not Found</h1>} />
       </Routes>
       {!isAuthPage && !isAdminPage && <Footer />}
@@ -52,7 +55,7 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <Layout />
+        <Layout />  
       </BrowserRouter>
     </AuthProvider>
   );

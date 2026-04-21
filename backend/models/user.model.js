@@ -1,3 +1,4 @@
+// backend/models/user.js
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
     'User',
@@ -5,44 +6,40 @@ module.exports = (sequelize, DataTypes) => {
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
-        autoIncrement: true
+        autoIncrement: true,
       },
       name: {
         type: DataTypes.STRING(100),
-        allowNull: false
+        allowNull: false,
       },
       email: {
         type: DataTypes.STRING(100),
         allowNull: false,
         unique: true,
-        validate: {
-          isEmail: true
-        }
+        validate: { isEmail: true },
       },
       password: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+      },
+      role: {
+        type: DataTypes.ENUM('user', 'admin'),
+        defaultValue: 'user', // all new signups are regular users
       },
       isActive: {
         type: DataTypes.BOOLEAN,
-        defaultValue: true
-      }
+        defaultValue: true,
+      },
     },
     {
       tableName: 'users',
-      timestamps: true
+      timestamps: true,
     }
   );
 
   User.associate = (models) => {
-    User.hasMany(models.Order, {
-      foreignKey: 'userId',
-      onDelete: 'CASCADE'
-    });
-    User.hasMany(models.Review, {
-      foreignKey: 'userId',
-      onDelete: 'CASCADE'
-    });
+    User.hasMany(models.Order, { foreignKey: 'userId', onDelete: 'CASCADE' });
+    User.hasMany(models.Review, { foreignKey: 'userId', onDelete: 'CASCADE' });
   };
 
   return User;
