@@ -1,17 +1,11 @@
 const db = require('../models');
-
 const { Product } = db;
 
-/**
- * Get all products with pagination and filters
- * GET /api/products?page=1&limit=10&category=bedroom&minPrice=10&maxPrice=100
- */
 const getAllProducts = async (req, res, next) => {
   try {
     const { page = 1, limit = 10, category, minPrice, maxPrice, isBestSeller, search } = req.query;
     const offset = (page - 1) * limit;
 
-    // Build where clause
     const where = { isActive: true };
     if (category) where.category = category;
     if (minPrice || maxPrice) {
@@ -27,7 +21,6 @@ const getAllProducts = async (req, res, next) => {
       ];
     }
 
-    // Fetch products
     const { count, rows } = await Product.findAndCountAll({
       where,
       limit: parseInt(limit),
@@ -51,159 +44,96 @@ const getAllProducts = async (req, res, next) => {
   }
 };
 
-/**
- * Get product by ID with reviews
- * GET /api/products/:id
- */
 const getProductById = async (req, res, next) => {
   try {
     const { id } = req.params;
-
     const product = await Product.findByPk(id, {
-      include: [
-        {
-          model: db.Review,
-          include: [{ model: db.User, attributes: ['id', 'name'] }],
-          attributes: { exclude: ['updatedAt'] }
-        }
-      ]
+      include: [{
+        model: db.Review,
+        include: [{ model: db.User, attributes: ['id', 'name'] }],
+        attributes: { exclude: ['updatedAt'] }
+      }]
     });
 
-    if (!product) {
-      return res.status(404).json({
-        success: false,
-        message: 'Product not found'
-      });
-    }
-
-    res.status(200).json({
-      success: true,
-      message: 'Product fetched successfully',
-      data: product
-    });
+    if (!product) return res.status(404).json({ success: false, message: 'Product not found' });
+    res.status(200).json({ success: true, message: 'Product fetched successfully', data: product });
   } catch (error) {
     next(error);
   }
 };
 
-/**
- * Create product (admin only)
- * POST /api/products
- */
+// ── FIXED: reads image from req.file (multer), not req.body ──
 const createProduct = async (req, res, next) => {
   try {
-    const { name, description, price, discountPrice, stock, category, image, isBestSeller } = req.body;
+    const { name, description, price, discountPrice, stock, category, isBestSeller } = req.body;
+
+    const image = req.file
+      ? `/uploads/products/${req.file.filename}`
+      : null;
 
     const product = await Product.create({
       name,
       description,
       price,
-      discountPrice,
-      stock,
+      discountPrice: discountPrice || null,
+      stock: stock || 0,
       category,
       image,
       isBestSeller: isBestSeller || false,
       isActive: true
     });
 
-    res.status(201).json({
-      success: true,
-      message: 'Product created successfully',
-      data: product
-    });
+    res.status(201).json({ success: true, message: 'Product created successfully', data: product });
   } catch (error) {
     next(error);
   }
 };
 
-/**
- * Update product (admin only)
- * PUT /api/products/:id
- */
+// ── FIXED: only updates image if new file uploaded ──
 const updateProduct = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const updateData = req.body;
+    const updateData = { ...req.body };
 
-    const product = await Product.findByPk(id);
-    if (!product) {
-      return res.status(404).json({
-        success: false,
-        message: 'Product not found'
-      });
+    if (req.file) {
+      updateData.image = `/uploads/products/${req.file.filename}`;
     }
 
-    await product.update(updateData);
+    const product = await Product.findByPk(id);
+    if (!product) return res.status(404).json({ success: false, message: 'Product not found' });
 
-    res.status(200).json({
-      success: true,
-      message: 'Product updated successfully',
-      data: product
-    });
+    await product.update(updateData);
+    res.status(200).json({ success: true, message: 'Product updated successfully', data: product });
   } catch (error) {
     next(error);
   }
 };
 
-/**
- * Delete product (admin only)
- * DELETE /api/products/:id
- */
 const deleteProduct = async (req, res, next) => {
   try {
     const { id } = req.params;
-
     const product = await Product.findByPk(id);
-    if (!product) {
-      return res.status(404).json({
-        success: false,
-        message: 'Product not found'
-      });
-    }
+    if (!product) return res.status(404).json({ success: false, message: 'Product not found' });
 
     await product.destroy();
-
-    res.status(200).json({
-      success: true,
-      message: 'Product deleted successfully'
-    });
+    res.status(200).json({ success: true, message: 'Product deleted successfully' });
   } catch (error) {
     next(error);
   }
 };
 
-/**
- * Get best sellers
- * GET /api/products/bestsellers
- */
 const getBestSellers = async (req, res, next) => {
   try {
     const { limit = 10 } = req.query;
-
     const products = await Product.findAll({
-      where: { 
-        isActive: true,
-        isBestSeller: true
-      },
+      where: { isActive: true, isBestSeller: true },
       limit: parseInt(limit),
-      order: [['rating', 'DESC']]
+      order: [['createdAt', 'DESC']]
     });
-
-    res.status(200).json({
-      success: true,
-      message: 'Best sellers fetched successfully', 
-      data: products
-    });
+    res.status(200).json({ success: true, message: 'Best sellers fetched successfully', data: products });
   } catch (error) {
     next(error);
   }
 };
 
-module.exports = {
-  getAllProducts,
-  getProductById,
-  createProduct,
-  updateProduct,
-  deleteProduct,
-  getBestSellers
-};
+module.exports = { getAllProducts, getProductById, createProduct, updateProduct, deleteProduct, getBestSellers };

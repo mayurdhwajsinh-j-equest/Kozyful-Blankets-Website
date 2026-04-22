@@ -108,8 +108,108 @@
     transform: rotate(-45deg) translate(4px, -4px);
 }
 
-@media (max-width: 768px) {
+/* ── Profile button ── */
+.navbar__profile {
+    position: relative;
+}
 
+.navbar__profile-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 20px;
+    transition: background 0.2s;
+}
+
+.navbar__profile-btn:hover {
+    background: rgba(0, 0, 0, 0.06);
+}
+
+.navbar__username {
+    font-size: 14px;
+    font-weight: 600;
+    color: #404D58;
+    white-space: nowrap;
+}
+
+/* ── Dropdown ── */
+.navbar__dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    min-width: 200px;
+    z-index: 1000;
+    overflow: hidden;
+    animation: dropdownFade 0.15s ease;
+}
+
+@keyframes dropdownFade {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.navbar__dropdown-header {
+    padding: 14px 16px 10px;
+}
+
+.navbar__dropdown-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #404D58;
+    margin: 0 0 2px;
+}
+
+.navbar__dropdown-email {
+    font-size: 12px;
+    color: #888;
+    margin: 0;
+    word-break: break-all;
+}
+
+.navbar__dropdown-divider {
+    height: 1px;
+    background: #F0F0F0;
+    margin: 4px 0;
+}
+
+.navbar__dropdown-item {
+    display: block;
+    padding: 10px 16px;
+    font-size: 14px;
+    color: #404D58;
+    text-decoration: none;
+    transition: background 0.15s;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.navbar__dropdown-item:hover {
+    background: #FEF9FA;
+    color: #E8656B;
+}
+
+.navbar__dropdown-logout {
+    color: #E8656B;
+    font-weight: 600;
+}
+
+.navbar__dropdown-logout:hover {
+    background: #FFEBEE;
+}
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
     .navbar {
         position: relative;
         z-index: 2;
@@ -152,10 +252,18 @@
         order: 2;
     }
 
-    /* Hide SUPPORT, BLOG and PROFILE in default mobile row */
-    .navbar__right li:nth-child(1),
-    .navbar__right li:nth-child(2),
-    .navbar__right li:nth-child(4) {
+    /* 
+      navbar__right children order:
+      1. SUPPORT
+      2. BLOG
+      3. Shop Blankets
+      4. navbar__profile (profile + dropdown)
+      5. Cart
+    */
+
+    /* Hide SUPPORT, BLOG in default mobile row — use class instead of nth-child */
+    .navbar__right .support-link,
+    .navbar__right .blog-link {
         display: none;
     }
 
@@ -174,16 +282,15 @@
         z-index: 100;
     }
 
-    /* Show SUPPORT, BLOG and PROFILE in dropdown */
-    .navbar__right.active li:nth-child(1),
-    .navbar__right.active li:nth-child(2),
-    .navbar__right.active li:nth-child(4) {
+    /* Show SUPPORT, BLOG in open menu */
+    .navbar__right.active .support-link,
+    .navbar__right.active .blog-link {
         display: flex !important;
     }
 
-    /* Keep Shop Blankets and Cart hidden in dropdown */
-    .navbar__right.active li:nth-child(3),
-    .navbar__right.active li:nth-child(5) {
+    /* Keep Shop Blankets and Cart hidden in dropdown menu */
+    .navbar__right.active .shop-blankets-link,
+    .navbar__right.active .cart-link {
         display: none !important;
     }
 
@@ -194,4 +301,37 @@
     .cart-icon {
         padding: 8px;
     }
+
+    /* Dropdown goes up on mobile to avoid overflow */
+    .navbar__dropdown {
+        right: 0;
+        left: auto;
+        min-width: 180px;
+    }
+}
+
+/* ── Cart badge ── */
+.navbar__cart {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.navbar__cart-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: #E8656B;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 3px;
+    line-height: 1;
+    pointer-events: none;
 }

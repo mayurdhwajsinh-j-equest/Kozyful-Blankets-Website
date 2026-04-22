@@ -396,3 +396,14 @@
     width: 100%;
   }
 }
+
+/* ── 3-column form row for Price / Discount / Category ── */
+.admin-form-row--3 {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+@media (max-width: 768px) {
+  .admin-form-row--3 {
+    grid-template-columns: 1fr;
+  }
+}

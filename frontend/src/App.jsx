@@ -10,6 +10,7 @@ import Signup from "./pages/auth/Signup";
 import FAQ from "./pages/FAQ/FAQ";
 import ResetPassword from "./pages/auth/ResetPassword";
 import { AuthProvider } from "./context/AuthContext";
+import { CartProvider } from "./context/CartContext";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import AdminProducts from "./pages/Admin/AdminProducts";
 import AdminOrders from "./pages/Admin/AdminOrders";
@@ -28,16 +29,15 @@ function Layout() {
     <>
       {!isAuthPage && !isAdminPage && <Header />}
       <Routes>
-        {/* Public routes */}
         <Route path="/" element={<Home />} />
         <Route path="/collection" element={<Collection />} />
-        <Route path="/pdp" element={<Pdp />} />
+        <Route path="/pdp/:id" element={<Pdp />} />  {/* ← now accepts product id */}
+        <Route path="/pdp" element={<Pdp />} />       {/* ← keep old route as fallback */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/FAQ" element={<FAQ />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
-        {/* Admin routes — each individually wrapped in AdminRoute guard */}
         <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
         <Route path="/admin/products" element={<AdminRoute><AdminProducts /></AdminRoute>} />
         <Route path="/admin/orders" element={<AdminRoute><AdminOrders /></AdminRoute>} />
@@ -54,9 +54,11 @@ function Layout() {
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <Layout />  
-      </BrowserRouter>
+      <CartProvider>
+        <BrowserRouter>
+          <Layout />
+        </BrowserRouter>
+      </CartProvider>
     </AuthProvider>
   );
 }

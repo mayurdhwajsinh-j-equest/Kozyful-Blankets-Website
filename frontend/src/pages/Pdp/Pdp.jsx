@@ -1,4 +1,5 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 import Gift from '../../components/Gift/Gift'
 import BestSellerCard from '../../components/BestSellerCard/BestSellerCard'
 import BlanketLoverCard from '../../components/BlanketLoverCard/BlanketLoverCard'
@@ -11,53 +12,42 @@ import fImg1 from "../../assets/feature-icon1.svg"
 import fImg2 from "../../assets/feature-icon2.svg"
 import fImg3 from "../../assets/feature-icon3.svg"
 import fImg4 from "../../assets/feature-icon4.svg"
-import mainimg from "../../assets/main-img.png";
-import p1 from "../../assets/p1.png";
-import p2 from "../../assets/p2.png";
-import p3 from "../../assets/p3.png";
-import p4 from "../../assets/p4.png";
-import p5 from "../../assets/p5.png";
-import p6 from "../../assets/p6.png";
 import prevIcon from "../../assets/prev-icon.svg"
 import nextIcon1 from "../../assets/next-icon.svg"
 import './Pdp.css'
 import ProductHero from '../../components/ProductHero/ProductHero'
+import { productAPI, BACKEND_URL } from '../../services/api'
+import { useCart } from '../../context/CartContext'
 
-// Reusable swiper scroll amount — scrolls by ~1 card width
 const SCROLL_AMOUNT = 220
 
-function BestSellerSwiper({ title }) {
+const getImageUrl = (imagePath) => {
+  if (!imagePath) return '/placeholder.png';
+  if (imagePath.startsWith('http')) return imagePath;
+  return `${BACKEND_URL}${imagePath}`;
+};
+
+function BestSellerSwiper({ title, products = [] }) {
     const trackRef = useRef(null)
-
-    const scrollPrev = () => {
-        if (trackRef.current) trackRef.current.scrollBy({ left: -SCROLL_AMOUNT, behavior: 'smooth' })
-    }
-
-    const scrollNext = () => {
-        if (trackRef.current) trackRef.current.scrollBy({ left: SCROLL_AMOUNT, behavior: 'smooth' })
-    }
+    const scrollPrev = () => trackRef.current?.scrollBy({ left: -SCROLL_AMOUNT, behavior: 'smooth' })
+    const scrollNext = () => trackRef.current?.scrollBy({ left: SCROLL_AMOUNT, behavior: 'smooth' })
 
     return (
         <div>
             <div className='bestSeller-top'>
                 <p className='bestSeller-title'>{title}</p>
-                <a href='#' className='see-all'>See all</a>
+                <a href='/collection' className='see-all'>See all</a>
             </div>
             <div className='bestSeller-carousel'>
                 <button className='swiper-btn' onClick={scrollPrev} aria-label="Previous">
                     <img src={prevIcon} alt="previous" />
                 </button>
-
                 <div className='bestSeller-cards' ref={trackRef}>
-                    <BestSellerCard />
-                    <BestSellerCard />
-                    <BestSellerCard />
-                    <BestSellerCard />
-                    <BestSellerCard />
-                    <BestSellerCard />
-                    <BestSellerCard />
+                    {products.length > 0
+                        ? products.map((product) => <BestSellerCard key={product.id} product={product} />)
+                        : Array(7).fill(null).map((_, i) => <BestSellerCard key={i} />)
+                    }
                 </div>
-
                 <button className='swiper-btn' onClick={scrollNext} aria-label="Next">
                     <img src={nextIcon1} alt="next" />
                 </button>
@@ -68,14 +58,8 @@ function BestSellerSwiper({ title }) {
 
 function BlanketLoverSwiper() {
     const trackRef = useRef(null)
-
-    const scrollPrev = () => {
-        if (trackRef.current) trackRef.current.scrollBy({ left: -SCROLL_AMOUNT, behavior: 'smooth' })
-    }
-
-    const scrollNext = () => {
-        if (trackRef.current) trackRef.current.scrollBy({ left: SCROLL_AMOUNT, behavior: 'smooth' })
-    }
+    const scrollPrev = () => trackRef.current?.scrollBy({ left: -SCROLL_AMOUNT, behavior: 'smooth' })
+    const scrollNext = () => trackRef.current?.scrollBy({ left: SCROLL_AMOUNT, behavior: 'smooth' })
 
     return (
         <div className='blanketLover-content'>
@@ -87,16 +71,9 @@ function BlanketLoverSwiper() {
                 <button className='swiper-btn' onClick={scrollPrev} aria-label="Previous">
                     <img src={prevIcon} alt="previous" />
                 </button>
-
                 <div className='blanketLover-cards' ref={trackRef}>
-                    <BlanketLoverCard />
-                    <BlanketLoverCard />
-                    <BlanketLoverCard />
-                    <BlanketLoverCard />
-                    <BlanketLoverCard />
-                    <BlanketLoverCard />
+                    {Array(6).fill(null).map((_, i) => <BlanketLoverCard key={i} />)}
                 </div>
-
                 <button className='swiper-btn' onClick={scrollNext} aria-label="Next">
                     <img src={nextIcon1} alt="next" />
                 </button>
@@ -105,47 +82,118 @@ function BlanketLoverSwiper() {
     )
 }
 
+// ── Product Hero for PDP (uses real product data) ──────────────────────────
+function PdpHero({ product, loading }) {
+    const { addToCart } = useCart();
+    const [added, setAdded] = useState(false);
+
+    const handleAddToCart = () => {
+        addToCart(product);
+        setAdded(true);
+        setTimeout(() => setAdded(false), 1500);
+    };
+
+    if (loading) return <div className="pdp-hero-loading">Loading product...</div>;
+    if (!product) return <ProductHero />; // fallback to static hero
+
+    return (
+        <div className="pdp-hero">
+            <div className="pdp-hero__image">
+                <img src={getImageUrl(product.image)} alt={product.name} />
+            </div>
+            <div className="pdp-hero__info">
+                {product.isBestSeller && <span className="pdp-hero__badge">Best Seller</span>}
+                <h1 className="pdp-hero__name">{product.name}</h1>
+                <div className="pdp-hero__price">
+                    {product.discountPrice && parseFloat(product.discountPrice) < parseFloat(product.price) ? (
+                        <>
+                            <span className="pdp-hero__price-original">£{product.price}</span>
+                            <span className="pdp-hero__price-discount">£{product.discountPrice}</span>
+                            <span className="pdp-hero__sale-tag">Sale</span>
+                        </>
+                    ) : (
+                        <span className="pdp-hero__price-current">£{product.price}</span>
+                    )}
+                </div>
+                <p className="pdp-hero__description">{product.description}</p>
+                <div className="pdp-hero__meta">
+                    <span className="pdp-hero__category">Category: <strong>{product.category}</strong></span>
+                    {product.stock > 0
+                        ? <span className="pdp-hero__stock in-stock">In Stock ({product.stock})</span>
+                        : <span className="pdp-hero__stock out-of-stock">Out of Stock</span>
+                    }
+                </div>
+                <button
+                    className={`pdp-hero__add-btn ${added ? 'added' : ''}`}
+                    onClick={handleAddToCart}
+                    disabled={product.stock === 0}
+                >
+                    {added ? '✓ Added to Cart!' : 'Add to Cart'}
+                </button>
+            </div>
+        </div>
+    );
+}
+
 function Pdp() {
+    const { id } = useParams();
+    const [product, setProduct] = useState(null);
+    const [relatedProducts, setRelatedProducts] = useState([]);
+    const [loading, setLoading] = useState(!!id);
+
+    useEffect(() => {
+        if (!id) return;
+        const fetchProduct = async () => {
+            setLoading(true);
+            try {
+                const res = await productAPI.getById(id);
+                if (res.data.success) {
+                    setProduct(res.data.data);
+                    // Fetch related products from same category
+                    const related = await productAPI.getAll({ category: res.data.data.category, limit: 7 });
+                    if (related.data.success) {
+                        setRelatedProducts(related.data.data.filter(p => p.id !== parseInt(id)));
+                    }
+                }
+            } catch (err) {
+                console.error('Failed to fetch product:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchProduct();
+    }, [id]);
+
     return (
         <>
             <section className='pdp'>
-               <ProductHero />
+                {id ? <PdpHero product={product} loading={loading} /> : <ProductHero />}
             </section>
+
             <section className='frame__section'>
                 <div className="frame__content">
-                    <div className="frame__center-item">
-                        <img src={fImg1} alt="" />
-                        <p>Fast shipping</p>
-                    </div>
-                    <div className="frame__center-item">
-                        <img src={fImg3} alt="" />
-                        <p>24/7 customer support</p>
-                    </div>
-                    <div className="frame__center-item">
-                        <img src={fImg2} alt="" />
-                        <p>Top quality materials</p>
-                    </div>
-                    <div className="frame__center-item">
-                        <img src={fImg4} alt="" />
-                        <p>100% Money-back guarantee</p>
-                    </div>
+                    <div className="frame__center-item"><img src={fImg1} alt="" /><p>Fast shipping</p></div>
+                    <div className="frame__center-item"><img src={fImg3} alt="" /><p>24/7 customer support</p></div>
+                    <div className="frame__center-item"><img src={fImg2} alt="" /><p>Top quality materials</p></div>
+                    <div className="frame__center-item"><img src={fImg4} alt="" /><p>100% Money-back guarantee</p></div>
                 </div>
             </section>
+
             <section className='info-section'>
                 <div className='info-content'>
                     <div className='shipping-info'>
                         <p className='info-title'>Shipping info</p>
-                        <p className='info-description'>Wrap yourself up in fond memories with our personalised photo blanket. There's really nothing better than snuggling up with a cosy blanket, and this one from Printerpix is fully customisable, making it that extra bit special.
-                            You'll love the soft texture of this personalised blanket as it keeps you warm and relaxed when you're huddled up on the sofa. It comes in various sizes, too. Simply choose your ideal size and get creative, adding whatever text and images you fancy to this comfy photo blanket.</p>
+                        <p className='info-description'>
+                            {product?.description || `Wrap yourself up in fond memories with our personalised photo blanket. There's really nothing better than snuggling up with a cosy blanket, and this one from Printerpix is fully customisable, making it that extra bit special.`}
+                        </p>
                     </div>
                     <div className='materials-info'>
                         <p className='info-title'>Materials and care</p>
-                        <p className='info-description'>Wrap yourself up in fond memories with our personalised photo blanket. There's really nothing better than snuggling up with a cosy blanket, and this one from Printerpix is fully customisable, making it that extra bit special.
-                            You'll love the soft texture of this personalised blanket as it keeps you warm and relaxed when you're huddled up on the sofa. It comes in various sizes, too. Simply choose your ideal size and get creative, adding whatever text and images you fancy to this comfy photo blanket.</p>
+                        <p className='info-description'>Wrap yourself up in fond memories with our personalised photo blanket. There's really nothing better than snuggling up with a cosy blanket, and this one from Printerpix is fully customisable, making it that extra bit special.</p>
                     </div>
-                    <div></div>
                 </div>
             </section>
+
             <section className='bedfit-section'>
                 <div className='bedfit-content'>
                     <p className='bedfit-title'>How it fits to your bed</p>
@@ -153,52 +201,34 @@ function Pdp() {
                         <div className='bedfit-size'>
                             <p className='bedfit-size-title'>Throw (127cm*152cm)</p>
                             <div className='bedfit-items'>
-                                <div>
-                                    <p className='bedfit-size-item'>Single bed</p>
-                                    <img src={singlebed} alt="Single bed" />
-                                </div>
-                                <div>
-                                    <p className='bedfit-size-item'>Double bed</p>
-                                    <img src={doublebed} alt="" />
-                                </div>
-                                <div>
-                                    <p className='bedfit-size-item'>King bed</p>
-                                    <img src={kingbed} alt="King bed" />
-                                </div>
+                                <div><p className='bedfit-size-item'>Single bed</p><img src={singlebed} alt="Single bed" /></div>
+                                <div><p className='bedfit-size-item'>Double bed</p><img src={doublebed} alt="" /></div>
+                                <div><p className='bedfit-size-item'>King bed</p><img src={kingbed} alt="King bed" /></div>
                             </div>
                         </div>
                         <div className='bedfit-size'>
                             <p className='bedfit-size-title'>Queen (152cm*203cm)</p>
                             <div className='bedfit-items'>
-                                <div>
-                                    <p className='bedfit-size-item'>Single bed</p>
-                                    <img src={singlebed} alt="Single bed" />
-                                </div>
-                                <div>
-                                    <p className='bedfit-size-item'>Double bed</p>
-                                    <img src={doublebed} alt="Double bed" />
-                                </div>
-                                <div>
-                                    <p className='bedfit-size-item'>King bed</p>
-                                    <img src={kingbed} alt="King bed" />
-                                </div>
+                                <div><p className='bedfit-size-item'>Single bed</p><img src={singlebed} alt="Single bed" /></div>
+                                <div><p className='bedfit-size-item'>Double bed</p><img src={doublebed} alt="Double bed" /></div>
+                                <div><p className='bedfit-size-item'>King bed</p><img src={kingbed} alt="King bed" /></div>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
+
             <section className='quality-section'>
                 <div className='quality-content'>
                     <div className='quality-left'>
                         <p className='quality-title'>Quality is talking...</p>
-                        <p className='quality-description'>Wrap yourself up in fond memories with our personalised photo blanket. There's really nothing better than snuggling up with a cosy blanket, and this one from Printerpix is fully customisable, making it that extra bit special.
-                            You'll love the soft texture of this personalised blanket as it keeps you warm and relaxed when you're huddled up on the sofa. It comes in various sizes, too. Simply choose your ideal size and get creative, adding whatever text and images you fancy to this comfy photo blanket.</p>
+                        <p className='quality-description'>Wrap yourself up in fond memories with our personalised photo blanket. There's really nothing better than snuggling up with a cosy blanket.</p>
                         <ul className='quality-list'>
                             <li className='quality-item'>Super soft, anti-pill fleece blanket</li>
                             <li className='quality-item'>Machine washable on low heat</li>
                             <li className='quality-item'>Bright, high-definition printing</li>
                             <li className='quality-item'>Easy online creation</li>
-                            <li className='quality-item'>Upload photos from your device, online storage or social media</li>
+                            <li className='quality-item'>Upload photos from your device</li>
                             <li className='quality-item'>Customisable</li>
                         </ul>
                     </div>
@@ -207,19 +237,25 @@ function Pdp() {
                     </div>
                 </div>
             </section>
+
             <section className='gift-section'>
-                <div className='gift-content'>
-                    <Gift />
-                </div>
+                <div className='gift-content'><Gift /></div>
             </section>
+
+            {/* Related products swiper */}
             <section className='bestSeller-section'>
                 <div className='bestSeller-content'>
-                    <BestSellerSwiper title="Blanket best sellers" />
+                    <BestSellerSwiper
+                        title={product ? `More ${product.category} products` : "Blanket best sellers"}
+                        products={relatedProducts}
+                    />
                 </div>
             </section>
+
             <section className='blanketLover-section'>
                 <BlanketLoverSwiper />
             </section>
+
             <section className='faq-section'>
                 <div className='faq-content'>
                     <p className='faq-title'>Frequently asked questions</p>

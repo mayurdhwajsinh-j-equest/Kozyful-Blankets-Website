@@ -1,8 +1,14 @@
 import { useEffect, useState, useRef } from "react";
 import AdminLayout from "../../components/AdminLayout/AdminLayout";
 import "./AdminProducts.css";
-import { productAPI } from "../../services/api";
+import { productAPI, BACKEND_URL } from "../../services/api";
 import api from "../../services/api";
+
+const getImageUrl = (imagePath) => {
+  if (!imagePath || imagePath === 'placeholder.png') return '/placeholder.png';
+  if (imagePath.startsWith('http')) return imagePath;
+  return `${BACKEND_URL}${imagePath}`;
+};
 
 const AdminProducts = () => {
   const [products, setProducts] = useState([]);
@@ -17,14 +23,13 @@ const AdminProducts = () => {
     name: "",
     description: "",
     price: "",
+    discountPrice: "",
     category: "",
     isBestSeller: false,
   });
   const [imageFile, setImageFile] = useState(null);
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
+  useEffect(() => { fetchProducts(); }, []);
 
   const fetchProducts = async () => {
     try {
@@ -58,28 +63,21 @@ const AdminProducts = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Build multipart/form-data payload for multer
     const payload = new FormData();
     payload.append("name", formData.name);
     payload.append("description", formData.description);
     payload.append("price", formData.price);
+    payload.append("discountPrice", formData.discountPrice);
     payload.append("category", formData.category);
     payload.append("isBestSeller", formData.isBestSeller);
-    if (imageFile) {
-      payload.append("image", imageFile); // field name must match multer config
-    }
+    if (imageFile) payload.append("image", imageFile);
 
     try {
       if (editingId) {
-        await api.put(`/products/${editingId}`, payload, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+        await api.put(`/products/${editingId}`, payload);
         alert("Product updated successfully!");
       } else {
-        await api.post("/products", payload, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+        await api.post("/products", payload);
         alert("Product created successfully!");
       }
       resetForm();
@@ -95,11 +93,12 @@ const AdminProducts = () => {
       name: product.name,
       description: product.description,
       price: product.price,
+      discountPrice: product.discountPrice || "",
       category: product.category,
       isBestSeller: product.isBestSeller || false,
     });
     setImageFile(null);
-    setImagePreview(product.image || null);
+    setImagePreview(product.image ? getImageUrl(product.image) : null);
     setEditingId(product.id);
     setShowForm(true);
   };
@@ -118,7 +117,7 @@ const AdminProducts = () => {
   };
 
   const resetForm = () => {
-    setFormData({ name: "", description: "", price: "", category: "", isBestSeller: false });
+    setFormData({ name: "", description: "", price: "", discountPrice: "", category: "", isBestSeller: false });
     setImageFile(null);
     setImagePreview(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
@@ -133,21 +132,16 @@ const AdminProducts = () => {
   return (
     <AdminLayout>
       <div className="admin-products">
-        {/* ── Header ── */}
         <div className="admin-products-header">
           <h2 className="admin-page-title">Products Management</h2>
           <button
             className="admin-btn-add-product"
-            onClick={() => {
-              if (showForm) resetForm();
-              else setShowForm(true);
-            }}
+            onClick={() => { if (showForm) resetForm(); else setShowForm(true); }}
           >
             {showForm ? "✕ Cancel" : "➕ Add Product"}
           </button>
         </div>
 
-        {/* ── Form ── */}
         {showForm && (
           <div className="admin-product-form-container">
             <form onSubmit={handleSubmit} className="admin-product-form">
@@ -177,7 +171,8 @@ const AdminProducts = () => {
                 />
               </div>
 
-              <div className="admin-form-row">
+              {/* ── Price / Discount Price / Category ── */}
+              <div className="admin-form-row admin-form-row--3">
                 <div className="admin-form-group">
                   <label>Price *</label>
                   <input
@@ -188,6 +183,18 @@ const AdminProducts = () => {
                     onChange={handleFormChange}
                     placeholder="Enter price"
                     required
+                  />
+                </div>
+
+                <div className="admin-form-group">
+                  <label>Discount Price</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    name="discountPrice"
+                    value={formData.discountPrice}
+                    onChange={handleFormChange}
+                    placeholder="Enter discount price (optional)"
                   />
                 </div>
 
@@ -209,7 +216,7 @@ const AdminProducts = () => {
                 </div>
               </div>
 
-              {/* ── Image Upload (replaces URL input) ── */}
+              {/* ── Image Upload ── */}
               <div className="admin-form-group">
                 <label>Product Image {!editingId && "*"}</label>
                 <div className="admin-image-upload-area">
@@ -225,9 +232,7 @@ const AdminProducts = () => {
                   <label htmlFor="imageUpload" className="admin-image-upload-label">
                     {imagePreview ? "🔄 Change Image" : "📂 Choose Image"}
                   </label>
-                  {imageFile && (
-                    <span className="admin-image-file-name">{imageFile.name}</span>
-                  )}
+                  {imageFile && <span className="admin-image-file-name">{imageFile.name}</span>}
                 </div>
                 {imagePreview && (
                   <div className="admin-image-preview">
@@ -259,7 +264,6 @@ const AdminProducts = () => {
           </div>
         )}
 
-        {/* ── Search ── */}
         <div className="admin-products-search">
           <input
             type="text"
@@ -270,7 +274,6 @@ const AdminProducts = () => {
           />
         </div>
 
-        {/* ── Table ── */}
         {loading ? (
           <div className="admin-products-loading">Loading products...</div>
         ) : filteredProducts.length === 0 ? (
@@ -284,6 +287,7 @@ const AdminProducts = () => {
                   <th>Name</th>
                   <th>Category</th>
                   <th>Price</th>
+                  <th>Discount</th>
                   <th>Best Seller</th>
                   <th>Actions</th>
                 </tr>
@@ -296,9 +300,10 @@ const AdminProducts = () => {
                       <div className="admin-product-name">
                         {product.image && (
                           <img
-                            src={product.image}
+                            src={getImageUrl(product.image)}
                             alt={product.name}
                             className="admin-product-thumb"
+                            onError={(e) => { e.target.style.display = 'none'; }}
                           />
                         )}
                         <span>{product.name}</span>
@@ -306,26 +311,18 @@ const AdminProducts = () => {
                     </td>
                     <td>{product.category}</td>
                     <td className="admin-price">${product.price}</td>
+                    <td className="admin-price">
+                      {product.discountPrice ? `$${product.discountPrice}` : <span className="admin-badge admin-badge-secondary">None</span>}
+                    </td>
                     <td>
-                      <span
-                        className={`admin-badge ${
-                          product.isBestSeller ? "admin-badge-success" : "admin-badge-secondary"
-                        }`}
-                      >
+                      <span className={`admin-badge ${product.isBestSeller ? "admin-badge-success" : "admin-badge-secondary"}`}>
                         {product.isBestSeller ? "Yes" : "No"}
                       </span>
                     </td>
                     <td>
                       <div className="admin-action-buttons">
-                        <button className="admin-btn-edit" onClick={() => handleEdit(product)}>
-                          ✏️ Edit
-                        </button>
-                        <button
-                          className="admin-btn-product-delete"
-                          onClick={() => handleDelete(product.id)}
-                        >
-                          🗑️ Delete
-                        </button>
+                        <button className="admin-btn-edit" onClick={() => handleEdit(product)}>✏️ Edit</button>
+                        <button className="admin-btn-product-delete" onClick={() => handleDelete(product.id)}>🗑️ Delete</button>
                       </div>
                     </td>
                   </tr>
