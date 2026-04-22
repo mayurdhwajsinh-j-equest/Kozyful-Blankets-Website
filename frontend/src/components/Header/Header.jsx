@@ -17,10 +17,12 @@ function Header() {
 
     useEffect(() => {
         const handleClickOutside = (e) => {
+            // Only close if click is truly outside the dropdown container
             if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
                 setDropdownOpen(false);
             }
         };
+        // Use mousedown on document but with capture=false so dropdown links fire first
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
@@ -30,6 +32,8 @@ function Header() {
         setDropdownOpen(false);
         navigate('/login');
     };
+
+    const closeDropdown = () => setDropdownOpen(false);
 
     return (
         <header className="navbar-wrapper">
@@ -48,10 +52,11 @@ function Header() {
                         <span></span>
                     </div>
 
+                    {/* Left nav links */}
                     <ul className="navbar__left">
                         <li><Link to="/sale">FATHERS DAY SALE <span className="save30">SAVE 30%</span></Link></li>
-                        <li><Link to="/blankets">BLANKETS</Link></li>
-                        <li><Link to="/towels">TOWELS</Link></li>
+                        <li><Link to="/collection">BLANKETS</Link></li>
+                        <li><Link to="/collection">TOWELS</Link></li>
                     </ul>
 
                     <div className="navbar__center">
@@ -59,13 +64,21 @@ function Header() {
                     </div>
 
                     <ul className={`navbar__right ${menuOpen ? "active" : ""}`}>
-                        <li className="support-link"><Link to="/support">SUPPORT</Link></li>
-                        <li className="blog-link"><Link to="/blog">BLOG</Link></li>
-                        <li className="shop-blankets-link"><Link to="/blankets" className="btn-shopBlankets">Shop Blankets</Link></li>
+                        <li className="support-link"><Link to="/FAQ" onClick={() => setMenuOpen(false)}>SUPPORT</Link></li>
+                        <li className="blog-link"><Link to="/FAQ" onClick={() => setMenuOpen(false)}>BLOG</Link></li>
+                        <li className="shop-blankets-link">
+                            <Link to="/collection" className="btn-shopBlankets" onClick={() => setMenuOpen(false)}>
+                                Shop Blankets
+                            </Link>
+                        </li>
 
-                        {/* Profile dropdown */}
+                        {/* ── Profile with dropdown ── */}
                         <li className="navbar__profile" ref={dropdownRef}>
-                            <button className="navbar__profile-btn" onClick={() => setDropdownOpen(!dropdownOpen)}>
+                            <button
+                                className="navbar__profile-btn"
+                                onClick={() => setDropdownOpen(prev => !prev)}
+                                type="button"
+                            >
                                 <img src={profileIcon} alt="User Profile" className="profile-icon" />
                                 {isAuthenticated && user?.name && (
                                     <span className="navbar__username">{user.name.split(' ')[0]}</span>
@@ -73,7 +86,7 @@ function Header() {
                             </button>
 
                             {dropdownOpen && (
-                                <div className="navbar__dropdown">
+                                <div className="navbar__dropdown" onMouseDown={(e) => e.stopPropagation()}>
                                     {isAuthenticated ? (
                                         <>
                                             <div className="navbar__dropdown-header">
@@ -81,27 +94,46 @@ function Header() {
                                                 <p className="navbar__dropdown-email">{user?.email}</p>
                                             </div>
                                             <div className="navbar__dropdown-divider" />
-                                            <Link to="/profile" className="navbar__dropdown-item" onClick={() => setDropdownOpen(false)}>My Profile</Link>
-                                            <Link to="/orders" className="navbar__dropdown-item" onClick={() => setDropdownOpen(false)}>My Orders</Link>
+                                            <Link to="/profile" className="navbar__dropdown-item" onClick={closeDropdown}>
+                                                👤 My Profile
+                                            </Link>
+                                            <Link to="/orders" className="navbar__dropdown-item" onClick={closeDropdown}>
+                                                📦 My Orders
+                                            </Link>
+                                            <Link to="/cart" className="navbar__dropdown-item" onClick={closeDropdown}>
+                                                🛒 My Cart {cartCount > 0 && `(${cartCount})`}
+                                            </Link>
                                             <div className="navbar__dropdown-divider" />
-                                            <button className="navbar__dropdown-item navbar__dropdown-logout" onClick={handleLogout}>Logout</button>
+                                            <button
+                                                className="navbar__dropdown-item navbar__dropdown-logout"
+                                                onClick={handleLogout}
+                                                type="button"
+                                            >
+                                                🚪 Logout
+                                            </button>
                                         </>
                                     ) : (
                                         <>
-                                            <Link to="/login" className="navbar__dropdown-item" onClick={() => setDropdownOpen(false)}>Sign In</Link>
-                                            <Link to="/signup" className="navbar__dropdown-item" onClick={() => setDropdownOpen(false)}>Create Account</Link>
+                                            <Link to="/login" className="navbar__dropdown-item" onClick={closeDropdown}>
+                                                Sign In
+                                            </Link>
+                                            <Link to="/signup" className="navbar__dropdown-item" onClick={closeDropdown}>
+                                                Create Account
+                                            </Link>
                                         </>
                                     )}
                                 </div>
                             )}
                         </li>
 
-                        {/* Cart with count badge */}
+                        {/* Cart icon with badge */}
                         <li className="cart-link">
-                            <Link to="/cart" className="navbar__cart">
+                            <Link to="/cart" className="navbar__cart" onClick={() => setMenuOpen(false)}>
                                 <img src={cartIcon} alt="Cart" className="cart-icon" />
                                 {cartCount > 0 && (
-                                    <span className="navbar__cart-badge">{cartCount > 99 ? '99+' : cartCount}</span>
+                                    <span className="navbar__cart-badge">
+                                        {cartCount > 99 ? '99+' : cartCount}
+                                    </span>
                                 )}
                             </Link>
                         </li>

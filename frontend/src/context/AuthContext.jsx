@@ -3,18 +3,36 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  // Restore user from localStorage on initial load
   const [token, setToken] = useState(localStorage.getItem('token') || null);
   const [user, setUser] = useState(() => {
     try {
       const stored = localStorage.getItem('user');
       return stored ? JSON.parse(stored) : null;
-    } catch {
-      return null;
-    }
+    } catch { return null; }
   });
+
+  // ← Add an initializing flag so guards wait before redirecting
+  const [initializing, setInitializing] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    // Restore session from localStorage on mount
+    try {
+      const storedToken = localStorage.getItem('token');
+      const storedUser = localStorage.getItem('user');
+      if (storedToken && storedUser) {
+        setToken(storedToken);
+        setUser(JSON.parse(storedUser));
+      }
+    } catch {
+      // corrupted storage — clear it
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+    } finally {
+      setInitializing(false); // ← done checking, guards can now render
+    }
+  }, []);
 
   useEffect(() => {
     if (token) {
@@ -53,10 +71,11 @@ export const AuthProvider = ({ children }) => {
     user,
     token,
     loading,
+    initializing, // ← expose so guards can wait
     error,
     login,
     logout,
-    isAuthenticated: !!token,
+    isAuthenticated: !!token && !!user,
     isAdmin: user?.role === 'admin',
   };
 

@@ -10,6 +10,12 @@ const getImageUrl = (imagePath) => {
   return `${BACKEND_URL}${imagePath}`;
 };
 
+const StockBadge = ({ stock }) => {
+  if (stock === 0)  return <span className="admin-stock-badge out">Out of Stock</span>;
+  if (stock <= 10)  return <span className="admin-stock-badge low">{stock} Low</span>;
+  return <span className="admin-stock-badge in">{stock}</span>;
+};
+
 const AdminProducts = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -24,6 +30,7 @@ const AdminProducts = () => {
     description: "",
     price: "",
     discountPrice: "",
+    stock: "",
     category: "",
     isBestSeller: false,
   });
@@ -68,6 +75,7 @@ const AdminProducts = () => {
     payload.append("description", formData.description);
     payload.append("price", formData.price);
     payload.append("discountPrice", formData.discountPrice);
+    payload.append("stock", formData.stock || 0);
     payload.append("category", formData.category);
     payload.append("isBestSeller", formData.isBestSeller);
     if (imageFile) payload.append("image", imageFile);
@@ -94,6 +102,7 @@ const AdminProducts = () => {
       description: product.description,
       price: product.price,
       discountPrice: product.discountPrice || "",
+      stock: product.stock ?? "",
       category: product.category,
       isBestSeller: product.isBestSeller || false,
     });
@@ -116,8 +125,22 @@ const AdminProducts = () => {
     }
   };
 
+  // Quick stock update inline without opening the full form
+  const handleStockUpdate = async (product, newStock) => {
+    const val = parseInt(newStock);
+    if (isNaN(val) || val < 0) return;
+    try {
+      await api.put(`/products/${product.id}`, { stock: val });
+      setProducts(prev =>
+        prev.map(p => p.id === product.id ? { ...p, stock: val } : p)
+      );
+    } catch (error) {
+      alert("Failed to update stock: " + (error.response?.data?.message || error.message));
+    }
+  };
+
   const resetForm = () => {
-    setFormData({ name: "", description: "", price: "", discountPrice: "", category: "", isBestSeller: false });
+    setFormData({ name: "", description: "", price: "", discountPrice: "", stock: "", category: "", isBestSeller: false });
     setImageFile(null);
     setImagePreview(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
@@ -128,6 +151,11 @@ const AdminProducts = () => {
   const filteredProducts = products.filter((product) =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Stats
+  const outOfStock = products.filter(p => p.stock === 0).length;
+  const lowStock   = products.filter(p => p.stock > 0 && p.stock <= 10).length;
+  const inStock    = products.filter(p => p.stock > 10).length;
 
   return (
     <AdminLayout>
@@ -142,6 +170,26 @@ const AdminProducts = () => {
           </button>
         </div>
 
+        {/* ── Stock stats ── */}
+        <div className="admin-stock-stats">
+          <div className="admin-stock-stat">
+            <span className="admin-stock-stat__value">{products.length}</span>
+            <span className="admin-stock-stat__label">Total Products</span>
+          </div>
+          <div className="admin-stock-stat admin-stock-stat--in">
+            <span className="admin-stock-stat__value">{inStock}</span>
+            <span className="admin-stock-stat__label">In Stock</span>
+          </div>
+          <div className="admin-stock-stat admin-stock-stat--low">
+            <span className="admin-stock-stat__value">{lowStock}</span>
+            <span className="admin-stock-stat__label">Low Stock (≤10)</span>
+          </div>
+          <div className="admin-stock-stat admin-stock-stat--out">
+            <span className="admin-stock-stat__value">{outOfStock}</span>
+            <span className="admin-stock-stat__label">Out of Stock</span>
+          </div>
+        </div>
+
         {showForm && (
           <div className="admin-product-form-container">
             <form onSubmit={handleSubmit} className="admin-product-form">
@@ -149,63 +197,31 @@ const AdminProducts = () => {
 
               <div className="admin-form-group">
                 <label>Product Name *</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleFormChange}
-                  placeholder="Enter product name"
-                  required
-                />
+                <input type="text" name="name" value={formData.name} onChange={handleFormChange} placeholder="Enter product name" required />
               </div>
 
               <div className="admin-form-group">
                 <label>Description *</label>
-                <textarea
-                  name="description"
-                  value={formData.description}
-                  onChange={handleFormChange}
-                  placeholder="Enter product description"
-                  rows="4"
-                  required
-                />
+                <textarea name="description" value={formData.description} onChange={handleFormChange} placeholder="Enter product description" rows="4" required />
               </div>
 
-              {/* ── Price / Discount Price / Category ── */}
-              <div className="admin-form-row admin-form-row--3">
+              {/* Price / Discount / Stock / Category */}
+              <div className="admin-form-row admin-form-row--4">
                 <div className="admin-form-group">
                   <label>Price *</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    name="price"
-                    value={formData.price}
-                    onChange={handleFormChange}
-                    placeholder="Enter price"
-                    required
-                  />
+                  <input type="number" step="0.01" name="price" value={formData.price} onChange={handleFormChange} placeholder="0.00" required />
                 </div>
-
                 <div className="admin-form-group">
                   <label>Discount Price</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    name="discountPrice"
-                    value={formData.discountPrice}
-                    onChange={handleFormChange}
-                    placeholder="Enter discount price (optional)"
-                  />
+                  <input type="number" step="0.01" name="discountPrice" value={formData.discountPrice} onChange={handleFormChange} placeholder="0.00 (optional)" />
                 </div>
-
+                <div className="admin-form-group">
+                  <label>Stock *</label>
+                  <input type="number" min="0" name="stock" value={formData.stock} onChange={handleFormChange} placeholder="0" required />
+                </div>
                 <div className="admin-form-group">
                   <label>Category *</label>
-                  <select
-                    name="category"
-                    value={formData.category}
-                    onChange={handleFormChange}
-                    required
-                  >
+                  <select name="category" value={formData.category} onChange={handleFormChange} required>
                     <option value="">Select Category</option>
                     <option value="bedroom">Bedroom</option>
                     <option value="living-room">Living Room</option>
@@ -216,19 +232,10 @@ const AdminProducts = () => {
                 </div>
               </div>
 
-              {/* ── Image Upload ── */}
               <div className="admin-form-group">
                 <label>Product Image {!editingId && "*"}</label>
                 <div className="admin-image-upload-area">
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    className="admin-image-file-input"
-                    id="imageUpload"
-                    required={!editingId}
-                  />
+                  <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageChange} className="admin-image-file-input" id="imageUpload" required={!editingId} />
                   <label htmlFor="imageUpload" className="admin-image-upload-label">
                     {imagePreview ? "🔄 Change Image" : "📂 Choose Image"}
                   </label>
@@ -242,23 +249,13 @@ const AdminProducts = () => {
               </div>
 
               <div className="admin-form-group checkbox">
-                <input
-                  type="checkbox"
-                  name="isBestSeller"
-                  checked={formData.isBestSeller}
-                  onChange={handleFormChange}
-                  id="isBestSeller"
-                />
+                <input type="checkbox" name="isBestSeller" checked={formData.isBestSeller} onChange={handleFormChange} id="isBestSeller" />
                 <label htmlFor="isBestSeller">Mark as Best Seller</label>
               </div>
 
               <div className="admin-form-buttons">
-                <button type="submit" className="admin-btn-submit">
-                  {editingId ? "Update Product" : "Create Product"}
-                </button>
-                <button type="button" className="admin-btn-cancel" onClick={resetForm}>
-                  Cancel
-                </button>
+                <button type="submit" className="admin-btn-submit">{editingId ? "Update Product" : "Create Product"}</button>
+                <button type="button" className="admin-btn-cancel" onClick={resetForm}>Cancel</button>
               </div>
             </form>
           </div>
@@ -288,31 +285,47 @@ const AdminProducts = () => {
                   <th>Category</th>
                   <th>Price</th>
                   <th>Discount</th>
+                  <th>Stock</th>
                   <th>Best Seller</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredProducts.map((product) => (
-                  <tr key={product.id}>
+                  <tr key={product.id} className={product.stock === 0 ? 'admin-row-out' : product.stock <= 10 ? 'admin-row-low' : ''}>
                     <td>{product.id}</td>
                     <td>
                       <div className="admin-product-name">
                         {product.image && (
-                          <img
-                            src={getImageUrl(product.image)}
-                            alt={product.name}
-                            className="admin-product-thumb"
-                            onError={(e) => { e.target.style.display = 'none'; }}
-                          />
+                          <img src={getImageUrl(product.image)} alt={product.name} className="admin-product-thumb" onError={(e) => { e.target.style.display = 'none'; }} />
                         )}
                         <span>{product.name}</span>
                       </div>
                     </td>
                     <td>{product.category}</td>
-                    <td className="admin-price">${product.price}</td>
+                    <td className="admin-price">£{product.price}</td>
                     <td className="admin-price">
-                      {product.discountPrice ? `$${product.discountPrice}` : <span className="admin-badge admin-badge-secondary">None</span>}
+                      {product.discountPrice
+                        ? `£${product.discountPrice}`
+                        : <span className="admin-badge admin-badge-secondary">None</span>
+                      }
+                    </td>
+                    {/* Inline stock editor */}
+                    <td>
+                      <div className="admin-stock-cell">
+                        <StockBadge stock={product.stock} />
+                        <div className="admin-stock-editor">
+                          <button className="admin-stock-btn" onClick={() => handleStockUpdate(product, product.stock - 1)} disabled={product.stock === 0}>−</button>
+                          <input
+                            className="admin-stock-input"
+                            type="number"
+                            min="0"
+                            value={product.stock}
+                            onChange={(e) => handleStockUpdate(product, e.target.value)}
+                          />
+                          <button className="admin-stock-btn" onClick={() => handleStockUpdate(product, product.stock + 1)}>+</button>
+                        </div>
+                      </div>
                     </td>
                     <td>
                       <span className={`admin-badge ${product.isBestSeller ? "admin-badge-success" : "admin-badge-secondary"}`}>

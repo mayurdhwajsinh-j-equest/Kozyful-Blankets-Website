@@ -10,6 +10,8 @@ import Signup from "./pages/auth/Signup";
 import FAQ from "./pages/FAQ/FAQ";
 import ResetPassword from "./pages/auth/ResetPassword";
 import Cart from "./pages/Cart/Cart";
+import Checkout from "./pages/Checkout/Checkout";
+import OrderSuccess from "./pages/OrderSuccess/OrderSuccess";
 import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
@@ -18,6 +20,7 @@ import AdminOrders from "./pages/Admin/AdminOrders";
 import AdminUsers from "./pages/Admin/AdminUsers";
 import AdminReviews from "./pages/Admin/AdminReviews";
 import AdminRoute from "./components/AdminRoute";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const authRoutes = ["/login", "/signup", "/reset-password"];
 
@@ -30,18 +33,39 @@ function Layout() {
     <>
       {!isAuthPage && !isAdminPage && <Header />}
       <Routes>
-        {/* Public routes */}
+        {/* ── Public routes ── */}
         <Route path="/" element={<Home />} />
         <Route path="/collection" element={<Collection />} />
         <Route path="/pdp/:id" element={<Pdp />} />
         <Route path="/pdp" element={<Pdp />} />
-        <Route path="/cart" element={<Cart />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/FAQ" element={<FAQ />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
-        {/* Admin routes */}
+        {/* ── Customer-only routes (must be logged in, admins blocked) ── */}
+        <Route path="/cart" element={
+          <ProtectedRoute blockAdmin>
+            <Cart />
+          </ProtectedRoute>
+        } />
+        <Route path="/checkout" element={
+          <ProtectedRoute blockAdmin>
+            <Checkout />
+          </ProtectedRoute>
+        } />
+        <Route path="/order-success" element={
+          <ProtectedRoute blockAdmin>
+            <OrderSuccess />
+          </ProtectedRoute>
+        } />
+        <Route path="/orders" element={
+          <ProtectedRoute blockAdmin>
+            <div style={{padding:'60px',textAlign:'center'}}>My Orders — coming soon</div>
+          </ProtectedRoute>
+        } />
+
+        {/* ── Admin-only routes ── */}
         <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
         <Route path="/admin/products" element={<AdminRoute><AdminProducts /></AdminRoute>} />
         <Route path="/admin/orders" element={<AdminRoute><AdminOrders /></AdminRoute>} />

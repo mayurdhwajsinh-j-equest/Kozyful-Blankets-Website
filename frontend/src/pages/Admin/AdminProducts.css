@@ -407,3 +407,131 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ── Stock stats bar ── */
+.admin-stock-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.admin-stock-stat {
+  background: white;
+  border-radius: 10px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  border-left: 4px solid #D0D5DD;
+}
+
+.admin-stock-stat--in  { border-left-color: #11854D; }
+.admin-stock-stat--low { border-left-color: #F59E0B; }
+.admin-stock-stat--out { border-left-color: #E8656B; }
+
+.admin-stock-stat__value {
+  font-size: 26px;
+  font-weight: 800;
+  color: #293644;
+}
+
+.admin-stock-stat__label {
+  font-size: 12px;
+  color: #888;
+  font-weight: 600;
+}
+
+/* ── Stock badge ── */
+.admin-stock-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.admin-stock-badge.in  { background: #DCF5E9; color: #11854D; }
+.admin-stock-badge.low { background: #FEF3C7; color: #B45309; }
+.admin-stock-badge.out { background: #FFEBEE; color: #C62828; }
+
+/* ── Inline stock editor ── */
+.admin-stock-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-start;
+}
+
+.admin-stock-editor {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.admin-stock-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1.5px solid #E0E4E8;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  color: #404D58;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  padding: 0;
+  line-height: 1;
+}
+
+.admin-stock-btn:hover:not(:disabled) {
+  background: #E8656B;
+  border-color: #E8656B;
+  color: white;
+}
+
+.admin-stock-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.admin-stock-input {
+  width: 52px;
+  text-align: center;
+  padding: 3px 6px;
+  border: 1.5px solid #E0E4E8;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #293644;
+  outline: none;
+}
+
+.admin-stock-input:focus {
+  border-color: #E8656B;
+}
+
+/* Row tints for low/out stock */
+.admin-row-low td { background: #FFFBEB !important; }
+.admin-row-out td { background: #FFF5F5 !important; }
+
+/* 4-column form row */
+.admin-form-row--4 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 900px) {
+  .admin-stock-stats { grid-template-columns: repeat(2, 1fr); }
+  .admin-form-row--4 { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 600px) {
+  .admin-stock-stats { grid-template-columns: 1fr 1fr; }
+  .admin-form-row--4 { grid-template-columns: 1fr; }
+}

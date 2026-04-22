@@ -60,7 +60,7 @@ function BestSellerCard({ product = {} }) {
             className={`bestSellerCard-addToCart ${hovered ? 'visible' : ''} ${added ? 'added' : ''}`}
             onClick={handleAddToCart}
           >
-            {added ? '✓ Added!' : '+ Add to Cart'}
+            {added ? '✓ Added!' : 'Add to Cart'}
           </button>
         </div>
 
