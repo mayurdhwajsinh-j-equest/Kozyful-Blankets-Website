@@ -77,6 +77,7 @@ export const orderAPI = {
   create: (data) => api.post('/orders', data),
   getAll: () => api.get('/orders'),
   getById: (id) => api.get(`/orders/${id}`),
+  cancel: (id) => api.put(`/orders/${id}/cancel`),  // ← add this
   updateStatus: (id, status) => api.put(`/orders/${id}`, { status }),
 };
 

@@ -21,6 +21,7 @@ import AdminUsers from "./pages/Admin/AdminUsers";
 import AdminReviews from "./pages/Admin/AdminReviews";
 import AdminRoute from "./components/AdminRoute";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Orders from "./pages/Orders/Orders";
 
 const authRoutes = ["/login", "/signup", "/reset-password"];
 
@@ -59,11 +60,14 @@ function Layout() {
             <OrderSuccess />
           </ProtectedRoute>
         } />
-        <Route path="/orders" element={
-          <ProtectedRoute blockAdmin>
-            <div style={{padding:'60px',textAlign:'center'}}>My Orders — coming soon</div>
-          </ProtectedRoute>
-        } />
+        <Route
+          path="/orders"
+          element={
+            <ProtectedRoute blockAdmin>
+              <Orders />
+            </ProtectedRoute>
+          }
+        />
 
         {/* ── Admin-only routes ── */}
         <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
