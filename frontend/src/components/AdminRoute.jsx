@@ -1,13 +1,21 @@
-import { Navigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { Navigate, Outlet } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
-const AdminRoute = ({ children }) => {
+const AdminRoute = () => {
   const { isAuthenticated, isAdmin, initializing } = useAuth();
 
-  // Wait for localStorage to be read before making any redirect decision
   if (initializing) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', fontSize: '16px', color: '#666' }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          minHeight: "100vh",
+          fontSize: "16px",
+          color: "#666",
+        }}
+      >
         Loading...
       </div>
     );
@@ -21,7 +29,7 @@ const AdminRoute = ({ children }) => {
     return <Navigate to="/" replace />;
   }
 
-  return children;
+  return <Outlet />;
 };
 
 export default AdminRoute;

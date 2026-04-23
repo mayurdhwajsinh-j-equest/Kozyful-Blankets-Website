@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import AdminLayout from "../../components/AdminLayout/AdminLayout";
 import "./AdminOrders.css";
 import { orderAPI } from "../../services/api";
-import api from "../../services/api";
 
 const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [statusFilter, setStatusFilter] = useState("all");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     fetchOrders();
@@ -17,11 +17,22 @@ const AdminOrders = () => {
   const fetchOrders = async () => {
     try {
       setLoading(true);
+      setError("");
+
       const response = await orderAPI.getAll();
-      setOrders(response.data?.data || []);
-    } catch (error) {
-      console.error("Error fetching orders:", error);
-      alert("Error fetching orders");
+
+      console.log("Orders API response:", response);
+
+      const ordersData =
+        response?.data?.data ||
+        response?.data?.orders ||
+        response?.data ||
+        [];
+
+      setOrders(Array.isArray(ordersData) ? ordersData : []);
+    } catch (err) {
+      console.error("Fetch Orders Error:", err);
+      setError(err.response?.data?.message || "Failed to fetch orders");
     } finally {
       setLoading(false);
     }
@@ -30,12 +41,11 @@ const AdminOrders = () => {
   const handleStatusChange = async (orderId, newStatus) => {
     try {
       await orderAPI.updateStatus(orderId, newStatus);
-      alert("Order status updated successfully!");
       fetchOrders();
       setSelectedOrder(null);
-    } catch (error) {
-      console.error("Error updating order:", error);
-      alert("Error updating order status");
+    } catch (err) {
+      console.error("Update Status Error:", err);
+      alert(err.response?.data?.message || "Failed to update status");
     }
   };
 
@@ -47,14 +57,17 @@ const AdminOrders = () => {
   return (
     <AdminLayout>
       <div className="admin-orders">
-        <div className="orders-header">
-          <h2 className="page-title">Orders Management</h2>
-          <div className="filter-group">
+
+        {/* HEADER */}
+        <div className="admin-orders-header">
+          <h2 className="admin-page-title">Orders Management</h2>
+
+          <div className="admin-filter-group">
             <label>Filter by Status:</label>
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="filter-select"
+              className="admin-filter-select"
             >
               <option value="all">All Orders</option>
               <option value="pending">Pending</option>
@@ -66,57 +79,77 @@ const AdminOrders = () => {
           </div>
         </div>
 
+        {/* STATES */}
         {loading ? (
-          <div className="loading">Loading orders...</div>
+          <div className="admin-orders-loading">Loading orders...</div>
+        ) : error ? (
+          <div className="admin-orders-no-orders">{error}</div>
         ) : filteredOrders.length === 0 ? (
-          <div className="no-orders">No orders found</div>
+          <div className="admin-orders-no-orders">No orders found</div>
         ) : (
-          <div className="orders-grid">
+          <div className="admin-orders-grid">
             {filteredOrders.map((order) => (
-              <div key={order.id} className="order-card">
-                <div className="order-header">
-                  <h3 className="order-id">Order #{order.id}</h3>
-                  <span className={`status-badge status-${order.status}`}>
+              <div key={order.id} className="admin-order-card">
+
+                {/* CARD HEADER */}
+                <div className="admin-order-header">
+                  <h3 className="admin-order-id">Order #{order.id}</h3>
+                  <span className={`admin-status-badge admin-status-${order.status}`}>
                     {order.status?.toUpperCase()}
                   </span>
                 </div>
 
-                <div className="order-info">
-                  <div className="info-row">
+                {/* INFO */}
+                <div className="admin-order-info">
+                  <div className="admin-info-row">
                     <span className="label">Customer:</span>
                     <span className="value">{order.user?.name || "N/A"}</span>
                   </div>
-                  <div className="info-row">
+
+                  <div className="admin-info-row">
                     <span className="label">Email:</span>
                     <span className="value">{order.user?.email || "N/A"}</span>
                   </div>
-                  <div className="info-row">
+
+                  <div className="admin-info-row">
                     <span className="label">Total:</span>
-                    <span className="value price">${order.total?.toFixed(2) || "0"}</span>
-                  </div>
-                  <div className="info-row">
-                    <span className="label">Date:</span>
-                    <span className="value">
-                      {new Date(order.createdAt).toLocaleDateString()}
+                    <span className="value price">
+                      ${order.total?.toFixed(2) || "0"}
                     </span>
                   </div>
-                  <div className="info-row">
+
+                  <div className="admin-info-row">
+                    <span className="label">Date:</span>
+                    <span className="value">
+                      {order.createdAt
+                        ? new Date(order.createdAt).toLocaleDateString()
+                        : "N/A"}
+                    </span>
+                  </div>
+
+                  <div className="admin-info-row">
                     <span className="label">Items:</span>
-                    <span className="value">{order.items?.length || 0} item(s)</span>
+                    <span className="value">
+                      {order.items?.length || 0} item(s)
+                    </span>
                   </div>
                 </div>
 
-                <div className="order-actions">
+                {/* ACTIONS */}
+                <div className="admin-order-actions">
                   <button
-                    className="btn-view"
+                    className="admin-btn-view"
                     onClick={() => setSelectedOrder(order)}
                   >
                     👁️ View Details
                   </button>
+
                   <select
                     value={order.status}
-                    onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                    className="status-select"
+                    onChange={(e) =>
+                      handleStatusChange(order.id, e.target.value)
+                    }
+                    className="admin-status-select"
                   >
                     <option value="pending">Pending</option>
                     <option value="processing">Processing</option>
@@ -130,75 +163,37 @@ const AdminOrders = () => {
           </div>
         )}
 
+        {/* MODAL */}
         {selectedOrder && (
-          <div className="modal-overlay" onClick={() => setSelectedOrder(null)}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-              <div className="modal-header">
+          <div
+            className="admin-modal-overlay"
+            onClick={() => setSelectedOrder(null)}
+          >
+            <div
+              className="admin-modal-content"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="admin-modal-header">
                 <h2>Order Details</h2>
                 <button
-                  className="close-btn"
+                  className="admin-close-btn"
                   onClick={() => setSelectedOrder(null)}
                 >
                   ✕
                 </button>
               </div>
 
-              <div className="modal-body">
-                <div className="detail-section">
+              <div className="admin-modal-body">
+                <div className="admin-detail-section">
                   <h3>Order Information</h3>
-                  <p>
-                    <strong>Order ID:</strong> #{selectedOrder.id}
-                  </p>
-                  <p>
-                    <strong>Status:</strong>{" "}
-                    <span className={`status-badge status-${selectedOrder.status}`}>
-                      {selectedOrder.status?.toUpperCase()}
-                    </span>
-                  </p>
-                  <p>
-                    <strong>Date:</strong>{" "}
-                    {new Date(selectedOrder.createdAt).toLocaleDateString()}
-                  </p>
+                  <p><strong>ID:</strong> #{selectedOrder.id}</p>
+                  <p><strong>Status:</strong> {selectedOrder.status}</p>
                 </div>
 
-                <div className="detail-section">
-                  <h3>Customer Information</h3>
+                <div className="admin-detail-section total-section">
                   <p>
-                    <strong>Name:</strong> {selectedOrder.user?.name || "N/A"}
-                  </p>
-                  <p>
-                    <strong>Email:</strong> {selectedOrder.user?.email || "N/A"}
-                  </p>
-                  <p>
-                    <strong>Phone:</strong> {selectedOrder.user?.phone || "N/A"}
-                  </p>
-                </div>
-
-                <div className="detail-section">
-                  <h3>Order Items</h3>
-                  <table className="items-table">
-                    <thead>
-                      <tr>
-                        <th>Product</th>
-                        <th>Quantity</th>
-                        <th>Price</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {selectedOrder.items?.map((item, idx) => (
-                        <tr key={idx}>
-                          <td>{item.product?.name || "N/A"}</td>
-                          <td>{item.quantity}</td>
-                          <td>${item.price?.toFixed(2) || "0"}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                <div className="detail-section total-section">
-                  <p>
-                    <strong>Total Amount:</strong> ${selectedOrder.total?.toFixed(2) || "0"}
+                    <strong>Total:</strong> $
+                    {selectedOrder.total?.toFixed(2) || "0"}
                   </p>
                 </div>
               </div>

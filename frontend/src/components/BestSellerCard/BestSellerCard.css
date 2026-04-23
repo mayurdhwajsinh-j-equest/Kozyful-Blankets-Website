@@ -13,7 +13,6 @@
 }
 
 .bestSellerCard:hover .bestSellerCard-content {
-    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
     transform: translateY(-3px);
 }
 
@@ -30,9 +29,8 @@
     font-weight: 600;
     padding: 2px 8px;
     position: absolute;
-    top: 8px;
-    left: 8px;
-    border-radius: 4px;
+    top: 0;
+    left: 0;
     z-index: 2;
 }
 
@@ -117,8 +115,10 @@
     font-size: 12px;
     font-weight: 600;
     color: #FFFFFF;
-    border-radius: 4px;
     margin-top: 6px;
+    position: absolute;
+    top: 0;
+    right: 0;
 }
 
 /* ── Mobile ── */

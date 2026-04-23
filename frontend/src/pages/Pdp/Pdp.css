@@ -172,3 +172,63 @@
         width: 100%;
     }
 }
+
+/* ── Quantity stepper ── */
+.pdp-hero__qty {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.pdp-hero__qty-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #404D58;
+}
+
+.pdp-hero__qty-stepper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #F7F8FA;
+  border: 1.5px solid #E0E4E8;
+  border-radius: 50px;
+  padding: 4px 8px;
+}
+
+.pdp-qty-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1.5px solid #E0E4E8;
+  background: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  color: #293644;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  line-height: 1;
+  padding: 0;
+}
+
+.pdp-qty-btn:hover:not(:disabled) {
+  background: #293644;
+  border-color: #293644;
+  color: #fff;
+}
+
+.pdp-qty-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.pdp-qty-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: #293644;
+  min-width: 24px;
+  text-align: center;
+}
