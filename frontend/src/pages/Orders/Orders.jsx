@@ -10,11 +10,11 @@ const getImageUrl = (imagePath) => {
 };
 
 const STATUS_CONFIG = {
-  pending:    { label: 'Pending',    color: 'status--pending',    icon: '🕐' },
+  pending: { label: 'Pending', color: 'status--pending', icon: '🕐' },
   processing: { label: 'Processing', color: 'status--processing', icon: '⚙️' },
-  shipped:    { label: 'Shipped',    color: 'status--shipped',    icon: '🚚' },
-  delivered:  { label: 'Delivered',  color: 'status--delivered',  icon: '✅' },
-  cancelled:  { label: 'Cancelled',  color: 'status--cancelled',  icon: '✕' },
+  shipped: { label: 'Shipped', color: 'status--shipped', icon: '🚚' },
+  delivered: { label: 'Delivered', color: 'status--delivered', icon: '✅' },
+  cancelled: { label: 'Cancelled', color: 'status--cancelled', icon: '✕' },
 };
 
 const StatusBadge = ({ status }) => {
@@ -58,18 +58,23 @@ function Orders() {
   useEffect(() => { fetchOrders(); }, []);
 
   const fetchOrders = async () => {
-    setLoading(true);
-    try {
-      const res = await orderAPI.getAll();
-      if (res.data.success) {
-        setOrders(res.data.data);
-      }
-    } catch (err) {
-      setError('Failed to load orders. Please try again.');
-    } finally {
-      setLoading(false);
+  setLoading(true);
+  try {
+    const res = await orderAPI.getMyOrders();
+    console.log('Orders response:', res.data); // ← add this
+    if (res.data.success) {
+      setOrders(res.data.data);
+    } else {
+      console.log('Success was false:', res.data); // ← and this
     }
-  };
+  } catch (err) {
+    console.error('Error status:', err.response?.status);
+    console.error('Error body:', err.response?.data);  // ← and this
+    setError('Failed to load orders. Please try again.');
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleCancel = async (orderId) => {
     if (!window.confirm('Are you sure you want to cancel this order?')) return;

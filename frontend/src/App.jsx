@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-
 import Home from "./pages/Home/Home";
 import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer";
@@ -7,23 +6,20 @@ import Collection from "./pages/Collection/Collection";
 import Pdp from "./pages/Pdp/Pdp";
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
-import FAQ from "./pages/FAQ/FAQ";
+import FAQ from "./pages/FAQ/FAQ";  
 import ResetPassword from "./pages/auth/ResetPassword";
 import Cart from "./pages/Cart/Cart";
 import Checkout from "./pages/Checkout/Checkout";
 import OrderSuccess from "./pages/OrderSuccess/OrderSuccess";
 import Orders from "./pages/Orders/Orders";
 import Profile from "./pages/Profile/Profile";
-
+import AdminRedirect from "./components/AdminRedirect";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import AdminProducts from "./pages/Admin/AdminProducts";
 import AdminOrders from "./pages/Admin/AdminOrders";
 import AdminUsers from "./pages/Admin/AdminUsers";
-import AdminReviews from "./pages/Admin/AdminReviews";
-
 import AdminRoute from "./components/AdminRoute";
 import ProtectedRoute from "./components/ProtectedRoute";
-
 import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
 
@@ -45,13 +41,13 @@ function Layout() {
       <Routes>
 
         {/* ================= PUBLIC ================= */}
-        <Route path="/" element={<Home />} />
-        <Route path="/collection" element={<Collection />} />
-        <Route path="/pdp/:id" element={<Pdp />} />
-        <Route path="/pdp" element={<Pdp />} />
-        <Route path="/FAQ" element={<FAQ />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+        <Route path="/" element={<AdminRedirect><Home /></AdminRedirect>} />
+        <Route path="/collection" element={<AdminRedirect><Collection /></AdminRedirect>} />
+        <Route path="/pdp/:id" element={<AdminRedirect><Pdp /></AdminRedirect>} />
+        <Route path="/pdp" element={<AdminRedirect><Pdp /></AdminRedirect>} />
+        <Route path="/FAQ" element={<AdminRedirect><FAQ /></AdminRedirect>} />
+        <Route path="/login" element={<AdminRedirect><Login /></AdminRedirect>} />
+        <Route path="/signup" element={<AdminRedirect><Signup /></AdminRedirect>} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
         {/* ================= USER ================= */}
@@ -82,7 +78,6 @@ function Layout() {
           <Route path="products" element={<AdminProducts />} />
           <Route path="orders" element={<AdminOrders />} />
           <Route path="users" element={<AdminUsers />} />
-          <Route path="reviews" element={<AdminReviews />} />
         </Route>
 
         {/* ================= FALLBACK ================= */}

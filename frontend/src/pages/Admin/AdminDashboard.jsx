@@ -19,17 +19,23 @@ const AdminDashboard = () => {
   const fetchStats = async () => {
     try {
       setLoading(true);
-      const productsRes = await productAPI.getAll({ limit: 1 });
-      const ordersRes = await orderAPI.getAll();
 
-      const totalRevenue =
-        ordersRes.data?.data?.reduce((sum, order) => sum + (order.total || 0), 0) || 0;
+      const [productsRes, ordersRes, usersRes] = await Promise.all([
+        productAPI.getAll({ limit: 1 }),
+        orderAPI.getAll({ limit: 1000 }),
+        userAPI.getProfile(), // ← swap this for an admin users list if you have one
+      ]);
+
+      // Only count revenue from delivered orders
+      const totalRevenue = ordersRes.data?.data
+        ?.filter(order => order.status === 'delivered')
+        .reduce((sum, order) => sum + (parseFloat(order.totalAmount) || 0), 0) || 0;
 
       setStats({
         totalProducts: productsRes.data?.pagination?.total || 0,
-        totalOrders: ordersRes.data?.data?.length || 0,
-        totalUsers: productsRes.data?.pagination?.total || 0,
-        totalRevenue: totalRevenue,
+        totalOrders: ordersRes.data?.pagination?.total || ordersRes.data?.data?.length || 0,
+        totalUsers: usersRes.data?.pagination?.total || 0, // ← needs admin users endpoint
+        totalRevenue,
       });
     } catch (error) {
       console.error("Error fetching stats:", error);

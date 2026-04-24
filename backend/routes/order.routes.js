@@ -15,14 +15,14 @@ const blockAdmin = (req, res, next) => {
   next();
 };
 
-// ── Customer routes (logged in, non-admin only) ──
+// ── Admin routes FIRST (before /:id) ──
+router.get('/admin/all', verifyToken, isAdmin, orderController.getAllOrders);
+router.put('/:id/status', verifyToken, isAdmin, orderController.updateOrderStatus);
+
+// ── Customer routes ──
 router.post('/', verifyToken, blockAdmin, validate(schemas.createOrder), orderController.createOrder);
 router.get('/', verifyToken, blockAdmin, orderController.getUserOrders);
 router.get('/:id', verifyToken, blockAdmin, orderController.getOrderById);
 router.put('/:id/cancel', verifyToken, blockAdmin, orderController.cancelOrder);
-
-// ── Admin routes (admin only) ──
-router.get('/admin/all', verifyToken, isAdmin, orderController.getAllOrders);
-router.put('/:id/status', verifyToken, isAdmin, orderController.updateOrderStatus);
 
 module.exports = router;

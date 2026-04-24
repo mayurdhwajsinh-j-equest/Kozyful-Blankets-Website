@@ -96,14 +96,12 @@ export const userAPI = {
 };
 
 export const orderAPI = {
-  // 👤 User
   create: (data) => api.post("/orders", data),
-  getMyOrders: () => api.get("/users/orders"),
+  getMyOrders: () => api.get("/orders"),  // ← was "/users/orders"
   cancel: (id) => api.put(`/orders/${id}/cancel`),
   getAll: () => api.get("/orders/admin/all"),
-  getById: (id) => api.get(`/orders/${id}`), 
-  updateStatus: (id, status) =>
-    api.put(`/orders/${id}/status`, { status }),
+  getById: (id) => api.get(`/orders/${id}`),
+  updateStatus: (id, status) => api.put(`/orders/${id}/status`, { status }),
 };
 
 export const reviewAPI = {

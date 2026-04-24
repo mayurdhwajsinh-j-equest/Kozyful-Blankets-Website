@@ -89,22 +89,17 @@ function BlanketLoverSwiper() {
 function PdpHero({ product, loading }) {
   const { addToCart } = useCart();
   const [added, setAdded] = useState(false);
-  // ← Fix 1: quantity selector added (was missing)
   const [quantity, setQuantity] = useState(1);
 
-  // Reset quantity when product changes
   useEffect(() => { setQuantity(1); }, [product?.id]);
 
   const handleAddToCart = () => {
-    // ← Fix 2: pass quantity so cart reflects chosen amount
     for (let i = 0; i < quantity; i++) addToCart(product);
     setAdded(true);
     setTimeout(() => setAdded(false), 1500);
   };
 
-  if (loading) return <div className="pdp-hero-loading">Loading product...</div>;
-  // ← Fix 3: product is null before fetch completes — show loader, not static hero
-  if (!product) return <div className="pdp-hero-loading">Loading product...</div>;
+  if (loading || !product) return <div className="pdp-hero-loading">Loading product...</div>;
 
   const hasDiscount = product.discountPrice &&
     parseFloat(product.discountPrice) < parseFloat(product.price);
@@ -115,7 +110,6 @@ function PdpHero({ product, loading }) {
         <img
           src={getImageUrl(product.image)}
           alt={product.name}
-          // ← Fix 4: onError fallback so broken image doesn't crash layout
           onError={(e) => { e.target.src = '/placeholder.png'; }}
         />
       </div>
@@ -143,14 +137,12 @@ function PdpHero({ product, loading }) {
           <span className="pdp-hero__category">
             Category: <strong>{product.category}</strong>
           </span>
-          {/* ← Fix 5: check stock > 0 correctly (stock can be 0 integer, not just falsy) */}
           {product.stock > 0
             ? <span className="pdp-hero__stock in-stock">In Stock ({product.stock})</span>
             : <span className="pdp-hero__stock out-of-stock">Out of Stock</span>
           }
         </div>
 
-        {/* ← Fix 6: quantity selector */}
         {product.stock > 0 && (
           <div className="pdp-hero__qty">
             <span className="pdp-hero__qty-label">Quantity</span>
@@ -188,13 +180,11 @@ function Pdp() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
-  // ← Fix 7: always start loading=true when id exists, false when no id
   const [loading, setLoading] = useState(!!id);
 
   useEffect(() => {
     if (!id) return;
 
-    // ← Fix 8: reset state when id changes (navigating between products)
     setProduct(null);
     setRelatedProducts([]);
     setLoading(true);
@@ -206,19 +196,16 @@ function Pdp() {
           const fetchedProduct = res.data.data;
           setProduct(fetchedProduct);
 
-          // Fetch related — exclude current product from results
+          // Fetch all admin products, exclude current
           try {
-            const related = await productAPI.getAll({
-              category: fetchedProduct.category,
-              limit: 8,
-            });
+            const related = await productAPI.getAll({ limit: 8 });
             if (related.data.success) {
               setRelatedProducts(
                 related.data.data.filter(p => p.id !== parseInt(id))
               );
             }
           } catch {
-            // related products failing silently is fine
+            // silently ignore related products failure
           }
         }
       } catch (err) {
@@ -229,7 +216,7 @@ function Pdp() {
     };
 
     fetchProduct();
-  }, [id]); // ← Fix 9: id in dependency array so re-fetches on navigation
+  }, [id]);
 
   return (
     <>
@@ -322,7 +309,7 @@ function Pdp() {
       <section className='bestSeller-section'>
         <div className='bestSeller-content'>
           <BestSellerSwiper
-            title={product ? `More ${product.category} products` : 'Blanket best sellers'}
+            title="You may also like"
             products={relatedProducts}
           />
         </div>
@@ -332,7 +319,7 @@ function Pdp() {
         <BlanketLoverSwiper />
       </section>
 
-      <section className='faq-section'>
+      <section className='faq-sec'>
         <div className='faq-content'>
           <p className='faq-title'>Frequently asked questions</p>
           <FAQ />
