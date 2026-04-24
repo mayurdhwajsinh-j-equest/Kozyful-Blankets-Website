@@ -20,21 +20,26 @@ const AdminDashboard = () => {
     try {
       setLoading(true);
 
-      const [productsRes, ordersRes, usersRes] = await Promise.all([
+      const [productsRes, ordersRes] = await Promise.all([
         productAPI.getAll({ limit: 1 }),
         orderAPI.getAll({ limit: 1000 }),
-        userAPI.getProfile(), // ← swap this for an admin users list if you have one
       ]);
 
-      // Only count revenue from delivered orders
-      const totalRevenue = ordersRes.data?.data
-        ?.filter(order => order.status === 'delivered')
-        .reduce((sum, order) => sum + (parseFloat(order.totalAmount) || 0), 0) || 0;
+      const orders = ordersRes.data?.data || [];
+
+      const totalRevenue = orders
+        .filter(order => order.status === 'delivered')
+        .reduce((sum, order) => sum + (parseFloat(order.totalAmount) || 0), 0);
+
+      // Derive unique users from orders until we have a proper endpoint
+      const totalUsers = [...new Set(
+        orders.map(o => o.userId).filter(Boolean)
+      )].length;
 
       setStats({
         totalProducts: productsRes.data?.pagination?.total || 0,
-        totalOrders: ordersRes.data?.pagination?.total || ordersRes.data?.data?.length || 0,
-        totalUsers: usersRes.data?.pagination?.total || 0, // ← needs admin users endpoint
+        totalOrders: ordersRes.data?.pagination?.total || orders.length || 0,
+        totalUsers,
         totalRevenue,
       });
     } catch (error) {

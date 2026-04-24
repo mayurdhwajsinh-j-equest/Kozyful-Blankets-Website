@@ -103,18 +103,18 @@ const AdminOrders = () => {
                 <div className="admin-order-info">
                   <div className="admin-info-row">
                     <span className="label">Customer:</span>
-                    <span className="value">{order.user?.name || "N/A"}</span>
+                    <span className="value">{order.User?.name || "N/A"}</span>
                   </div>
 
                   <div className="admin-info-row">
                     <span className="label">Email:</span>
-                    <span className="value">{order.user?.email || "N/A"}</span>
+                    <span className="value">{order.User?.email || "N/A"}</span>
                   </div>
 
                   <div className="admin-info-row">
                     <span className="label">Total:</span>
                     <span className="value price">
-                      ${order.total?.toFixed(2) || "0"}
+                      £{parseFloat(order.totalAmount || 0).toFixed(2)}
                     </span>
                   </div>
 
@@ -130,7 +130,7 @@ const AdminOrders = () => {
                   <div className="admin-info-row">
                     <span className="label">Items:</span>
                     <span className="value">
-                      {order.items?.length || 0} item(s)
+                      {order.OrderItems?.length || 0} item(s)
                     </span>
                   </div>
                 </div>
@@ -193,7 +193,7 @@ const AdminOrders = () => {
                 <div className="admin-detail-section total-section">
                   <p>
                     <strong>Total:</strong> $
-                    {selectedOrder.total?.toFixed(2) || "0"}
+                    £{parseFloat(selectedOrder.totalAmount || 0).toFixed(2)}
                   </p>
                 </div>
               </div>

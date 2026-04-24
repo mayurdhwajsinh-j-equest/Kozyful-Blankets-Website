@@ -1,25 +1,36 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { useAuth } from './AuthContext';
 
 const CartContext = createContext(null);
 
 export const CartProvider = ({ children }) => {
+  const { user } = useAuth();
+  const cartKey = user?.id ? `cart_${user.id}` : 'cart_guest';
+
   const [cartItems, setCartItems] = useState(() => {
     try {
-      const stored = localStorage.getItem('cart');
+      const stored = localStorage.getItem(cartKey);
       return stored ? JSON.parse(stored) : [];
     } catch { return []; }
   });
 
-  // Persist cart to localStorage
+  // Reload cart whenever the logged-in user changes
   useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(cartItems));
-  }, [cartItems]);
+    try {
+      const stored = localStorage.getItem(cartKey);
+      setCartItems(stored ? JSON.parse(stored) : []);
+    } catch { setCartItems([]); }
+  }, [cartKey]);
+
+  // Persist cart under user-specific key
+  useEffect(() => {
+    localStorage.setItem(cartKey, JSON.stringify(cartItems));
+  }, [cartItems, cartKey]);
 
   const addToCart = (product) => {
     setCartItems((prev) => {
       const existing = prev.find((item) => item.id === product.id);
       if (existing) {
-        // Increment quantity if already in cart
         return prev.map((item) =>
           item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
         );
@@ -27,7 +38,7 @@ export const CartProvider = ({ children }) => {
       return [...prev, { ...product, quantity: 1 }];
     });
   };
-  
+
   const removeFromCart = (productId) => {
     setCartItems((prev) => prev.filter((item) => item.id !== productId));
   };
@@ -42,7 +53,9 @@ export const CartProvider = ({ children }) => {
   const clearCart = () => setCartItems([]);
 
   const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-  const cartTotal = cartItems.reduce((sum, item) => sum + parseFloat(item.discountPrice || item.price) * item.quantity, 0);
+  const cartTotal = cartItems.reduce(
+    (sum, item) => sum + parseFloat(item.discountPrice || item.price) * item.quantity, 0
+  );
 
   return (
     <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, updateQuantity, clearCart, cartCount, cartTotal }}>

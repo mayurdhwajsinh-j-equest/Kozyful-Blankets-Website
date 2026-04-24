@@ -23,6 +23,7 @@ function Login() {
     try {
       const response = await authAPI.login({ email, password });
       if (response.data.success) {
+        localStorage.removeItem('cart');
         await login(response.data.data);
         // Redirect based on role
         if (response.data.data.role === 'admin') {
