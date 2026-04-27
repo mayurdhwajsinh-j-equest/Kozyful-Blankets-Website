@@ -1,7 +1,8 @@
 import axios from "axios";
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+  import.meta.env.VITE_API_BASE_URL?.trim() ||
+  "http://localhost:5000/api";
 
 export const BACKEND_URL = API_BASE_URL.replace("/api", "");
 
@@ -24,7 +25,7 @@ const getToken = () => {
       localStorage.getItem("user") || localStorage.getItem("admin");
 
     if (stored) {
-      const parsed = JSON.parse(stored);
+      const parsed = JSON.parse(stored); 
       return parsed.token || parsed.accessToken || null;
     }
   } catch {}

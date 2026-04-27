@@ -21,6 +21,8 @@ const SORT_OPTIONS = [
     { value: "name-desc", label: "Name Z to A" },
 ]
 
+const PRODUCTS_PER_PAGE = 20
+
 function AccordionGroup({ label, options, selected, onChange }) {
     const [open, setOpen] = useState(true)
 
@@ -62,24 +64,31 @@ function Collection() {
     const [sortModalOpen, setSortModalOpen] = useState(false)
     const [products, setProducts] = useState([])
     const [loading, setLoading] = useState(true)
+    const [currentPage, setCurrentPage] = useState(1)
+    const [totalProducts, setTotalProducts] = useState(0)
+    const [totalPages, setTotalPages] = useState(1)
+
+    // Reset to page 1 when filters or sort changes
+    useEffect(() => {
+        setCurrentPage(1)
+    }, [activeFilters, sortValue])
 
     useEffect(() => {
         fetchProducts()
-    }, [activeFilters, sortValue])
+    }, [activeFilters, sortValue, currentPage])
 
     const fetchProducts = async () => {
         setLoading(true)
         try {
             const params = {
-                limit: 100,
+                limit: PRODUCTS_PER_PAGE,
+                page: currentPage,
             }
 
-            // Add filter parameters
             if (activeFilters.Color.length > 0) {
                 params.color = activeFilters.Color[0]
             }
 
-            // Add sorting
             const sortMap = {
                 'best-sellers': 'isBestSeller',
                 'price-asc': 'priceAsc',
@@ -94,6 +103,9 @@ function Collection() {
             const response = await productAPI.getAll(params)
             if (response.data.success) {
                 setProducts(response.data.data)
+                const total = response.data.pagination?.total || response.data.data.length
+                setTotalProducts(total)
+                setTotalPages(Math.ceil(total / PRODUCTS_PER_PAGE))
             }
         } catch (error) {
             console.error('Failed to fetch products:', error)
@@ -115,11 +127,34 @@ function Collection() {
         setActiveFilters(Object.fromEntries(Object.keys(FILTERS).map((k) => [k, []])))
     }
 
+    const handlePageChange = (page) => {
+        setCurrentPage(page)
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+
     const activeTags = Object.entries(activeFilters).flatMap(([group, vals]) =>
         vals.map((val) => ({ group, val }))
     )
 
-    const activeSortLabel = SORT_OPTIONS.find(o => o.value === sortValue)?.label
+    // Generate page numbers with ellipsis
+    const getPageNumbers = () => {
+        const pages = []
+        if (totalPages <= 7) {
+            for (let i = 1; i <= totalPages; i++) pages.push(i)
+        } else {
+            pages.push(1)
+            if (currentPage > 3) pages.push('...')
+            for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
+                pages.push(i)
+            }
+            if (currentPage < totalPages - 2) pages.push('...')
+            pages.push(totalPages)
+        }
+        return pages
+    }
+
+    const startItem = (currentPage - 1) * PRODUCTS_PER_PAGE + 1
+    const endItem = Math.min(currentPage * PRODUCTS_PER_PAGE, totalProducts)
 
     return (
         <>
@@ -190,7 +225,16 @@ function Collection() {
                     {/* Product Section */}
                     <div className='product-section'>
                         <div className="product-section__header">
-                            <p className='productSection-title'>Blanket best sellers ({products.length})</p>
+                            <div>
+                                <p className='productSection-title'>
+                                    Blanket best sellers ({totalProducts})
+                                </p>
+                                {!loading && totalProducts > 0 && (
+                                    <p className="product-section__showing">
+                                        Showing {startItem}–{endItem} of {totalProducts} products
+                                    </p>
+                                )}
+                            </div>
                             <div className="sort-wrapper">
                                 <label className="sort-label">Sort By</label>
                                 <select
@@ -208,15 +252,50 @@ function Collection() {
 
                         <div className='product-section__cards'>
                             {loading ? (
-                                <p>Loading products...</p>
+                                <p className="product-section__message">Loading products...</p>
                             ) : products.length > 0 ? (
                                 products.map((product) => (
                                     <BestSellerCard key={product.id} product={product} />
                                 ))
                             ) : (
-                                <p>No products found</p>
+                                <p className="product-section__message">No products found</p>
                             )}
                         </div>
+
+                        {/* ── Pagination ── */}
+                        {!loading && totalPages > 1 && (
+                            <div className="pagination">
+                                <button
+                                    className="pagination__btn pagination__btn--nav"
+                                    onClick={() => handlePageChange(currentPage - 1)}
+                                    disabled={currentPage === 1}
+                                >
+                                    ‹ Prev
+                                </button>
+
+                                {getPageNumbers().map((page, i) =>
+                                    page === '...' ? (
+                                        <span key={`ellipsis-${i}`} className="pagination__ellipsis">...</span>
+                                    ) : (
+                                        <button
+                                            key={page}
+                                            className={`pagination__btn ${currentPage === page ? 'active' : ''}`}
+                                            onClick={() => handlePageChange(page)}
+                                        >
+                                            {page}
+                                        </button>
+                                    )
+                                )}
+
+                                <button
+                                    className="pagination__btn pagination__btn--nav"
+                                    onClick={() => handlePageChange(currentPage + 1)}
+                                    disabled={currentPage === totalPages}
+                                >
+                                    Next ›
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
             </section>

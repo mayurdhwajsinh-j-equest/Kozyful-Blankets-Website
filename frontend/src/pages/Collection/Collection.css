@@ -443,3 +443,90 @@
         font-weight: 600;
     }
 }
+
+/* ─── Pagination ─── */
+
+.product-section__showing {
+    font-size: 13px;
+    color: #888;
+    margin: 2px 0 0 0;
+}
+
+.product-section__message {
+    font-size: 15px;
+    color: #888;
+    padding: 40px 0;
+    width: 100%;
+    text-align: center;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 40px;
+    padding-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+.pagination__btn {
+    min-width: 38px;
+    height: 38px;
+    padding: 0 12px;
+    border: 1.5px solid #E0E4E8;
+    border-radius: 8px;
+    background: #fff;
+    color: #293644;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+}
+
+.pagination__btn:hover:not(:disabled) {
+    background: #293644;
+    color: #fff;
+    border-color: #293644;
+}
+
+.pagination__btn.active {
+    background: #E8656B;
+    color: #fff;
+    border-color: #E8656B;
+}
+
+.pagination__btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.pagination__btn--nav {
+    padding: 0 16px;
+    font-weight: 700;
+}
+
+.pagination__ellipsis {
+    font-size: 14px;
+    color: #888;
+    padding: 0 4px;
+    line-height: 38px;
+}
+
+@media (max-width: 768px) {
+    .pagination {
+        gap: 4px;
+        margin-top: 24px;
+    }
+
+    .pagination__btn {
+        min-width: 34px;
+        height: 34px;
+        font-size: 13px;
+    }
+
+    .pagination__btn--nav {
+        padding: 0 10px;
+    }
+}
