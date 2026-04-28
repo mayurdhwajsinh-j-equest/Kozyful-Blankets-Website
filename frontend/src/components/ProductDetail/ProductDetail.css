@@ -233,8 +233,8 @@
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: transparent;
-    border: 1px solid #e8e8e8;
+    background: none;
+    border: none;
     border-radius: 50%;
     width: 36px;
     height: 36px;
@@ -242,10 +242,8 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.10);
     font-size: 20px;
     color: #555;
-    transition: box-shadow 0.2s;
     z-index: 10;
     line-height: 1;
 }

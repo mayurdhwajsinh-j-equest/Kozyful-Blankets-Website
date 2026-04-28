@@ -54,11 +54,11 @@
     }
 
     .marquee-track-ltr {
-        animation: marquee-ltr 2s linear infinite;
+        animation: marquee-ltr 5s linear infinite;
     }
 
     .marquee-track-rtl {
-        animation: marquee-rtl 2s linear infinite;
+        animation: marquee-rtl 5s linear infinite;
     }
 
 }

@@ -141,7 +141,7 @@
     font-weight: 800;
     font-size: 20px;
     color: #FFFFFF;
-    min-width: 205px;
+    min-width: 245px;
     padding: 10px 20px;
     border-radius: 56px;
     background-color: #000000;
@@ -239,18 +239,16 @@
 
 /* Arrow buttons — shared between both swipers */
 .swiper-btn {
-    background: #ffffff;
-    border: 1px solid #e0e0e0;
+    background: none;
+    border: none;
     border-radius: 50%;
     width: 36px;
     height: 36px;
     display: flex;
-    align-items: center;
+    align-items: center;    
     justify-content: center;
     cursor: pointer;
     flex-shrink: 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    transition: background 0.2s, box-shadow 0.2s;
     padding: 0;
 }
 
@@ -451,8 +449,20 @@
 
 .frame__content {
     padding: 0 5px;
-}
+    flex-wrap: wrap;        
+    justify-content: center;  
+    gap: 16px;                
+  }
 
+  .frame__center-item {
+    flex: 0 0 calc(50% - 16px);  
+    box-sizing: border-box;
+  }
+
+  .bestSeller-section .bestSeller-cards
+  {
+    gap : 8px;
+  }
 
 .category__items{
     flex-direction: column;
@@ -465,7 +475,12 @@
 
 .btnshopBlankets{
     font-size: 18px;
-    padding: 5px ;
+    min-width: 225px;
+}
+
+.next-icon
+{
+    max-width: 8px;
 }
 
 .pdp-content{

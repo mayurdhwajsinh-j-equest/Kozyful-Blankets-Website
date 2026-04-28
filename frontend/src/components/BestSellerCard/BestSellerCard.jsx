@@ -25,15 +25,16 @@ function BestSellerCard({ product = {} }) {
     isBestSeller = true,
   } = product;
 
+  const hasDiscount = discountPrice && parseFloat(discountPrice) < parseFloat(price);
+
   const handleCardClick = () => {
     if (id) navigate(`/pdp/${id}`);
   };
 
   const handleAddToCart = (e) => {
     e.preventDefault();
-    e.stopPropagation(); // prevent card click firing
+    e.stopPropagation();
     addToCart(product);
-    // Brief "Added!" feedback
     setAdded(true);
     setTimeout(() => setAdded(false), 1500);
   };
@@ -55,7 +56,6 @@ function BestSellerCard({ product = {} }) {
             onError={(e) => { e.target.src = '/placeholder.png'; }}
           />
 
-          {/* Add to Cart overlay button */}
           <button
             className={`bestSellerCard-addToCart ${hovered ? 'visible' : ''} ${added ? 'added' : ''}`}
             onClick={handleAddToCart}
@@ -67,18 +67,17 @@ function BestSellerCard({ product = {} }) {
         <div className='bestSellerCard-bottom'>
           <p className='bestSellerCard-bottom__p1'>{name}</p>
           <p className='bestSellerCard-bottom__p2'>
-            {discountPrice && parseFloat(discountPrice) < parseFloat(price) ? (
+            {hasDiscount ? (
               <>
+                £{discountPrice}
+                {' '}
                 <span className='bestSellerCard-bottom__original'>£{price}</span>
-                {' '}£{discountPrice}
               </>
             ) : (
               `£${price}`
             )}
           </p>
-          {discountPrice && parseFloat(discountPrice) < parseFloat(price) && (
-            <p className='bestSellerCard-bottom__p3'>Sale</p>
-          )}
+          {hasDiscount && <p className='bestSellerCard-bottom__p3'>Sale</p>}
         </div>
       </div>
     </div>
