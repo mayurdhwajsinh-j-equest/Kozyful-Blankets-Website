@@ -18,7 +18,7 @@
 
 .footer__left {
     max-width: 350px;
-}
+}   
 
 .footer__logo {
     display: block;
@@ -216,15 +216,35 @@
     }
 
     .footer__right {
-        grid-template-columns: 1fr 1fr;
+        display: flex;
+        flex-wrap: wrap;        /* allows third item to drop below */
+        gap: 0;
+        width: 100%;
     }
 
-    .footer__links:not(:last-child) {
-        padding-right: 16px;
+    /* First two columns — 50% each with divider between */
+    .footer__links:nth-child(1),
+    .footer__links:nth-child(2) {
+        flex: 0 0 50%;
+        box-sizing: border-box;
     }
 
-    .footer__links:last-child {
-        padding-left: 16px;
+    .footer__links:nth-child(1) {
+        border-right: 2px solid #293644;
+        padding-right: 20px;
+        border-bottom: none;
+    }
+
+    .footer__links:nth-child(2) {
+        padding-left: 20px;
+        border-right: none;
+    }
+
+    .footer__links:nth-child(3) {
+        flex: 0 0 100%;
+        margin-top: 24px;
+        border-right: none;
+        padding: 0;
     }
 
     .footer__center {

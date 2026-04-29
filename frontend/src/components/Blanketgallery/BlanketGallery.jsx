@@ -34,7 +34,7 @@ function BlanketGallery() {
                 <p className='blanketGallery-title'>Blanket gallery</p>
 
                 <div className='blanketGallery-main'>
-                    <button className='gallery-arrow gallery-arrow--left' onClick={handlePrev} aria-label="Previous">
+                    <button className='gallery-arr gallery-arrow--left' onClick={handlePrev} aria-label="Previous">
                         <img src={leftArrow} alt="left arrow" />
                     </button>
 
@@ -51,7 +51,7 @@ function BlanketGallery() {
                         </div>
                     </div>
 
-                    <button className='gallery-arrow gallery-arrow--right' onClick={handleNext} aria-label="Next">
+                    <button className='gallery-arr gallery-arrow--right' onClick={handleNext} aria-label="Next">
                         <img src={rightArrow} alt="right arrow" />
                     </button>
                 </div>

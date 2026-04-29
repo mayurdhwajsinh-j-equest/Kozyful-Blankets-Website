@@ -31,7 +31,7 @@
 .navbar__right {
     display: flex;
     align-items: center;
-    gap: 28px;
+    gap: 22px;
     padding-left: 0;
 }
 
@@ -137,10 +137,6 @@
     padding: 4px 8px;
     border-radius: 20px;
     transition: background 0.2s;
-}
-
-.navbar__profile-btn:hover {
-    background: rgba(0,0,0,0.06);
 }
 
 .navbar__username {

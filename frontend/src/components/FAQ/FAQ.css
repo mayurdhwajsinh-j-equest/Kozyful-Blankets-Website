@@ -9,8 +9,8 @@
 
 /* ===== FAQ List Container ===== */
 .faq-list {
-  width: 660px;        
-  min-width: 660px;    
+  width: 848px;
+  min-width: 848px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -25,8 +25,8 @@
   cursor: pointer;
   user-select: none;
   transition: box-shadow 0.2s ease;
-  width: 100%;        /* ← add this */
-  box-sizing: border-box;  /* ← add this */
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .faq-item:hover {
@@ -106,20 +106,23 @@
     opacity: 0;
     transform: translateY(-4px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-@media(max-width: 700px) {
+@media (max-width: 700px) {
   .faq-page {
-    padding: 20px 12px;
+    padding: 20px 0;
+    width: 100%;
+    align-items: flex-start;
   }
 
   .faq-list {
     width: 100%;
-    min-width: auto;
+    min-width: 0;
   }
 
   .faq-item {

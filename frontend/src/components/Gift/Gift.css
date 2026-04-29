@@ -82,6 +82,10 @@
     font-size: 13px;
 }
 
+.gift__card-text t3{
+    max-width: 100px;
+}
+
 .gift__card
 {
     position: relative;

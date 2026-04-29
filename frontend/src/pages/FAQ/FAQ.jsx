@@ -96,7 +96,7 @@ function AccordionItem({ question, answer, isOpen, onToggle }) {
                 <span className="faq-item__q-text">{question}</span>
                 <span className={`faq-item__chevron ${isOpen ? 'faq-item__chevron--open' : ''}`}>
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                        <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                 </span>
             </button>
@@ -130,7 +130,7 @@ function FAQ() {
     })).filter(cat => cat.questions.length > 0)
 
     return (
-        <section className="faq-section">
+        <section className="faq-sec">
             {/* Hero */}
             <div className="faq-hero">
                 <h1 className="faq-hero__title">Frequently asked questions</h1>
@@ -145,8 +145,8 @@ function FAQ() {
                     />
                     <span className="faq-hero__search-icon">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                            <circle cx="7" cy="7" r="5" stroke="#999" strokeWidth="1.5"/>
-                            <path d="M11 11l3 3" stroke="#999" strokeWidth="1.5" strokeLinecap="round"/>
+                            <circle cx="7" cy="7" r="5" stroke="#999" strokeWidth="1.5" />
+                            <path d="M11 11l3 3" stroke="#999" strokeWidth="1.5" strokeLinecap="round" />
                         </svg>
                     </span>
                 </div>

@@ -126,7 +126,8 @@
     position: relative;
 }
 
-.ctg1, .ctg2 {
+.ctg1,
+.ctg2 {
     width: 100%;
     display: block;
     border-radius: 8px;
@@ -164,16 +165,20 @@
 }
 
 .bestSeller-content {
-    max-width: 1280px;
-    margin: 0 auto;
+    /* max-width: 1280px; */
+    /* margin: 0 auto; */
     display: flex;
     flex-direction: column;
     gap: 48px;
 }
 
+/* Title rows — both get same 1280px constraint + full width */
 .bestSeller-top,
 .blanketLover-top {
     display: flex;
+    max-width: 1280px;
+    width: 100%;          /* ← ensures it stretches to max-width, not content width */
+    margin: 0 auto;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 32px;
@@ -196,6 +201,8 @@
     display: flex;
     align-items: center;
     gap: 12px;
+    max-width: 1376px;
+    margin: 0 auto;
     position: relative;
 }
 
@@ -211,11 +218,11 @@
     scrollbar-width: none;
     -ms-overflow-style: none;
     flex: 1;
-    padding: 8px 4px; /* small vertical padding so box-shadows aren't clipped */
+    padding: 8px 4px;
 }
 
-.bestSeller-section .bestSeller-cards{
-    gap: 35px;
+.bestSeller-section .bestSeller-cards {
+    gap: 20px;
 }
 
 .bestSeller-cards::-webkit-scrollbar,
@@ -224,14 +231,14 @@
 }
 
 /* Best seller: ~5 cards visible */
-.bestSeller-cards > * {
+.bestSeller-cards>* {
     scroll-snap-align: start;
     flex: 0 0 calc(20% - 13px);
     min-width: 200px;
 }
 
 /* Blanket lover: ~4 cards visible */
-.blanketLover-cards > * {
+.blanketLover-cards>* {
     scroll-snap-align: start;
     flex: 0 0 calc(25% - 12px);
     min-width: 220px;
@@ -245,7 +252,7 @@
     width: 36px;
     height: 36px;
     display: flex;
-    align-items: center;    
+    align-items: center;
     justify-content: center;
     cursor: pointer;
     flex-shrink: 0;
@@ -289,8 +296,8 @@
 }
 
 .blanketLover-content {
-    max-width: 1280px;
-    margin: 0 auto;
+    /* max-width: 1280px;
+    margin: 0 auto; */
     display: flex;
     flex-direction: column;
 }
@@ -317,6 +324,10 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+.faq-section {
+    background-color: #D1C4E933;
 }
 
 .whyPeopleLoveUs-section {
@@ -426,110 +437,119 @@
 
 @media (max-width: 768px) {
 
-.hero__title{
-    font-size: 36px;
-    padding: 0 43px;
-    max-width: 80%;
-}
+    .hero__title {
+        font-size: 36px;
+        padding: 0 43px;
+        max-width: 80%;
+    }
 
-.hero__subtitle{
-    font-size: 14px;
-    padding: 0 43px;
-}
+    .hero__subtitle {
+        font-size: 14px;
+        padding: 0 43px;
+    }
 
-.hero__badge{
-    font-size: 16px;
-    left: 15px;
-}
+    .hero__badge {
+        font-size: 16px;
+        left: 15px;
+    }
 
-.hero__image
-{
-    max-width: 328px;
-}
+    .hero__image {
+        max-width: 328px;
+    }
 
-.frame__content {
-    padding: 0 5px;
-    flex-wrap: wrap;        
-    justify-content: center;  
-    gap: 16px;                
-  }
+    .frame__content {
+        padding: 0 5px;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 16px;
+    }
 
-  .frame__center-item {
-    flex: 0 0 calc(50% - 16px);  
-    box-sizing: border-box;
-  }
+    .frame__center-item {
+        flex: 0 0 calc(50% - 16px);
+        box-sizing: border-box;
+    }
 
-  .bestSeller-section .bestSeller-cards
-  {
-    gap : 8px;
-  }
+    .bestSeller-section .bestSeller-cards {
+        gap: 8px;
+    }
 
-.category__items{
-    flex-direction: column;
-    max-width: 351px;
-}
+    .category__items {
+        flex-direction: column;
+        max-width: 351px;
+    }
 
-.shopbycategory__title{
-    font-size: 24px;
-}
+    .shopbycategory__title {
+        font-size: 24px;
+    }
 
-.btnshopBlankets{
-    font-size: 18px;
-    min-width: 225px;
-}
+    .btnshopBlankets {
+        font-size: 18px;
+        min-width: 225px;
+    }
 
-.next-icon
-{
-    max-width: 8px;
-}
+    .next-icon {
+        max-width: 8px;
+    }
 
-.pdp-content{
-    padding: 48px 12px;
-    max-width: 375px;
-}
+    .pdp-content {
+        padding: 48px 12px;
+        max-width: 375px;
+    }
 
-.bestSeller-section{
-    padding: 48px 12px;
-}
+    .bestSeller-section {
+        padding: 48px 12px;
+    }
 
-.swiper-btn
-{
-    display: none;
-}
+    /* Reset title rows so they align flush with cards on mobile */
+    .bestSeller-top,
+    .blanketLover-top {
+        max-width: 100%;
+        margin-bottom: 16px;
+    }
 
-.bestSeller-title,.blanketLover-title
-{
-    font-size: 24px;
-}   
+    /* Reset carousel max-width so it fills mobile screen fully */
+    .bestSeller-carousel,
+    .blanketLover-carousel {
+        max-width: 100%;
+    }
 
-.blanketLover-section
-{
-    padding: 48px 12px; 
-}
+    .swiper-btn {
+        display: none;
+    }
 
-.faq-content
-{
-    max-width: 375px;
-    padding: 48px 12px;
-}
+    .bestSeller-title,
+    .blanketLover-title {
+        font-size: 24px;
+    }
 
-.faq-title{
-    font-size: 24px;
-    text-align: center;
-    font-weight: bold;
-    max-width: 305px;
-}
+    .blanketLover-section {
+        padding: 48px 12px;
+    }
 
-.blanketGallery-section{
-    padding: 0px;
-}
+    .faq-content {
+        max-width: 375px;
+        padding: 48px 12px;
+        align-items: stretch;
+    }
 
-.blanketGallery-content{
-    padding: 48px 12px;
-}
+    .faq-title {
+        font-size: 24px;
+        text-align: center;
+        font-weight: bold;
+        max-width: 305px;
+        align-self: center;
+    }
 
-.whyPeopleLoveUs-top{
-    padding: 0 12px;
-}
+    .blanketGallery-section {
+        padding: 0px;
+    }
+
+    .blanketGallery-content {
+        padding: 48px 12px;
+    }
+
+    .whyPeopleLoveUs-top {
+        padding: 0 12px;
+    }
 
 }

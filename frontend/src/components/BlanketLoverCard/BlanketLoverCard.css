@@ -28,13 +28,16 @@
     margin-bottom: 0;
 }
 
-.blanketLover-bottom__p2
-{
+.blanketLover-bottom__p2 {
     margin-top: 0;
-    margin-bottom: 0; 
+    margin-bottom: 0;
     line-height: 20px;
     font-size: 14px;
     color: #58636E;
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .blanketLoverCard-bottom__btm

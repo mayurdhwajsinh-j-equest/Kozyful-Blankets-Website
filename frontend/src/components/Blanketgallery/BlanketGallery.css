@@ -51,13 +51,14 @@
 }
 
 /* ── Arrow Buttons ── */
-.gallery-arrow {
+.gallery-arr
+ {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
     z-index: 2;
-    background: #ffffff;
-    border: 1px solid #e0d6cf;
+    background: none;
+    border: none;
     border-radius: 50%;
     width: 40px;
     height: 40px;
@@ -65,23 +66,18 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: background 0.2s, border-color 0.2s;
+    /* transition: background 0.2s, border-color 0.2s; */
 }
 
 .gallery-arrow--left {
-    left: 12px;
+    left: -50px;
 }
 
 .gallery-arrow--right {
-    right: 12px;
+    right: -50px;
 }
 
-.gallery-arrow:hover {
-    background: #f5ede8;
-    border-color: #c8b4a8;
-}
-
-.gallery-arrow img {
+.gallery-arr img {
     width: 14px;
     height: 14px;
     display: block;
@@ -90,7 +86,7 @@
 /* ── Thumbnails ── */
 .blanketGallery-additional {
     display: flex;
-    flex-direction: row;
+    /* flex-direction: row; */
     gap: 10px;
     width: 100%;
     overflow: hidden;
@@ -142,11 +138,11 @@
 
     .gallery-arrow--left
     {
-        left: -20px;
+        left: -28px;
     }
 
     .gallery-arrow--right
     {
-        right: -20px;
+        right: -28px;
     }
 }
