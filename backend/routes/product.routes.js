@@ -25,10 +25,17 @@ router.post(
   productController.createProduct
 );
 
+// In product.routes.js — add this before the PUT route
+router.patch(
+  '/:id',
+  verifyToken,
+  productController.updateProduct   // no multer, just json body
+);
+
 router.put(
   '/:id',
   verifyToken,
-  upload.single('image'),
+  upload.fields([{ name: 'image', maxCount: 1 }]),
   validate(schemas.updateProduct),
   productController.updateProduct
 );

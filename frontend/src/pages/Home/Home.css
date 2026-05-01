@@ -177,7 +177,7 @@
 .blanketLover-top {
     display: flex;
     max-width: 1280px;
-    width: 100%;          /* ← ensures it stretches to max-width, not content width */
+    width: 100%;
     margin: 0 auto;
     justify-content: space-between;
     align-items: center;

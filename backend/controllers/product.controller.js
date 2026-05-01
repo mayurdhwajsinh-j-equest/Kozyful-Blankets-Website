@@ -1,49 +1,115 @@
 const db = require('../models');
 const { Product } = db;
+const { Op } = db.Sequelize;
 
+// ─────────────────────────────────────────────────────────────
+// GET /products  — supports filters, sort, pagination, search
+// ─────────────────────────────────────────────────────────────
 const getAllProducts = async (req, res, next) => {
   try {
-    const { page = 1, limit = 10, category, minPrice, maxPrice, isBestSeller, search } = req.query;
-    const offset = (page - 1) * limit;
+    const {
+      page = 1,
+      limit = 10,
+      category,
+      minPrice,
+      maxPrice,
+      isBestSeller,
+      search,
+      // ── new filter params ──
+      material,     // comma-separated: "Polyester,Fleece"
+      pattern,      // comma-separated
+      size,         // comma-separated  (matches inside sizes JSON — handled in JS after fetch for now)
+      fill,         // comma-separated
+      // ── sort ──
+      sort,         // isBestSeller | priceAsc | priceDesc | nameAsc | nameDesc
+    } = req.query;
 
+    const offset = (page - 1) * limit;
     const where = { isActive: true };
+
+    // ── existing filters ──
     if (category) where.category = category;
+
     if (minPrice || maxPrice) {
       where.price = {};
-      if (minPrice) where.price[db.Sequelize.Op.gte] = parseFloat(minPrice);
-      if (maxPrice) where.price[db.Sequelize.Op.lte] = parseFloat(maxPrice);
+      if (minPrice) where.price[Op.gte] = parseFloat(minPrice);
+      if (maxPrice) where.price[Op.lte] = parseFloat(maxPrice);
     }
+
     if (isBestSeller === 'true') where.isBestSeller = true;
+
     if (search) {
-      where[db.Sequelize.Op.or] = [
-        { name: { [db.Sequelize.Op.like]: `%${search}%` } },
-        { description: { [db.Sequelize.Op.like]: `%${search}%` } }
+      where[Op.or] = [
+        { name: { [Op.like]: `%${search}%` } },
+        { description: { [Op.like]: `%${search}%` } },
       ];
     }
+
+    // ── new attribute filters (multi-value: "Polyester,Fleece") ──
+    if (material) {
+      const vals = material.split(',').map(v => v.trim()).filter(Boolean);
+      if (vals.length === 1) where.material = vals[0];
+      else where.material = { [Op.in]: vals };
+    }
+
+    if (pattern) {
+      const vals = pattern.split(',').map(v => v.trim()).filter(Boolean);
+      if (vals.length === 1) where.pattern = vals[0];
+      else where.pattern = { [Op.in]: vals };
+    }
+
+    if (fill) {
+      const vals = fill.split(',').map(v => v.trim()).filter(Boolean);
+      if (vals.length === 1) where.fill = vals[0];
+      else where.fill = { [Op.in]: vals };
+    }
+
+    // ── sort ──
+    let order = [['createdAt', 'DESC']]; // default
+
+    if (sort === 'isBestSeller') order = [['isBestSeller', 'DESC'], ['createdAt', 'DESC']];
+    if (sort === 'priceAsc') order = [['price', 'ASC']];
+    if (sort === 'priceDesc') order = [['price', 'DESC']];
+    if (sort === 'nameAsc') order = [['name', 'ASC']];
+    if (sort === 'nameDesc') order = [['name', 'DESC']];
 
     const { count, rows } = await Product.findAndCountAll({
       where,
       limit: parseInt(limit),
       offset: parseInt(offset),
-      order: [['createdAt', 'DESC']]
+      order,
     });
+
+    // ── size filter — done in JS because sizes is a JSON column ──
+    // (move to a separate SizeVariant table later for DB-level filtering)
+    let filteredRows = rows;
+    if (size) {
+      const sizeVals = size.split(',').map(v => v.trim().toLowerCase()).filter(Boolean);
+      filteredRows = rows.filter(product => {
+        const sizes = product.sizes || [];
+        return sizes.some(s => sizeVals.includes(s.label?.toLowerCase()));
+      });
+    }
 
     res.status(200).json({
       success: true,
       message: 'Products fetched successfully',
-      data: rows,
+      data: filteredRows,
       pagination: {
         total: count,
         page: parseInt(page),
         limit: parseInt(limit),
-        pages: Math.ceil(count / limit)
-      }
+        pages: Math.ceil(count / limit),
+      },
     });
   } catch (error) {
     next(error);
   }
 };
 
+// ─────────────────────────────────────────────────────────────
+// GET /products/:id
+// ─────────────────────────────────────────────────────────────
 const getProductById = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -51,25 +117,39 @@ const getProductById = async (req, res, next) => {
       include: [{
         model: db.Review,
         include: [{ model: db.User, attributes: ['id', 'name'] }],
-        attributes: { exclude: ['updatedAt'] }
-      }]
+        attributes: { exclude: ['updatedAt'] },
+      }],
     });
 
-    if (!product) return res.status(404).json({ success: false, message: 'Product not found' });
+    if (!product) {
+      return res.status(404).json({ success: false, message: 'Product not found' });
+    }
+
     res.status(200).json({ success: true, message: 'Product fetched successfully', data: product });
   } catch (error) {
     next(error);
   }
 };
 
-// ── FIXED: reads image from req.file (multer), not req.body ──
+// ─────────────────────────────────────────────────────────────
+// POST /products  (admin)
+// ─────────────────────────────────────────────────────────────
 const createProduct = async (req, res, next) => {
   try {
-    const { name, description, price, discountPrice, stock, category, isBestSeller } = req.body;
+    const {
+      name, description, price, discountPrice,
+      stock, category, isBestSeller,
+      // new fields
+      material, pattern, fill,
+      types, sizes,
+      dispatchInfo, isCustomizable, klarnaEligible,
+      images,
+    } = req.body;
 
+    // Main thumbnail — from multer or body
     const image = req.file
       ? `/uploads/products/${req.file.filename}`
-      : null;
+      : req.body.image || null;
 
     const product = await Product.create({
       name,
@@ -79,8 +159,17 @@ const createProduct = async (req, res, next) => {
       stock: stock || 0,
       category,
       image,
-      isBestSeller: isBestSeller || false,
-      isActive: true
+      images: parseJSON(images, []),
+      isBestSeller: isBestSeller === 'true' || isBestSeller === true || false,
+      isActive: true,
+      material: material || null,
+      pattern: pattern || null,
+      fill: fill || null,
+      types: parseJSON(types, []),
+      sizes: parseJSON(sizes, []),
+      dispatchInfo: dispatchInfo || null,
+      isCustomizable: isCustomizable === 'true' || isCustomizable === true || false,
+      klarnaEligible: klarnaEligible === 'true' || klarnaEligible === true || false,
     });
 
     res.status(201).json({ success: true, message: 'Product created successfully', data: product });
@@ -89,18 +178,40 @@ const createProduct = async (req, res, next) => {
   }
 };
 
-// ── FIXED: only updates image if new file uploaded ──
+// ─────────────────────────────────────────────────────────────
+// PUT /products/:id  (admin)
+// ─────────────────────────────────────────────────────────────
 const updateProduct = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const updateData = { ...req.body };
-
-    if (req.file) {
-      updateData.image = `/uploads/products/${req.file.filename}`;
-    }
+    console.log("req.body:", req.body);
+    console.log("req.files:", req.files);
 
     const product = await Product.findByPk(id);
-    if (!product) return res.status(404).json({ success: false, message: 'Product not found' });
+    if (!product) {
+      return res.status(404).json({ success: false, message: 'Product not found' });
+    }
+
+    const updateData = { ...req.body };
+
+    // Handle image from req.files (upload.fields) instead of req.file
+    if (req.files && req.files['image'] && req.files['image'][0]) {
+      updateData.image = `/uploads/products/${req.files['image'][0].filename}`;
+    }
+
+    // Parse JSON fields
+    ['images', 'types', 'sizes'].forEach(field => {
+      if (typeof updateData[field] === 'string' && updateData[field].trim()) {
+        updateData[field] = parseJSON(updateData[field], undefined);
+      }
+    });
+
+    // Boolean coercion
+    ['isBestSeller', 'isActive', 'isCustomizable', 'klarnaEligible'].forEach(field => {
+      if (updateData[field] !== undefined) {
+        updateData[field] = updateData[field] === 'true' || updateData[field] === true;
+      }
+    });
 
     await product.update(updateData);
     res.status(200).json({ success: true, message: 'Product updated successfully', data: product });
@@ -109,12 +220,16 @@ const updateProduct = async (req, res, next) => {
   }
 };
 
+// ─────────────────────────────────────────────────────────────
+// DELETE /products/:id  (admin)
+// ─────────────────────────────────────────────────────────────
 const deleteProduct = async (req, res, next) => {
   try {
     const { id } = req.params;
     const product = await Product.findByPk(id);
-    if (!product) return res.status(404).json({ success: false, message: 'Product not found' });
-
+    if (!product) {
+      return res.status(404).json({ success: false, message: 'Product not found' });
+    }
     await product.destroy();
     res.status(200).json({ success: true, message: 'Product deleted successfully' });
   } catch (error) {
@@ -122,13 +237,16 @@ const deleteProduct = async (req, res, next) => {
   }
 };
 
+// ─────────────────────────────────────────────────────────────
+// GET /products/bestsellers
+// ─────────────────────────────────────────────────────────────
 const getBestSellers = async (req, res, next) => {
   try {
     const { limit = 10 } = req.query;
     const products = await Product.findAll({
       where: { isActive: true, isBestSeller: true },
       limit: parseInt(limit),
-      order: [['createdAt', 'DESC']]
+      order: [['createdAt', 'DESC']],
     });
     res.status(200).json({ success: true, message: 'Best sellers fetched successfully', data: products });
   } catch (error) {
@@ -136,4 +254,20 @@ const getBestSellers = async (req, res, next) => {
   }
 };
 
-module.exports = { getAllProducts, getProductById, createProduct, updateProduct, deleteProduct, getBestSellers };
+// ─────────────────────────────────────────────────────────────
+// Helper
+// ─────────────────────────────────────────────────────────────
+function parseJSON(value, fallback) {
+  if (!value) return fallback;
+  if (typeof value !== 'string') return value;
+  try { return JSON.parse(value); } catch { return fallback; }
+}
+
+module.exports = {
+  getAllProducts,
+  getProductById,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  getBestSellers,
+};

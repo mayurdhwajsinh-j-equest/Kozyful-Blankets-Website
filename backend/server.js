@@ -50,7 +50,7 @@ db.sequelize.authenticate()
   .then(() => console.log('✓ Database connected successfully'))
   .catch((error) => { console.error('✗ Database connection failed:', error.message); process.exit(1); });
 
-db.sequelize.sync({ alter: false })
+db.sequelize.sync({ alter: true })
   .then(() => console.log('✓ Database synced'))
   .catch((error) => console.error('✗ Database sync failed:', error.message));
 

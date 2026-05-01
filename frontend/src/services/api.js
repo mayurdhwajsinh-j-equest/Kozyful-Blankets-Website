@@ -25,10 +25,10 @@ const getToken = () => {
       localStorage.getItem("user") || localStorage.getItem("admin");
 
     if (stored) {
-      const parsed = JSON.parse(stored); 
+      const parsed = JSON.parse(stored);
       return parsed.token || parsed.accessToken || null;
     }
-  } catch {}
+  } catch { }
 
   return null;
 };
@@ -77,9 +77,10 @@ export const productAPI = {
   getAll: (params) => api.get("/products", { params }),
   getById: (id) => api.get(`/products/${id}`),
   search: (query) => api.get("/products", { params: { search: query } }),
-  create: (data) => api.post("/admin/products", data),
-  update: (id, data) => api.put(`/admin/products/${id}`, data),
-  delete: (id) => api.delete(`/admin/products/${id}`),
+  create: (data) => api.post("/products", data),
+  update: (id, data) => api.put(`/products/${id}`, data),
+  delete: (id) => api.delete(`/products/${id}`),
+  patch: (id, data) => api.patch(`/products/${id}`, data),
 };
 
 export const userAPI = {

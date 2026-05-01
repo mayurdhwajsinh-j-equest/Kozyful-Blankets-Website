@@ -11,9 +11,34 @@ const getImageUrl = (imagePath) => {
 };
 
 const StockBadge = ({ stock }) => {
-  if (stock === 0)  return <span className="admin-stock-badge out">Out of Stock</span>;
-  if (stock <= 10)  return <span className="admin-stock-badge low">{stock} Low</span>;
+  if (stock === 0) return <span className="admin-stock-badge out">Out of Stock</span>;
+  if (stock <= 10) return <span className="admin-stock-badge low">{stock} Low</span>;
   return <span className="admin-stock-badge in">{stock}</span>;
+};
+
+// ── helpers for JSON textarea fields ──
+const toJson = (val) => {
+  try { return JSON.stringify(JSON.parse(val), null, 2); }
+  catch { return val; }
+};
+
+const EMPTY_FORM = {
+  name: "",
+  description: "",
+  price: "",
+  discountPrice: "",
+  stock: "",
+  category: "",
+  isBestSeller: false,
+  // new fields
+  material: "",
+  pattern: "",
+  fill: "",
+  types: "",   // JSON string
+  sizes: "",   // JSON string
+  dispatchInfo: "",
+  isCustomizable: false,
+  klarnaEligible: false,
 };
 
 const AdminProducts = () => {
@@ -23,17 +48,10 @@ const AdminProducts = () => {
   const [editingId, setEditingId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
+  const [activeTab, setActiveTab] = useState("basic"); // basic | variants | extra
   const fileInputRef = useRef(null);
 
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    price: "",
-    discountPrice: "",
-    stock: "",
-    category: "",
-    isBestSeller: false,
-  });
+  const [formData, setFormData] = useState(EMPTY_FORM);
   const [imageFile, setImageFile] = useState(null);
 
   useEffect(() => { fetchProducts(); }, []);
@@ -68,33 +86,61 @@ const AdminProducts = () => {
     reader.readAsDataURL(file);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const payload = new FormData();
-    payload.append("name", formData.name);
-    payload.append("description", formData.description);
-    payload.append("price", formData.price);
-    payload.append("discountPrice", formData.discountPrice);
-    payload.append("stock", formData.stock || 0);
-    payload.append("category", formData.category);
-    payload.append("isBestSeller", formData.isBestSeller);
-    if (imageFile) payload.append("image", imageFile);
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    try {
-      if (editingId) {
-        await api.put(`/products/${editingId}`, payload);
-        alert("Product updated successfully!");
-      } else {
-        await api.post("/products", payload);
-        alert("Product created successfully!");
-      }
-      resetForm();
-      fetchProducts();
-    } catch (error) {
-      console.error("Error saving product:", error);
-      alert("Error saving product: " + (error.response?.data?.message || error.message));
+  // ── DEBUG: log everything before sending ──
+  console.log("formData:", formData);
+  console.log("editingId:", editingId);
+
+  for (const field of ['types', 'sizes']) {
+    if (formData[field]) {
+      try { JSON.parse(formData[field]); }
+      catch { alert(`Invalid JSON in "${field}"`); return; }
     }
-  };
+  }
+
+  const payload = new FormData();
+  payload.append("name",          formData.name);
+  payload.append("description",   formData.description);
+  payload.append("price",         formData.price);
+  payload.append("discountPrice", formData.discountPrice);
+  payload.append("stock",         formData.stock || 0);
+  payload.append("category",      formData.category);
+  payload.append("isBestSeller",  formData.isBestSeller);
+  payload.append("material",      formData.material      || "");
+  payload.append("pattern",       formData.pattern       || "");
+  payload.append("fill",          formData.fill          || "");
+  payload.append("dispatchInfo",  formData.dispatchInfo  || "");
+  payload.append("isCustomizable",formData.isCustomizable);
+  payload.append("klarnaEligible",formData.klarnaEligible);
+  payload.append("types",         formData.types         || "[]");
+  payload.append("sizes",         formData.sizes         || "[]");
+  if (imageFile) payload.append("image", imageFile);
+
+  // ── DEBUG: log FormData contents ──
+  for (let [key, value] of payload.entries()) {
+    console.log(`payload → ${key}:`, value);
+  }
+
+  try {
+    let response;
+    if (editingId) {
+      response = await productAPI.update(editingId, payload);
+    } else {
+      response = await productAPI.create(payload);
+    }
+    // ── DEBUG: log response ──
+    console.log("API response:", response.data);
+    resetForm();
+    fetchProducts();
+  } catch (error) {
+    console.error("Full error:", error);
+    console.error("Response data:", error.response?.data);
+    console.error("Status:", error.response?.status);
+    alert("Error: " + (error.response?.data?.message || error.message));
+  }
+};
 
   const handleEdit = (product) => {
     setFormData({
@@ -105,17 +151,26 @@ const AdminProducts = () => {
       stock: product.stock ?? "",
       category: product.category,
       isBestSeller: product.isBestSeller || false,
+      material: product.material || "",
+      pattern: product.pattern || "",
+      fill: product.fill || "",
+      types: product.types ? JSON.stringify(product.types, null, 2) : "",
+      sizes: product.sizes ? JSON.stringify(product.sizes, null, 2) : "",
+      dispatchInfo: product.dispatchInfo || "",
+      isCustomizable: product.isCustomizable || false,
+      klarnaEligible: product.klarnaEligible || false,
     });
     setImageFile(null);
     setImagePreview(product.image ? getImageUrl(product.image) : null);
     setEditingId(product.id);
+    setActiveTab("basic");
     setShowForm(true);
   };
 
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
       try {
-        await api.delete(`/products/${id}`);
+        await productAPI.delete(id);
         alert("Product deleted successfully!");
         fetchProducts();
       } catch (error) {
@@ -125,12 +180,11 @@ const AdminProducts = () => {
     }
   };
 
-  // Quick stock update inline without opening the full form
   const handleStockUpdate = async (product, newStock) => {
     const val = parseInt(newStock);
     if (isNaN(val) || val < 0) return;
     try {
-      await api.put(`/products/${product.id}`, { stock: val });
+      await productAPI.patch(product.id, { stock: val });
       setProducts(prev =>
         prev.map(p => p.id === product.id ? { ...p, stock: val } : p)
       );
@@ -138,24 +192,23 @@ const AdminProducts = () => {
       alert("Failed to update stock: " + (error.response?.data?.message || error.message));
     }
   };
-
   const resetForm = () => {
-    setFormData({ name: "", description: "", price: "", discountPrice: "", stock: "", category: "", isBestSeller: false });
+    setFormData(EMPTY_FORM);
     setImageFile(null);
     setImagePreview(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
     setShowForm(false);
     setEditingId(null);
+    setActiveTab("basic");
   };
 
   const filteredProducts = products.filter((product) =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Stats
   const outOfStock = products.filter(p => p.stock === 0).length;
-  const lowStock   = products.filter(p => p.stock > 0 && p.stock <= 10).length;
-  const inStock    = products.filter(p => p.stock > 10).length;
+  const lowStock = products.filter(p => p.stock > 0 && p.stock <= 10).length;
+  const inStock = products.filter(p => p.stock > 10).length;
 
   return (
     <AdminLayout>
@@ -190,68 +243,179 @@ const AdminProducts = () => {
           </div>
         </div>
 
+        {/* ════════════════════════════════
+            Product Form
+        ════════════════════════════════ */}
         {showForm && (
           <div className="admin-product-form-container">
             <form onSubmit={handleSubmit} className="admin-product-form">
               <h3>{editingId ? "Edit Product" : "Add New Product"}</h3>
 
-              <div className="admin-form-group">
-                <label>Product Name *</label>
-                <input type="text" name="name" value={formData.name} onChange={handleFormChange} placeholder="Enter product name" required />
+              {/* ── Tab switcher ── */}
+              <div className="admin-form-tabs">
+                {["basic", "variants", "extra"].map(tab => (
+                  <button
+                    key={tab}
+                    type="button"
+                    className={`admin-form-tab ${activeTab === tab ? "active" : ""}`}
+                    onClick={() => setActiveTab(tab)}
+                  >
+                    {tab === "basic" ? "📦 Basic Info" : null}
+                    {tab === "variants" ? "🎛️ Variants" : null}
+                    {tab === "extra" ? "⚙️ Extra" : null}
+                  </button>
+                ))}
               </div>
 
-              <div className="admin-form-group">
-                <label>Description *</label>
-                <textarea name="description" value={formData.description} onChange={handleFormChange} placeholder="Enter product description" rows="4" required />
-              </div>
-
-              {/* Price / Discount / Stock / Category */}
-              <div className="admin-form-row admin-form-row--4">
-                <div className="admin-form-group">
-                  <label>Price *</label>
-                  <input type="number" step="0.01" name="price" value={formData.price} onChange={handleFormChange} placeholder="0.00" required />
-                </div>
-                <div className="admin-form-group">
-                  <label>Discount Price</label>
-                  <input type="number" step="0.01" name="discountPrice" value={formData.discountPrice} onChange={handleFormChange} placeholder="0.00 (optional)" />
-                </div>
-                <div className="admin-form-group">
-                  <label>Stock *</label>
-                  <input type="number" min="0" name="stock" value={formData.stock} onChange={handleFormChange} placeholder="0" required />
-                </div>
-                <div className="admin-form-group">
-                  <label>Category *</label>
-                  <select name="category" value={formData.category} onChange={handleFormChange} required>
-                    <option value="">Select Category</option>
-                    <option value="bedroom">Bedroom</option>
-                    <option value="living-room">Living Room</option>
-                    <option value="travel">Travel</option>
-                    <option value="kids">Kids</option>
-                    <option value="other">Other</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="admin-form-group">
-                <label>Product Image {!editingId && "*"}</label>
-                <div className="admin-image-upload-area">
-                  <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageChange} className="admin-image-file-input" id="imageUpload" required={!editingId} />
-                  <label htmlFor="imageUpload" className="admin-image-upload-label">
-                    {imagePreview ? "🔄 Change Image" : "📂 Choose Image"}
-                  </label>
-                  {imageFile && <span className="admin-image-file-name">{imageFile.name}</span>}
-                </div>
-                {imagePreview && (
-                  <div className="admin-image-preview">
-                    <img src={imagePreview} alt="Preview" />
+              {/* ══ TAB: Basic Info ══ */}
+              {activeTab === "basic" && (
+                <>
+                  <div className="admin-form-group">
+                    <label>Product Name *</label>
+                    <input type="text" name="name" value={formData.name} onChange={handleFormChange} placeholder="Enter product name" required />
                   </div>
-                )}
-              </div>
 
-              <div className="admin-form-group checkbox">
-                <input type="checkbox" name="isBestSeller" checked={formData.isBestSeller} onChange={handleFormChange} id="isBestSeller" />
-                <label htmlFor="isBestSeller">Mark as Best Seller</label>
-              </div>
+                  <div className="admin-form-group">
+                    <label>Description *</label>
+                    <textarea name="description" value={formData.description} onChange={handleFormChange} placeholder="Enter product description" rows="4" required />
+                  </div>
+
+                  <div className="admin-form-row admin-form-row--4">
+                    <div className="admin-form-group">
+                      <label>Price *</label>
+                      <input type="number" step="0.01" name="price" value={formData.price} onChange={handleFormChange} placeholder="0.00" required />
+                    </div>
+                    <div className="admin-form-group">
+                      <label>Discount Price</label>
+                      <input type="number" step="0.01" name="discountPrice" value={formData.discountPrice} onChange={handleFormChange} placeholder="0.00 (optional)" />
+                    </div>
+                    <div className="admin-form-group">
+                      <label>Stock *</label>
+                      <input type="number" min="0" name="stock" value={formData.stock} onChange={handleFormChange} placeholder="0" required />
+                    </div>
+                    <div className="admin-form-group">
+                      <label>Category *</label>
+                      <select name="category" value={formData.category} onChange={handleFormChange} required>
+                        <option value="">Select Category</option>
+                        <option value="bedroom">Bedroom</option>
+                        <option value="living-room">Living Room</option>
+                        <option value="travel">Travel</option>
+                        <option value="kids">Kids</option>
+                        <option value="other">Other</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Filter attributes */}
+                  <div className="admin-form-row admin-form-row--3">
+                    <div className="admin-form-group">
+                      <label>Material</label>
+                      <select name="material" value={formData.material} onChange={handleFormChange}>
+                        <option value="">None</option>
+                        {["Cotton", "Wool", "Fleece", "Down", "Polyester", "Silk", "Cashmere"].map(m => (
+                          <option key={m} value={m}>{m}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="admin-form-group">
+                      <label>Pattern</label>
+                      <select name="pattern" value={formData.pattern} onChange={handleFormChange}>
+                        <option value="">None</option>
+                        {["Solid", "Striped", "Plaid", "Geometric", "Floral"].map(p => (
+                          <option key={p} value={p}>{p}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="admin-form-group">
+                      <label>Fill</label>
+                      <select name="fill" value={formData.fill} onChange={handleFormChange}>
+                        <option value="">None</option>
+                        {["Goose Down", "Duck Down", "Synthetic", "Wool", "Cotton", "SpiderMan", "Plain"].map(f => (
+                          <option key={f} value={f}>{f}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="admin-form-group">
+                    <label>Product Image {!editingId && "*"}</label>
+                    <div className="admin-image-upload-area">
+                      <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageChange} className="admin-image-file-input" id="imageUpload" required={!editingId} />
+                      <label htmlFor="imageUpload" className="admin-image-upload-label">
+                        {imagePreview ? "🔄 Change Image" : "📂 Choose Image"}
+                      </label>
+                      {imageFile && <span className="admin-image-file-name">{imageFile.name}</span>}
+                    </div>
+                    {imagePreview && (
+                      <div className="admin-image-preview">
+                        <img src={imagePreview} alt="Preview" />
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="admin-form-group checkbox">
+                    <input type="checkbox" name="isBestSeller" checked={formData.isBestSeller} onChange={handleFormChange} id="isBestSeller" />
+                    <label htmlFor="isBestSeller">Mark as Best Seller</label>
+                  </div>
+                </>
+              )}
+
+              {/* ══ TAB: Variants ══ */}
+              {activeTab === "variants" && (
+                <>
+                  <div className="admin-form-group">
+                    <label>Types (JSON array)</label>
+                    <p className="admin-form-hint">e.g. <code>{`[{"label":"Fleece","value":"fleece"},{"label":"Sherpa fleece","value":"sherpa"}]`}</code></p>
+                    <textarea
+                      name="types"
+                      value={formData.types}
+                      onChange={handleFormChange}
+                      placeholder='[{"label":"Fleece","value":"fleece"}]'
+                      rows="5"
+                      className="admin-json-textarea"
+                    />
+                  </div>
+
+                  <div className="admin-form-group">
+                    <label>Sizes (JSON array)</label>
+                    <p className="admin-form-hint">e.g. <code>{`[{"label":"Small","dimensions":"48cm*78cm","price":"12.99","discountPrice":"9.99"}]`}</code></p>
+                    <textarea
+                      name="sizes"
+                      value={formData.sizes}
+                      onChange={handleFormChange}
+                      placeholder='[{"label":"Small","dimensions":"48cm*78cm","price":"12.99","discountPrice":null}]'
+                      rows="8"
+                      className="admin-json-textarea"
+                    />
+                  </div>
+                </>
+              )}
+
+              {/* ══ TAB: Extra ══ */}
+              {activeTab === "extra" && (
+                <>
+                  <div className="admin-form-group">
+                    <label>Dispatch Info</label>
+                    <textarea
+                      name="dispatchInfo"
+                      value={formData.dispatchInfo}
+                      onChange={handleFormChange}
+                      placeholder="e.g. Dispatched within 2–3 business days"
+                      rows="3"
+                    />
+                  </div>
+
+                  <div className="admin-form-group checkbox">
+                    <input type="checkbox" name="isCustomizable" checked={formData.isCustomizable} onChange={handleFormChange} id="isCustomizable" />
+                    <label htmlFor="isCustomizable">Product is Customizable (shows "Customize blanket" button)</label>
+                  </div>
+
+                  <div className="admin-form-group checkbox">
+                    <input type="checkbox" name="klarnaEligible" checked={formData.klarnaEligible} onChange={handleFormChange} id="klarnaEligible" />
+                    <label htmlFor="klarnaEligible">Klarna Eligible (shows "Klarna available at checkout")</label>
+                  </div>
+                </>
+              )}
 
               <div className="admin-form-buttons">
                 <button type="submit" className="admin-btn-submit">{editingId ? "Update Product" : "Create Product"}</button>
@@ -261,6 +425,7 @@ const AdminProducts = () => {
           </div>
         )}
 
+        {/* ── Search ── */}
         <div className="admin-products-search">
           <input
             type="text"
@@ -271,6 +436,7 @@ const AdminProducts = () => {
           />
         </div>
 
+        {/* ── Table ── */}
         {loading ? (
           <div className="admin-products-loading">Loading products...</div>
         ) : filteredProducts.length === 0 ? (
@@ -283,6 +449,7 @@ const AdminProducts = () => {
                   <th>ID</th>
                   <th>Name</th>
                   <th>Category</th>
+                  <th>Material</th>
                   <th>Price</th>
                   <th>Discount</th>
                   <th>Stock</th>
@@ -303,6 +470,12 @@ const AdminProducts = () => {
                       </div>
                     </td>
                     <td>{product.category}</td>
+                    <td>
+                      {product.material
+                        ? <span className="admin-badge admin-badge-secondary">{product.material}</span>
+                        : <span className="admin-badge admin-badge-secondary">—</span>
+                      }
+                    </td>
                     <td className="admin-price">£{product.price}</td>
                     <td className="admin-price">
                       {product.discountPrice
@@ -310,7 +483,6 @@ const AdminProducts = () => {
                         : <span className="admin-badge admin-badge-secondary">None</span>
                       }
                     </td>
-                    {/* Inline stock editor */}
                     <td>
                       <div className="admin-stock-cell">
                         <StockBadge stock={product.stock} />

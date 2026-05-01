@@ -14,6 +14,8 @@ import fImg3 from "../../assets/feature-icon3.svg"
 import fImg4 from "../../assets/feature-icon4.svg"
 import prevIcon from "../../assets/prev-icon.svg"
 import nextIcon1 from "../../assets/next-icon.svg"
+import klarnaIcon from "../../assets/klarna-icon.svg"   // add this asset or swap with text
+import dispatchIcon from "../../assets/dispatch-icon.svg" // add this asset or swap with emoji
 import './Pdp.css'
 import ProductHero from '../../components/ProductHero/ProductHero'
 import { productAPI, BACKEND_URL } from '../../services/api'
@@ -27,8 +29,25 @@ const getImageUrl = (imagePath) => {
   return `${BACKEND_URL}${imagePath}`;
 };
 
-// ── Swipers ───────────────────────────────────────────────────────────────────
+// ── Star Rating ───────────────────────────────────────────────
+function StarRating({ rating = 0, count }) {
+  const stars = Array.from({ length: 5 }, (_, i) => {
+    if (i < Math.floor(rating)) return 'full';
+    if (i < rating) return 'half';
+    return 'empty';
+  });
+  return (
+    <div className="pdp-stars">
+      {stars.map((type, i) => (
+        <span key={i} className={`pdp-star pdp-star--${type}`}>★</span>
+      ))}
+      <span className="pdp-rating-value">{rating > 0 ? rating.toFixed(1) : ''}</span>
+      {count !== undefined && <span className="pdp-rating-count">({count} reviews)</span>}
+    </div>
+  );
+}
 
+// ── Swipers ───────────────────────────────────────────────────
 function BestSellerSwiper({ title, products = [] }) {
   const trackRef = useRef(null)
   const scrollPrev = () => trackRef.current?.scrollBy({ left: -SCROLL_AMOUNT, behavior: 'smooth' })
@@ -84,14 +103,30 @@ function BlanketLoverSwiper() {
   )
 }
 
-// ── PDP Hero ──────────────────────────────────────────────────────────────────
-
+// ── PDP Hero ──────────────────────────────────────────────────
 function PdpHero({ product, loading }) {
   const { addToCart } = useCart();
-  const [added, setAdded] = useState(false);
-  const [quantity, setQuantity] = useState(1);
+  const [added,         setAdded]         = useState(false);
+  const [quantity,      setQuantity]      = useState(1);
+  const [selectedType,  setSelectedType]  = useState(null);
+  const [selectedSize,  setSelectedSize]  = useState(null);
+  const [currentImage,  setCurrentImage]  = useState(0);
 
-  useEffect(() => { setQuantity(1); }, [product?.id]);
+  // Parse JSON fields safely
+  const types = Array.isArray(product?.types) ? product.types : [];
+  const sizes = Array.isArray(product?.sizes) ? product.sizes : [];
+
+  // Build gallery: use images array if available, else fall back to single image
+  const gallery = Array.isArray(product?.images) && product.images.length > 0
+    ? product.images
+    : product?.image ? [product.image] : [];
+
+  useEffect(() => {
+    setQuantity(1);
+    setCurrentImage(0);
+    if (types.length > 0) setSelectedType(types[0]);
+    if (sizes.length > 0) setSelectedSize(sizes[0]);
+  }, [product?.id]);
 
   const handleAddToCart = () => {
     for (let i = 0; i < quantity; i++) addToCart(product);
@@ -99,92 +134,251 @@ function PdpHero({ product, loading }) {
     setTimeout(() => setAdded(false), 1500);
   };
 
-  if (loading || !product) return <div className="pdp-hero-loading">Loading product...</div>;
+  if (loading || !product) {
+    return (
+      <div className="pdp-hero-loading">
+        <div className="pdp-hero-loading__spinner" />
+        <p>Loading product...</p>
+      </div>
+    );
+  }
 
-  const hasDiscount = product.discountPrice &&
-    parseFloat(product.discountPrice) < parseFloat(product.price);
+  // Price logic — use selected size price if available, else product price
+  const basePrice     = selectedSize?.price
+    ? parseFloat(selectedSize.price)
+    : parseFloat(product.price);
+
+  const discountPrice = selectedSize?.discountPrice
+    ? parseFloat(selectedSize.discountPrice)
+    : product.discountPrice ? parseFloat(product.discountPrice) : null;
+
+  const hasDiscount   = discountPrice && discountPrice < basePrice;
+  const activePrice   = hasDiscount ? discountPrice : basePrice;
+  const finalPrice    = (activePrice * quantity).toFixed(2);
+  const originalTotal = (basePrice  * quantity).toFixed(2);
+  const savedAmount   = hasDiscount ? ((basePrice - discountPrice) * quantity).toFixed(2) : 0;
+  const discountPct   = hasDiscount
+    ? Math.round(((basePrice - discountPrice) / basePrice) * 100)
+    : 0;
+
+  const reviewCount = product.Reviews?.length ?? 0;
 
   return (
     <div className="pdp-hero">
-      <div className="pdp-hero__image">
-        <img
-          src={getImageUrl(product.image)}
-          alt={product.name}
-          onError={(e) => { e.target.src = '/placeholder.png'; }}
-        />
+
+      {/* ── Left: Image gallery ── */}
+      <div className="pdp-hero__gallery">
+
+        {/* Main image with prev/next arrows */}
+        <div className="pdp-hero__main-image-wrap">
+          <button
+            className="pdp-gallery-arrow pdp-gallery-arrow--left"
+            onClick={() => setCurrentImage(i => (i - 1 + gallery.length) % gallery.length)}
+            disabled={gallery.length <= 1}
+          >‹</button>
+
+          <img
+            key={currentImage}
+            src={gallery.length > 0 ? getImageUrl(gallery[currentImage]) : '/placeholder.png'}
+            alt={product.name}
+            className="pdp-hero__main-image"
+            onError={(e) => { e.target.src = '/placeholder.png'; }}
+          />
+
+          <button
+            className="pdp-gallery-arrow pdp-gallery-arrow--right"
+            onClick={() => setCurrentImage(i => (i + 1) % gallery.length)}
+            disabled={gallery.length <= 1}
+          >›</button>
+        </div>
+
+        {/* Thumbnails */}
+        {gallery.length > 1 && (
+          <div className="pdp-hero__thumbnails">
+            {gallery.map((img, idx) => (
+              <div
+                key={idx}
+                className={`pdp-hero__thumb ${idx === currentImage ? 'active' : ''}`}
+                onClick={() => setCurrentImage(idx)}
+              >
+                <img
+                  src={getImageUrl(img)}
+                  alt={`${product.name} ${idx + 1}`}
+                  onError={(e) => { e.target.src = '/placeholder.png'; }}
+                />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
+      {/* ── Right: Product info ── */}
       <div className="pdp-hero__info">
-        {product.isBestSeller && <span className="pdp-hero__badge">Best Seller</span>}
 
+        {/* Name */}
         <h1 className="pdp-hero__name">{product.name}</h1>
 
-        <div className="pdp-hero__price">
-          {hasDiscount ? (
-            <>
-              <span className="pdp-hero__price-original">£{parseFloat(product.price).toFixed(2)}</span>
-              <span className="pdp-hero__price-discount">£{parseFloat(product.discountPrice).toFixed(2)}</span>
-              <span className="pdp-hero__sale-tag">Sale</span>
-            </>
-          ) : (
-            <span className="pdp-hero__price-current">£{parseFloat(product.price).toFixed(2)}</span>
-          )}
-        </div>
+        {/* Stars */}
+        <StarRating rating={product.rating || 0} count={reviewCount} />
 
-        <p className="pdp-hero__description">{product.description}</p>
+        {/* Short description */}
+        {product.description && (
+          <p className="pdp-hero__short-desc">
+            {product.description.length > 100
+              ? product.description.slice(0, 100) + '...'
+              : product.description}
+          </p>
+        )}
 
-        <div className="pdp-hero__meta">
-          <span className="pdp-hero__category">
-            Category: <strong>{product.category}</strong>
-          </span>
-          {product.stock > 0
-            ? <span className="pdp-hero__stock in-stock">In Stock ({product.stock})</span>
-            : <span className="pdp-hero__stock out-of-stock">Out of Stock</span>
-          }
-        </div>
+        {/* ── Type selector ── */}
+        {types.length > 0 && (
+          <div className="pdp-selector">
+            <span className="pdp-selector__label">Type</span>
+            <div className="pdp-selector__options">
+              {types.map((type) => (
+                <button
+                  key={type.value}
+                  type="button"
+                  className={`pdp-type-btn ${selectedType?.value === type.value ? 'active' : ''}`}
+                  onClick={() => setSelectedType(type)}
+                >
+                  {selectedType?.value === type.value && (
+                    <span className="pdp-type-check">✓</span>
+                  )}
+                  {type.label}
+                  <span className="pdp-type-dot" />
+                </button>
+              ))}
+            </div>
+          </div> 
+        )}
 
-        {product.stock > 0 && (
-          <div className="pdp-hero__qty">
-            <span className="pdp-hero__qty-label">Quantity</span>
-            <div className="pdp-hero__qty-stepper">
-              <button
-                onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                disabled={quantity <= 1}
-                className="pdp-qty-btn"
-              >−</button>
-              <span className="pdp-qty-value">{quantity}</span>
-              <button
-                onClick={() => setQuantity(q => Math.min(product.stock, q + 1))}
-                disabled={quantity >= product.stock}
-                className="pdp-qty-btn"
-              >+</button>
+        {/* ── Size selector ── */}
+        {sizes.length > 0 && (
+          <div className="pdp-selector">
+            <span className="pdp-selector__label">Size</span>
+            <div className="pdp-selector__options">
+              {sizes.map((size) => (
+                <button
+                  key={size.label}
+                  type="button"
+                  className={`pdp-size-btn ${selectedSize?.label === size.label ? 'active' : ''}`}
+                  onClick={() => setSelectedSize(size)}
+                >
+                  {selectedSize?.label === size.label && (
+                    <span className="pdp-size-check">✓</span>
+                  )}
+                  {size.label}
+                  {size.dimensions && (
+                    <span className="pdp-size-dim">({size.dimensions})</span>
+                  )}
+                </button>
+              ))}
             </div>
           </div>
         )}
 
-        <button
-          className={`pdp-hero__add-btn ${added ? 'added' : ''}`}
-          onClick={handleAddToCart}
-          disabled={product.stock === 0}
-        >
-          {added ? `✓ Added ${quantity > 1 ? `(${quantity})` : ''} to Cart!` : 'Add to Cart'}
-        </button>
+        {/* ── Quantity + per-unit price + discount % ── */}
+        {product.stock > 0 && (
+          <div className="pdp-selector">
+            <span className="pdp-selector__label">Quantity</span>
+            <div className="pdp-qty-row">
+              <div className="pdp-hero__qty-stepper">
+                <button
+                  className="pdp-qty-btn"
+                  onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                  disabled={quantity <= 1}
+                >−</button>
+                <span className="pdp-qty-value">{quantity}</span>
+                <button
+                  className="pdp-qty-btn"
+                  onClick={() => setQuantity(q => Math.min(product.stock, q + 1))}
+                  disabled={quantity >= product.stock}
+                >+</button>
+              </div>
+              <span className="pdp-unit-price">
+                £{activePrice.toFixed(2)} each
+              </span>
+              {hasDiscount && (
+                <span className="pdp-discount-pct">{discountPct}% OFF</span>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ── Final price ── */}
+        <div className="pdp-final-price-row">
+          <span className="pdp-final-label">Final price</span>
+          <div className="pdp-final-price-values">
+            {hasDiscount && (
+              <span className="pdp-final-original">£{originalTotal}</span>
+            )}
+            <span className="pdp-final-discounted">£{finalPrice}</span>
+            {hasDiscount && savedAmount > 0 && (
+              <span className="pdp-saved-badge">You saved £{savedAmount}</span>
+            )}
+          </div>
+        </div>
+
+        {/* ── CTA buttons ── */}
+        <div className="pdp-cta-group">
+          <button
+            className={`pdp-hero__add-btn ${added ? 'added' : ''}`}
+            onClick={handleAddToCart}
+            disabled={product.stock === 0}
+          >
+            {product.stock === 0
+              ? 'Out of Stock'
+              : added
+                ? `✓ Added ${quantity > 1 ? `(${quantity})` : ''} to Cart!`
+                : 'Add to Cart'
+            }
+          </button>
+
+          {product.isCustomizable && (
+            <button className="pdp-customize-btn">
+              Customize blanket
+            </button>
+          )}
+        </div>
+
+        {/* Klarna */}
+        {product.klarnaEligible && (
+          <div className="pdp-klarna">
+            <span className="pdp-klarna__logo">Klarna</span>
+            <span className="pdp-klarna__text">available at checkout</span>
+          </div>
+        )}
+
+        {/* ── Dispatch info ── */}
+        {product.dispatchInfo && (
+          <div className="pdp-dispatch">
+            <span className="pdp-dispatch__icon">🚚</span>
+            <div>
+              <p className="pdp-dispatch__title">Dispatch time notification</p>
+              <p className="pdp-dispatch__text">{product.dispatchInfo}</p>
+            </div>
+          </div>
+        )}
+
+        {/* Stock warning */}
+        {product.stock > 0 && product.stock <= 10 && (
+          <p className="pdp-low-stock">Only {product.stock} left in stock!</p>
+        )}
       </div>
     </div>
   );
 }
 
-// ── Page ──────────────────────────────────────────────────────────────────────
-
+// ── Page ──────────────────────────────────────────────────────
 function Pdp() {
   const { id } = useParams();
-  const [product, setProduct] = useState(null);
+  const [product,         setProduct]         = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
-  const [loading, setLoading] = useState(!!id);
+  const [loading,         setLoading]         = useState(!!id);
 
   useEffect(() => {
     if (!id) return;
-
     setProduct(null);
     setRelatedProducts([]);
     setLoading(true);
@@ -193,20 +387,13 @@ function Pdp() {
       try {
         const res = await productAPI.getById(id);
         if (res.data.success) {
-          const fetchedProduct = res.data.data;
-          setProduct(fetchedProduct);
-
-          // Fetch all admin products, exclude current
+          setProduct(res.data.data);
           try {
             const related = await productAPI.getAll({ limit: 8 });
             if (related.data.success) {
-              setRelatedProducts(
-                related.data.data.filter(p => p.id !== parseInt(id))
-              );
+              setRelatedProducts(related.data.data.filter(p => p.id !== parseInt(id)));
             }
-          } catch {
-            // silently ignore related products failure
-          }
+          } catch { /* silent */ }
         }
       } catch (err) {
         console.error('Failed to fetch product:', err);
@@ -308,10 +495,7 @@ function Pdp() {
 
       <section className='bestSeller-section'>
         <div className='bestSeller-content'>
-          <BestSellerSwiper
-            title="You may also like"
-            products={relatedProducts}
-          />
+          <BestSellerSwiper title="You may also like" products={relatedProducts} />
         </div>
       </section>
 

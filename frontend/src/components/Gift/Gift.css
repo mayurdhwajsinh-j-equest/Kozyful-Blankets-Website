@@ -106,31 +106,43 @@
 
 @media (max-width: 768px) {
 
-    .gift__content{
+    .gift__content {
         padding: 48px 12px;
     }
 
-    .gift__top
-    {
+    .gift__top {
         flex-direction: column;
         gap: 24px;
     }
 
-    .gift__card{
-        max-width: 163.5px;
-    }
-
-    .gift__image{
+    .gift__image {
         max-width: 100%;
     }
 
-    .gift__heading
-    {
+    .gift__heading {
         font-size: 24px;
         margin: 0;
     }
 
-    .gift__cta{
+    .gift__cta {
+        max-width: 100%;
+    }
+
+    /* ── Gift cards layout ── */
+    .gift__bottom {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 24px;
+    }
+
+    .gift__card {
+        flex: 0 0 calc(50% - 12px); 
+        max-width: calc(50% - 12px);
+        box-sizing: border-box;
+    }
+
+    .gift__card:last-child {
+        flex: 0 0 100%;        
         max-width: 100%;
     }
 }

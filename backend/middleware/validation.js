@@ -59,25 +59,43 @@ const schemas = {
   // ── Products ─────────────────────────────────────────────────
   createProduct: Joi.object({
     name: Joi.string().min(2).max(100).required(),
-    description: Joi.string().max(1000).optional().allow(''),
-    price: Joi.number().positive().required(),         // "25.99" → 25.99 via convert
-    discountPrice: Joi.number().positive().optional(),
-    stock: Joi.number().integer().min(0).optional().default(0), // ← no longer required
+    description: Joi.string().max(2000).optional().allow(''),
+    price: Joi.number().positive().required(),
+    discountPrice: Joi.number().positive().optional().allow('', null),
+    stock: Joi.number().integer().min(0).optional().default(0),
     category: Joi.string().max(50).required(),
-    image: Joi.string().optional().allow(''),          // URL path set by multer in controller
-    isBestSeller: Joi.boolean().optional().default(false), // "true"/"false" → boolean
+    image: Joi.string().optional().allow(''),
+    isBestSeller: Joi.boolean().optional().default(false),
+    // ── new fields ──
+    material: Joi.string().optional().allow(''),
+    pattern: Joi.string().optional().allow(''),
+    fill: Joi.string().optional().allow(''),
+    types: Joi.string().optional().allow(''),   // JSON string
+    sizes: Joi.string().optional().allow(''),   // JSON string
+    dispatchInfo: Joi.string().optional().allow(''),
+    isCustomizable: Joi.boolean().optional().default(false),
+    klarnaEligible: Joi.boolean().optional().default(false),
   }),
 
   updateProduct: Joi.object({
     name: Joi.string().min(2).max(100).optional(),
-    description: Joi.string().max(1000).optional().allow(''),
+    description: Joi.string().max(2000).optional().allow(''),
     price: Joi.number().positive().optional(),
-    discountPrice: Joi.number().positive().optional(),
+    discountPrice: Joi.number().positive().optional().allow('', null),
     stock: Joi.number().integer().min(0).optional(),
     category: Joi.string().max(50).optional(),
     image: Joi.string().optional().allow(''),
     isBestSeller: Joi.boolean().optional(),
     isActive: Joi.boolean().optional(),
+    // ── new fields ──
+    material: Joi.string().optional().allow(''),
+    pattern: Joi.string().optional().allow(''),
+    fill: Joi.string().optional().allow(''),
+    types: Joi.string().optional().allow(''),   // JSON string
+    sizes: Joi.string().optional().allow(''),   // JSON string
+    dispatchInfo: Joi.string().optional().allow(''),
+    isCustomizable: Joi.boolean().optional(),
+    klarnaEligible: Joi.boolean().optional(),
   }),
 
   // ── Reviews ──────────────────────────────────────────────────

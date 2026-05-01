@@ -7,32 +7,38 @@ import { productAPI } from '../../services/api'
 
 const FILTERS = {
     Material: ["Cotton", "Wool", "Fleece", "Down", "Polyester", "Silk", "Cashmere"],
-    Pattern: ["Solid", "Striped", "Plaid", "Geometric", "Floral"],
-    Size: ["Twin", "Full", "Queen", "King", "Throw"],
-    Fill: ["Goose Down", "Duck Down", "Synthetic", "Wool", "Cotton"],
-    Color: ["Ivory", "Charcoal", "Navy", "Sage", "Blush", "Mocha"],
+    Pattern:  ["Solid", "Striped", "Plaid", "Geometric", "Floral"],
+    Size:     ["Twin", "Full", "Queen", "King", "Throw"],
+    Fill:     ["Goose Down", "Duck Down", "Synthetic", "Wool", "Cotton"],
 }
 
 const SORT_OPTIONS = [
     { value: "best-sellers", label: "Best sellers" },
-    { value: "price-asc", label: "Price ascending" },
-    { value: "price-desc", label: "Price descending" },
-    { value: "name-asc", label: "Name A to Z" },
-    { value: "name-desc", label: "Name Z to A" },
+    { value: "price-asc",    label: "Price ascending" },
+    { value: "price-desc",   label: "Price descending" },
+    { value: "name-asc",     label: "Name A to Z" },
+    { value: "name-desc",    label: "Name Z to A" },
 ]
+
+// Maps frontend sort value → backend sort param
+const SORT_MAP = {
+    'best-sellers': 'isBestSeller',
+    'price-asc':    'priceAsc',
+    'price-desc':   'priceDesc',
+    'name-asc':     'nameAsc',
+    'name-desc':    'nameDesc',
+}
 
 const PRODUCTS_PER_PAGE = 20
 
 function AccordionGroup({ label, options, selected, onChange }) {
     const [open, setOpen] = useState(true)
-
     return (
         <div className="filter-group">
             <button className="filter-group__header" onClick={() => setOpen(!open)}>
                 <span className="filter-group__label">{label}</span>
                 <span className={`filter-group__chevron ${open ? "open" : ""}`}>›</span>
             </button>
-
             {open && (
                 <div className="filter-group__options">
                     {options.map((opt) => (
@@ -54,51 +60,46 @@ function AccordionGroup({ label, options, selected, onChange }) {
 function Collection() {
     const [activeFilters, setActiveFilters] = useState({
         Material: [],
-        Pattern: [],
-        Size: [],
-        Fill: [],
-        Color: [],
+        Pattern:  [],
+        Size:     [],
+        Fill:     [],
     })
-    const [sortValue, setSortValue] = useState("best-sellers")
+    const [sortValue,       setSortValue]       = useState("best-sellers")
     const [filterModalOpen, setFilterModalOpen] = useState(false)
-    const [sortModalOpen, setSortModalOpen] = useState(false)
-    const [products, setProducts] = useState([])
-    const [loading, setLoading] = useState(true)
-    const [currentPage, setCurrentPage] = useState(1)
-    const [totalProducts, setTotalProducts] = useState(0)
-    const [totalPages, setTotalPages] = useState(1)
+    const [sortModalOpen,   setSortModalOpen]   = useState(false)
+    const [products,        setProducts]        = useState([])
+    const [loading,         setLoading]         = useState(true)
+    const [currentPage,     setCurrentPage]     = useState(1)
+    const [totalProducts,   setTotalProducts]   = useState(0)
+    const [totalPages,      setTotalPages]      = useState(1)
 
-    // Reset to page 1 when filters or sort changes
-    useEffect(() => {
-        setCurrentPage(1)
-    }, [activeFilters, sortValue])
+    // Reset to page 1 when filters or sort change
+    useEffect(() => { setCurrentPage(1) }, [activeFilters, sortValue])
 
-    useEffect(() => {
-        fetchProducts()
-    }, [activeFilters, sortValue, currentPage])
+    useEffect(() => { fetchProducts() }, [activeFilters, sortValue, currentPage])
 
     const fetchProducts = async () => {
         setLoading(true)
         try {
             const params = {
                 limit: PRODUCTS_PER_PAGE,
-                page: currentPage,
+                page:  currentPage,
+                sort:  SORT_MAP[sortValue],
             }
 
-            if (activeFilters.Color.length > 0) {
-                params.color = activeFilters.Color[0]
-            }
+            // ── Send active filters as comma-separated strings ──
+            if (activeFilters.Material.length > 0)
+                params.material = activeFilters.Material.join(',')
 
-            const sortMap = {
-                'best-sellers': 'isBestSeller',
-                'price-asc': 'priceAsc',
-                'price-desc': 'priceDesc',
-                'name-asc': 'nameAsc',
-                'name-desc': 'nameDesc',
-            }
-            if (sortValue) {
-                params.sort = sortMap[sortValue]
-            }
+            if (activeFilters.Pattern.length > 0)
+                params.pattern = activeFilters.Pattern.join(',')
+
+            if (activeFilters.Fill.length > 0)
+                params.fill = activeFilters.Fill.join(',')
+
+            // Size is filtered in JS on the backend (JSON column)
+            if (activeFilters.Size.length > 0)
+                params.size = activeFilters.Size.join(',')
 
             const response = await productAPI.getAll(params)
             if (response.data.success) {
@@ -136,7 +137,6 @@ function Collection() {
         vals.map((val) => ({ group, val }))
     )
 
-    // Generate page numbers with ellipsis
     const getPageNumbers = () => {
         const pages = []
         if (totalPages <= 7) {
@@ -154,16 +154,14 @@ function Collection() {
     }
 
     const startItem = (currentPage - 1) * PRODUCTS_PER_PAGE + 1
-    const endItem = Math.min(currentPage * PRODUCTS_PER_PAGE, totalProducts)
+    const endItem   = Math.min(currentPage * PRODUCTS_PER_PAGE, totalProducts)
 
     return (
         <>
             <section className='collection-section'>
                 <div className="collection__content">
                     <div className="collection__info">
-                        <p className="collection__breadcrumb">
-                            Home &gt; Middle page &gt; This page
-                        </p>
+                        <p className="collection__breadcrumb">Home &gt; Middle page &gt; This page</p>
                         <p className="collection__title">BLANKETS</p>
                         <p className="collection__subtitle">OVER 300,000+ HAPPY CUSTOMERS</p>
                     </div>
@@ -191,7 +189,7 @@ function Collection() {
                         </button>
                     </div>
 
-                    {/* Filter Sidebar (desktop) */}
+                    {/* ── Filter Sidebar (desktop) ── */}
                     <aside className='filter-section'>
                         <p className='filterBy-title'>Filter By</p>
                         <div className="filter-content">
@@ -206,9 +204,7 @@ function Collection() {
                                 </div>
                             )}
                             {activeTags.length > 0 && (
-                                <button className="filter-section__clear" onClick={clearAll}>
-                                    Clear All
-                                </button>
+                                <button className="filter-section__clear" onClick={clearAll}>Clear All</button>
                             )}
                             {Object.entries(FILTERS).map(([group, options]) => (
                                 <AccordionGroup
@@ -222,7 +218,7 @@ function Collection() {
                         </div>
                     </aside>
 
-                    {/* Product Section */}
+                    {/* ── Product Section ── */}
                     <div className='product-section'>
                         <div className="product-section__header">
                             <div>
@@ -238,8 +234,6 @@ function Collection() {
                             <div className="sort-wrapper">
                                 <label className="sort-label">Sort By</label>
                                 <select
-                                    name="sortBy"
-                                    id="sortBy"
                                     value={sortValue}
                                     onChange={(e) => setSortValue(e.target.value)}
                                 >
@@ -269,9 +263,7 @@ function Collection() {
                                     className="pagination__btn pagination__btn--nav"
                                     onClick={() => handlePageChange(currentPage - 1)}
                                     disabled={currentPage === 1}
-                                >
-                                    ‹ Prev
-                                </button>
+                                >‹ Prev</button>
 
                                 {getPageNumbers().map((page, i) =>
                                     page === '...' ? (
@@ -281,9 +273,7 @@ function Collection() {
                                             key={page}
                                             className={`pagination__btn ${currentPage === page ? 'active' : ''}`}
                                             onClick={() => handlePageChange(page)}
-                                        >
-                                            {page}
-                                        </button>
+                                        >{page}</button>
                                     )
                                 )}
 
@@ -291,9 +281,7 @@ function Collection() {
                                     className="pagination__btn pagination__btn--nav"
                                     onClick={() => handlePageChange(currentPage + 1)}
                                     disabled={currentPage === totalPages}
-                                >
-                                    Next ›
-                                </button>
+                                >Next ›</button>
                             </div>
                         )}
                     </div>
@@ -310,7 +298,6 @@ function Collection() {
                             </span>
                             <button className="bottom-sheet__close" onClick={() => setFilterModalOpen(false)}>×</button>
                         </div>
-
                         <div className="bottom-sheet__body">
                             {activeTags.length > 0 && (
                                 <div className="filter-section__tags filter-section__tags--wrap">
@@ -323,9 +310,7 @@ function Collection() {
                                 </div>
                             )}
                             {activeTags.length > 0 && (
-                                <button className="filter-section__clear" onClick={clearAll}>
-                                    Clear All
-                                </button>
+                                <button className="filter-section__clear" onClick={clearAll}>Clear All</button>
                             )}
                             {Object.entries(FILTERS).map(([group, options]) => (
                                 <AccordionGroup
@@ -337,7 +322,6 @@ function Collection() {
                                 />
                             ))}
                         </div>
-
                         <div className="bottom-sheet__footer">
                             <button className="bottom-sheet__apply" onClick={() => setFilterModalOpen(false)}>
                                 Apply filter

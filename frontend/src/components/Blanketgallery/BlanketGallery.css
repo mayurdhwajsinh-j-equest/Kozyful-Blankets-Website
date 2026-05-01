@@ -124,25 +124,24 @@
     }
 
     .gallery-slide img {
-    max-height: 160px;
+        max-height: 160px;
     }
 
-    .blanketGallery-additional{
+    .blanketGallery-additional {
         gap: 8px;
-        min-width: 375px;
+        min-width: 0;      
+        width: 100%;       
     }
 
     .additional img {
-        min-width: 100px;
+        min-width: 0;      
     }
 
-    .gallery-arrow--left
-    {
+    .gallery-arrow--left {
         left: -28px;
     }
 
-    .gallery-arrow--right
-    {
+    .gallery-arrow--right {
         right: -28px;
     }
 }
